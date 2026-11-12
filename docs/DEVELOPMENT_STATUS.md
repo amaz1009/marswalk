@@ -24,13 +24,13 @@ Update this block after every step. It is what an interrupted session resumes fr
 
 ```text
 ACTIVE_WP: WP-00
-BRANCH: wp/WP-00-bootstrap
+BRANCH: develop
 STEP: 4 of 4
-LAST_COMPLETED: Repository bootstrap verified (GIT_WORKFLOW.md §7)
-NEXT_ACTION: WP-05 (Data source selection) on branch wp/WP-05-data-sources
+LAST_COMPLETED: WP-00 merged into develop
+NEXT_ACTION: Start WP-05 (Data source selection) on branch wp/WP-05-data-sources
 BLOCKERS: none
 WAITING_FOR_OWNER: no
-UPDATED: 2026-11-12T15:05+05:30
+UPDATED: 2026-11-12T15:33+05:30
 ```
 
 ---
@@ -54,7 +54,7 @@ UPDATED: 2026-11-12T15:05+05:30
 
 | ID | Title | Tier | Status | Branch | Tests (passed/failed/skipped) | Notes |
 |----|-------|------|--------|--------|-------------------------------|-------|
-| WP-00 | Repository bootstrap | — | VERIFIED | wp/WP-00-bootstrap | — | Owner task completed; rulesets owner-confirmed |
+| WP-00 | Repository bootstrap | — | MERGED | wp/WP-00-bootstrap | — | Owner task completed; rulesets owner-confirmed |
 | WP-05 | Data source selection | P0 | PENDING | wp/WP-05-data-sources | — | Allowed before the event |
 | WP-01 | Backend skeleton | P0 | PENDING | wp/WP-01-backend-skeleton | — | Needs CODE_START_AUTHORISED |
 | WP-02 | Shared models and OpenAPI export | P0 | PENDING | wp/WP-02-shared-models | — | |
@@ -132,5 +132,6 @@ Format: `timestamp | WP | step | action | tests (command → passed/failed/skipp
 
 ```text
 2026-11-11T22:50+05:30 | — | — | Documentation package v1 created (architecture v1.1, contracts, spec, testing, plan, status, git workflow) | cross-document consistency script executed → 0 issues; no code tests (documents only) | 535d2ff
-2026-11-12T15:05+05:30 | WP-00 | 4 of 4 | Repository bootstrap verified and documented | git remote/branch inspection → verified; rulesets owner-confirmed; no code tests | [WP-00]
+2026-11-12T15:05+05:30 | WP-00 | 4 of 4 | Repository bootstrap verified and documented | git remote/branch inspection → verified; rulesets owner-confirmed; no code tests | e36ad30
+2026-11-12T15:33+05:30 | WP-00 | 4 of 4 | Merged wp/WP-00-bootstrap into develop (status MERGED) | merge --no-ff verified; no code tests | [WP-00]
 ```

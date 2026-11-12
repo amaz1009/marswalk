@@ -24,13 +24,13 @@ Update this block after every step. It is what an interrupted session resumes fr
 
 ```text
 ACTIVE_WP: WP-05
-BRANCH: wp/WP-05-data-sources
+BRANCH: develop
 STEP: 6 of 6
-LAST_COMPLETED: WP-05 provisional data sources shortlist and manifest documented
+LAST_COMPLETED: WP-05 merged into develop
 NEXT_ACTION: Awaiting owner code start authorisation for WP-01 (CODE_START_AUTHORISED is NO)
 BLOCKERS: none
 WAITING_FOR_OWNER: yes — WP-01 is a code WP while CODE_START_AUTHORISED is NO
-UPDATED: 2026-11-12T17:55+05:30
+UPDATED: 2026-11-12T18:35+05:30
 ```
 
 ---
@@ -55,7 +55,7 @@ UPDATED: 2026-11-12T17:55+05:30
 | ID | Title | Tier | Status | Branch | Tests (passed/failed/skipped) | Notes |
 |----|-------|------|--------|--------|-------------------------------|-------|
 | WP-00 | Repository bootstrap | — | MERGED | wp/WP-00-bootstrap | — | Owner task completed; rulesets owner-confirmed |
-| WP-05 | Data source selection | P0 | VERIFIED | wp/WP-05-data-sources | — | Provisional shortlist documented; awaiting Nov 13 resources |
+| WP-05 | Data source selection | P0 | MERGED | wp/WP-05-data-sources | — | Provisional shortlist documented; awaiting Nov 13 resources |
 | WP-01 | Backend skeleton | P0 | PENDING | wp/WP-01-backend-skeleton | — | Needs CODE_START_AUTHORISED |
 | WP-02 | Shared models and OpenAPI export | P0 | PENDING | wp/WP-02-shared-models | — | |
 | WP-03 | Coordinates and geodesy | P0 | PENDING | wp/WP-03-coordinates | — | |
@@ -134,5 +134,6 @@ Format: `timestamp | WP | step | action | tests (command → passed/failed/skipp
 2026-11-11T22:50+05:30 | — | — | Documentation package v1 created (architecture v1.1, contracts, spec, testing, plan, status, git workflow) | cross-document consistency script executed → 0 issues; no code tests (documents only) | 535d2ff
 2026-11-12T15:05+05:30 | WP-00 | 4 of 4 | Repository bootstrap verified and documented | git remote/branch inspection → verified; rulesets owner-confirmed; no code tests | e36ad30
 2026-11-12T15:33+05:30 | WP-00 | 4 of 4 | Merged wp/WP-00-bootstrap into develop (status MERGED) | merge --no-ff verified; no code tests | 15785ea
-2026-11-12T17:55+05:30 | WP-05 | 6 of 6 | Provisional data source shortlist and manifest documented | curl header checks (7/7 products HTTP 200/302 verified) → 0 issues; no code tests | [WP-05]
+2026-11-12T17:55+05:30 | WP-05 | 6 of 6 | Provisional data source shortlist and manifest documented | curl header checks (7/7 products HTTP 200/302 verified) → 0 issues; no code tests | afba586
+2026-11-12T18:35+05:30 | WP-05 | 6 of 6 | Merged wp/WP-05-data-sources into develop (status MERGED) | merge --no-ff verified; no code tests | [WP-05]
 ```

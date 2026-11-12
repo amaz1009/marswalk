@@ -1,0 +1,135 @@
+# MARSWALK — Development Status
+
+This is the single live record of progress. Every agent session reads it first and
+updates it after every completed step. If this file and memory disagree, this file wins.
+
+---
+
+## 1. Owner Settings
+
+Only the owner changes these values.
+
+```text
+CODE_START_AUTHORISED: NO        # YES once the owner confirms the event allows code before/at this time
+REVIEW_MODE: milestone           # milestone = agent merges WPs into develop; owner approves develop → main
+                                 # per-wp    = agent opens a PR for every WP into develop and waits
+DOWNLOAD_APPROVED: NO            # YES once the owner approves the data download size (WP-06 step 2)
+```
+
+---
+
+## 2. Current Checkpoint
+
+Update this block after every step. It is what an interrupted session resumes from.
+
+```text
+ACTIVE_WP: WP-00
+BRANCH: main
+STEP: 0 of 4
+LAST_COMPLETED: Documentation package v1 created
+NEXT_ACTION: Owner performs WP-00 (repository bootstrap, GIT_WORKFLOW.md §7)
+BLOCKERS: none
+WAITING_FOR_OWNER: yes — WP-00
+UPDATED: 2026-11-11T22:50+05:30
+```
+
+---
+
+## 3. Status Values
+
+| Status | Meaning |
+|--------|---------|
+| `PENDING` | Not started |
+| `IN_PROGRESS` | Work has started on the WP branch |
+| `BLOCKED` | Cannot continue. The reason is in the Blockers section. |
+| `IMPLEMENTED` | Code written. Tests not yet all executed and passing. |
+| `VERIFIED` | All WP tests and the full suite executed and passing |
+| `MERGED` | Merged into `develop` |
+| `RELEASED` | Included in `main` through an owner-approved merge |
+| `SKIPPED` | Deliberately not done (reason recorded), for example after the cut line |
+
+---
+
+## 4. Work Packages
+
+| ID | Title | Tier | Status | Branch | Tests (passed/failed/skipped) | Notes |
+|----|-------|------|--------|--------|-------------------------------|-------|
+| WP-00 | Repository bootstrap | — | PENDING | main | — | Owner task |
+| WP-05 | Data source selection | P0 | PENDING | wp/WP-05-data-sources | — | Allowed before the event |
+| WP-01 | Backend skeleton | P0 | PENDING | wp/WP-01-backend-skeleton | — | Needs CODE_START_AUTHORISED |
+| WP-02 | Shared models and OpenAPI export | P0 | PENDING | wp/WP-02-shared-models | — | |
+| WP-03 | Coordinates and geodesy | P0 | PENDING | wp/WP-03-coordinates | — | |
+| WP-04 | Frontend skeleton and dev scripts | P0 | PENDING | wp/WP-04-frontend-skeleton | — | |
+| WP-06 | Data download and processing pipeline | P0 | PENDING | wp/WP-06-data-pipeline | — | Needs DOWNLOAD_APPROVED |
+| WP-07 | Terrain and hazard engines | P0 | PENDING | wp/WP-07-terrain-engine | — | |
+| WP-08 | Region, dataset, layer and terrain APIs | P0 | PENDING | wp/WP-08-layer-api | — | |
+| WP-09 | Frontend map, layers and inspector | P0 | PENDING | wp/WP-09-frontend-map | — | Milestone M1 |
+| WP-10 | Routing engine | P0 | PENDING | wp/WP-10-routing-engine | — | |
+| WP-11 | EVA model, safety checks and route API | P0 | PENDING | wp/WP-11-eva-safety | — | |
+| WP-12 | Frontend traverse planner and safety panel | P0 | PENDING | wp/WP-12-frontend-traverse | — | Milestone M2 |
+| WP-13 | Mission report | P0 | PENDING | wp/WP-13-mission-report | — | Milestone M3 |
+| WP-14 | Walk-back envelope | P1 | PENDING | wp/WP-14-walkback-envelope | — | |
+| WP-15 | Rover-eye surface images | P1 | PENDING | wp/WP-15-surface-images | — | |
+| WP-16 | Field View | P1 | PENDING | wp/WP-16-field-view | — | |
+| WP-17 | Agent system (deterministic default) | P1 | PENDING | wp/WP-17-agents | — | Cut-line candidate |
+| WP-18 | CRISM and MSL RAD context data | P1 | PENDING | wp/WP-18-context-data | — | Cut-line candidate |
+| WP-19 | Site selection | P1 | PENDING | wp/WP-19-site-selection | — | Cut-line candidate |
+| WP-20 | QA, integration and test report | P0 | PENDING | wp/WP-20-qa-integration | — | |
+| WP-21 | Demo scenario and final documentation | P0 | PENDING | wp/WP-21-demo-docs | — | Milestone M5 |
+
+---
+
+## 5. Milestones
+
+| Milestone | Status | Tag | Approved by owner on |
+|-----------|--------|-----|----------------------|
+| M0 Docs and data selection | PENDING | v0.0.1 | — |
+| M1 Real data on the map | PENDING | v0.1.0 | — |
+| M2 End-to-end route | PENDING | v0.2.0 | — |
+| M3 P0 complete | PENDING | v0.3.0 | — |
+| M4 P1 features | PENDING | v0.4.0 | — |
+| M5 Submission | PENDING | v1.0.0 | — |
+
+---
+
+## 6. Open Items
+
+| ID | Item | Status | Resolution |
+|----|------|--------|------------|
+| O-1 | Confirm region and data products against official challenge resources (2026-11-13) | OPEN | |
+| O-2 | Select HiRISE and CTX DTM products for the boxwork area | OPEN | |
+| O-3 | Review `roughness_warning_m` and other EVA defaults against region data | OPEN | |
+| O-4 | Confirm the event rule on writing code before 2026-11-14 | OPEN | Owner |
+| O-5 | Confirm an MSL RAD product for site-level context | OPEN | |
+| O-6 | Verify chosen PDS formats open with rasterio's bundled GDAL on Windows | OPEN | |
+
+---
+
+## 7. Decisions Log
+
+Architecture decisions ADR-01 to ADR-16 are in `SYSTEM_ARCHITECTURE.md` §3. Record
+new decisions here.
+
+| ID | Date | Decision | Reason | Affected files |
+|----|------|----------|--------|----------------|
+| D-001 | 2026-11-11 | Provisional region: Gale Crater / Mount Sharp boxwork | Matches the challenge example; MSL RAD site data; HiRISE coverage | SYSTEM_ARCHITECTURE.md §1.4 |
+| D-002 | 2026-11-11 | Solo build; no LLM key; local demo with video; Windows | Owner answers | SYSTEM_ARCHITECTURE.md ADR-07, ADR-13, ADR-14, §13 |
+| D-003 | 2026-11-11 | Consumables model and exclusion zones moved to P2 | Fit the solo 48-hour scope | SYSTEM_ARCHITECTURE.md §15, SCIENCE_AND_SAFETY_SPEC.md §5, §12 |
+
+---
+
+## 8. Blockers and Known Issues
+
+| Date | WP | Issue | Impact | Status |
+|------|----|-------|--------|--------|
+| — | — | none | — | — |
+
+---
+
+## 9. Work Log (append-only, newest last)
+
+Format: `timestamp | WP | step | action | tests (command → passed/failed/skipped) | commit`
+
+```text
+2026-11-11T22:50+05:30 | — | — | Documentation package v1 created (architecture v1.1, contracts, spec, testing, plan, status, git workflow) | cross-document consistency script executed → 0 issues; no code tests (documents only) | not yet committed
+```

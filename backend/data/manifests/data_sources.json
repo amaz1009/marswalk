@@ -1,0 +1,72 @@
+[
+  {
+    "dataset_id": "HIRISE_DTM_GALE_MOUND",
+    "product_id": "DTEEC_001488_1750_001752_1750_U02.IMG",
+    "url": "https://hirise-pds.lpl.arizona.edu/PDS/DTM/PSP/ORB_001400_001499/PSP_001488_1750_PSP_001752_1750/DTEEC_001488_1750_001752_1750_U02.IMG",
+    "expected_format": "PDS3_IMG",
+    "expected_size_bytes": 360402944,
+    "purpose": "Primary terrain model (1 m post spacing) for local obstacle avoidance, slope, roughness, and path planning.",
+    "selected_because": "Official stereo-derived HiRISE DTM covering lower Mount Sharp layered mound and boxwork-bearing formations in Gale Crater. Resolves metric obstacles required by the EVA planning challenge.",
+    "verified_url_at": "2026-11-12T12:16:12Z"
+  },
+  {
+    "dataset_id": "HIRISE_ORTHO_GALE_MOUND",
+    "product_id": "PSP_001752_1750_RED_C_01_ORTHO.JP2",
+    "url": "https://hirise-pds.lpl.arizona.edu/PDS/DTM/PSP/ORB_001400_001499/PSP_001488_1750_PSP_001752_1750/PSP_001752_1750_RED_C_01_ORTHO.JP2",
+    "expected_format": "JP2",
+    "expected_size_bytes": 33256997,
+    "purpose": "Primary high-resolution optical basemap co-registered to the primary DTM for surface visual inspection.",
+    "selected_because": "Official orthorectified image corresponding to DTM stereo observation pair PSP_001488_1750 / PSP_001752_1750. Reduced C-version provides full optical coverage at manageable size.",
+    "verified_url_at": "2026-11-12T12:16:34Z"
+  },
+  {
+    "dataset_id": "USGS_GALE_MERGED_DEM",
+    "product_id": "MSL_Gale_DEM_Mosaic_1m_v3.tif",
+    "url": "https://asc-pds-services.s3.us-west-2.amazonaws.com/mosaic/Mars/MSL/MSL_Gale_DEM_Mosaic_1m_v3.tif",
+    "expected_format": "GEOTIFF",
+    "expected_size_bytes": 3868256546,
+    "purpose": "Fallback and wide-area 1m digital elevation model covering the complete Gale Crater exploration corridor (HRSC + CTX + HiRISE tied to MOLA).",
+    "selected_because": "USGS Astrogeology peer-reviewed multi-sensor mosaic (Calef & Parker 2016). Ensures spatial continuity and prevents edge artifacts beyond the single HiRISE strip.",
+    "verified_url_at": "2026-11-12T12:18:31Z"
+  },
+  {
+    "dataset_id": "MOLA_MEGDR_GALE",
+    "product_id": "MEGT00N090HB.IMG",
+    "url": "https://pds-geosciences.wustl.edu/mgs/mgs-m-mola-5-megdr-l3-v1/mgsl_300x/meg128/megt00n090hb.img",
+    "expected_format": "PDS3_IMG",
+    "expected_size_bytes": 129761280,
+    "purpose": "Regional topographic context (128 pixels/degree, ~463 m/pixel) and planetary geodetic datum reference.",
+    "selected_because": "Official PDS Geosciences Node MGS MOLA Precision Experiment Data Record covering latitude 0 to 44 S, longitude 90 to 180 E.",
+    "verified_url_at": "2026-11-12T12:14:25Z"
+  },
+  {
+    "dataset_id": "USGS_GEOLOGY_SIM3292",
+    "product_id": "sim3292_database.zip",
+    "url": "https://pubs.usgs.gov/sim/3292/downloads/sim3292_database.zip",
+    "expected_format": "ZIP",
+    "expected_size_bytes": 808910442,
+    "purpose": "Geologic units, structural features, and surface material context for landing site and traverse evaluation.",
+    "selected_because": "USGS Scientific Investigations Map 3292 (Tanaka et al. 2014, 1:20M). Standard authoritative GIS database for Martian geology.",
+    "verified_url_at": "2026-11-12T12:19:10Z"
+  },
+  {
+    "dataset_id": "THEMIS_DAY_IR_GLOBAL",
+    "product_id": "Mars_MO_THEMIS-IR-Day_mosaic_global_100m_v12.tif",
+    "url": "https://asc-pds-services.s3.us-west-2.amazonaws.com/mosaic/Mars_MO_THEMIS-IR-Day_mosaic_global_100m_v12.tif",
+    "expected_format": "GEOTIFF",
+    "expected_size_bytes": 22769567365,
+    "purpose": "Thermal infrared context and thermophysical surface variation layer (100 m/pixel).",
+    "selected_because": "USGS/ASU 2001 Mars Odyssey THEMIS Daytime Infrared Global Mosaic v12. Notice: due to 22.8 GB size, sub-window / COG range extraction is recommended in WP-06.",
+    "verified_url_at": "2026-11-12T12:21:24Z"
+  },
+  {
+    "dataset_id": "MSL_RAD_SURFACE_RDR",
+    "product_id": "MSL-M-RAD-3-RDR-V1.0",
+    "url": "https://pds-ppi.igpp.ucla.edu/collection/MSL-M-RAD-3-RDR-V1.0",
+    "expected_format": "PDS3_BUNDLE",
+    "expected_size_bytes": null,
+    "purpose": "In-situ surface radiation environment measurements (dose rate, galactic cosmic rays, solar particle events) in Gale Crater.",
+    "selected_because": "NASA PDS Planetary Plasma Interactions (PPI) Node official collection for Curiosity RAD Reduced Data Records.",
+    "verified_url_at": "2026-11-12T12:24:11Z"
+  }
+]

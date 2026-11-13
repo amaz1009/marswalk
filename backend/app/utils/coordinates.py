@@ -226,17 +226,14 @@ class MarsCoordinateTransformer:
             self.source_crs_wkt,
             self.target_crs_wkt,
             always_xy=True,
+            allow_ballpark=False,
         )
         self._inverse_transformer = pyproj.Transformer.from_crs(
             self.target_crs_wkt,
             self.source_crs_wkt,
             always_xy=True,
+            allow_ballpark=False,
         )
-
-    @property
-    def has_ballpark_transformation(self) -> bool:
-        """Whether the underlying PROJ pipeline uses a ballpark transformation."""
-        return self._forward_transformer.has_ballpark_transformation
 
     @property
     def wkt(self) -> str:

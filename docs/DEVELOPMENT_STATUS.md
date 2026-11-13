@@ -24,13 +24,13 @@ Update this block after every step. It is what an interrupted session resumes fr
 
 ```text
 ACTIVE_WP: WP-05
-BRANCH: wp/WP-05b-resources-review
+BRANCH: develop
 STEP: review
-LAST_COMPLETED: Space Apps Resources review (2026-11-13) completed; region confirmed as Gale / Mount Sharp
+LAST_COMPLETED: WP-05b merged into develop
 NEXT_ACTION: Awaiting owner code start authorisation for WP-01 (CODE_START_AUTHORISED is NO)
 BLOCKERS: none
 WAITING_FOR_OWNER: yes — WP-01 is a code WP while CODE_START_AUTHORISED is NO
-UPDATED: 2026-11-13T16:15+05:30
+UPDATED: 2026-11-13T16:31+05:30
 ```
 
 ---
@@ -55,7 +55,7 @@ UPDATED: 2026-11-13T16:15+05:30
 | ID | Title | Tier | Status | Branch | Tests (passed/failed/skipped) | Notes |
 |----|-------|------|--------|--------|-------------------------------|-------|
 | WP-00 | Repository bootstrap | — | MERGED | wp/WP-00-bootstrap | — | Owner task completed; rulesets owner-confirmed |
-| WP-05 | Data source selection | P0 | MERGED | wp/WP-05-data-sources | — | Provisional shortlist documented; awaiting Nov 13 resources |
+| WP-05 | Data source selection | P0 | MERGED | wp/WP-05-data-sources | — | Shortlist and Nov 13 resources review merged (WP-05, WP-05b) |
 | WP-01 | Backend skeleton | P0 | PENDING | wp/WP-01-backend-skeleton | — | Needs CODE_START_AUTHORISED |
 | WP-02 | Shared models and OpenAPI export | P0 | PENDING | wp/WP-02-shared-models | — | |
 | WP-03 | Coordinates and geodesy | P0 | PENDING | wp/WP-03-coordinates | — | |
@@ -137,5 +137,6 @@ Format: `timestamp | WP | step | action | tests (command → passed/failed/skipp
 2026-11-12T15:33+05:30 | WP-00 | 4 of 4 | Merged wp/WP-00-bootstrap into develop (status MERGED) | merge --no-ff verified; no code tests | 15785ea
 2026-11-12T17:55+05:30 | WP-05 | 6 of 6 | Provisional data source shortlist and manifest documented | curl header checks (7/7 products HTTP 200/302 verified) → 0 issues; no code tests | afba586
 2026-11-12T18:35+05:30 | WP-05 | 6 of 6 | Merged wp/WP-05-data-sources into develop (status MERGED) | merge --no-ff verified; no code tests | be0e368
-2026-11-13T16:15+05:30 | WP-05 | review | Space Apps Resources review (2026-11-13) completed; region confirmed as Gale / Mount Sharp | docs consistency check → 0 issues; no code tests (documents only) | [WP-05]
+2026-11-13T16:15+05:30 | WP-05 | review | Space Apps Resources review (2026-11-13) completed; region confirmed as Gale / Mount Sharp | docs consistency check → 0 issues; no code tests (documents only) | d838ece
+2026-11-13T16:31+05:30 | WP-05 | review | Merged wp/WP-05b-resources-review into develop (status MERGED) | merge --no-ff verified; no code tests | [WP-05]
 ```

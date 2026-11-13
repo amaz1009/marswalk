@@ -68,5 +68,16 @@
     "purpose": "In-situ surface radiation environment measurements (dose rate, galactic cosmic rays, solar particle events) in Gale Crater.",
     "selected_because": "NASA PDS Planetary Plasma Interactions (PPI) Node official collection for Curiosity RAD Reduced Data Records.",
     "verified_url_at": "2026-11-12T12:24:11Z"
+  },
+  {
+    "dataset_id": "MARS_TREK_PORTAL",
+    "product_id": "NASA_SOLAR_SYSTEM_TREKS_MARS",
+    "url": null,
+    "status": "UNVERIFIED — candidate only",
+    "expected_format": "WEB_PORTAL",
+    "expected_size_bytes": null,
+    "purpose": "Reference and validation portal for cross-checking Gale Crater surface morphology, landmark names, and orbital basemaps.",
+    "selected_because": "Listed as an official resource in the NASA Space Apps 2026 Resources tab (2026-11-13). Evaluated as reference/validation only; layers, endpoints, and terms not reviewed (no download URL).",
+    "verified_url_at": null
   }
 ]

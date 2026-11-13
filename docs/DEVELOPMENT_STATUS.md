@@ -24,13 +24,13 @@ Update this block after every step. It is what an interrupted session resumes fr
 
 ```text
 ACTIVE_WP: WP-05
-BRANCH: develop
-STEP: 6 of 6
-LAST_COMPLETED: WP-05 merged into develop
+BRANCH: wp/WP-05b-resources-review
+STEP: review
+LAST_COMPLETED: Space Apps Resources review (2026-11-13) completed; region confirmed as Gale / Mount Sharp
 NEXT_ACTION: Awaiting owner code start authorisation for WP-01 (CODE_START_AUTHORISED is NO)
 BLOCKERS: none
 WAITING_FOR_OWNER: yes — WP-01 is a code WP while CODE_START_AUTHORISED is NO
-UPDATED: 2026-11-12T18:35+05:30
+UPDATED: 2026-11-13T16:15+05:30
 ```
 
 ---
@@ -96,7 +96,7 @@ UPDATED: 2026-11-12T18:35+05:30
 
 | ID | Item | Status | Resolution |
 |----|------|--------|------------|
-| O-1 | Confirm region and data products against official challenge resources (2026-11-13) | OPEN | |
+| O-1 | Confirm region and data products against official challenge resources (2026-11-13) | RESOLVED | Resources review completed 2026-11-13; region confirmed as Gale / Mount Sharp (DATA_SOURCES.md §7) |
 | O-2 | Select HiRISE and CTX DTM products for the boxwork area | OPEN | |
 | O-3 | Review `roughness_warning_m` and other EVA defaults against region data | OPEN | |
 | O-4 | Confirm the event rule on writing code before 2026-11-14 | OPEN | Owner |
@@ -115,6 +115,7 @@ new decisions here.
 | D-001 | 2026-11-11 | Provisional region: Gale Crater / Mount Sharp boxwork | Matches the challenge example; MSL RAD site data; HiRISE coverage | SYSTEM_ARCHITECTURE.md §1.4 |
 | D-002 | 2026-11-11 | Solo build; no LLM key; local demo with video; Windows | Owner answers | SYSTEM_ARCHITECTURE.md ADR-07, ADR-13, ADR-14, §13 |
 | D-003 | 2026-11-11 | Consumables model and exclusion zones moved to P2 | Fit the solo 48-hour scope | SYSTEM_ARCHITECTURE.md §15, SCIENCE_AND_SAFETY_SPEC.md §5, §12 |
+| D-004 | 2026-11-13 | Region confirmed: Gale Crater / Mount Sharp | Space Apps Resources review confirmed region alignment with NASA-listed USGS mapping; Mars Trek added as candidate | DATA_SOURCES.md §7 |
 
 ---
 
@@ -135,5 +136,6 @@ Format: `timestamp | WP | step | action | tests (command → passed/failed/skipp
 2026-11-12T15:05+05:30 | WP-00 | 4 of 4 | Repository bootstrap verified and documented | git remote/branch inspection → verified; rulesets owner-confirmed; no code tests | e36ad30
 2026-11-12T15:33+05:30 | WP-00 | 4 of 4 | Merged wp/WP-00-bootstrap into develop (status MERGED) | merge --no-ff verified; no code tests | 15785ea
 2026-11-12T17:55+05:30 | WP-05 | 6 of 6 | Provisional data source shortlist and manifest documented | curl header checks (7/7 products HTTP 200/302 verified) → 0 issues; no code tests | afba586
-2026-11-12T18:35+05:30 | WP-05 | 6 of 6 | Merged wp/WP-05-data-sources into develop (status MERGED) | merge --no-ff verified; no code tests | [WP-05]
+2026-11-12T18:35+05:30 | WP-05 | 6 of 6 | Merged wp/WP-05-data-sources into develop (status MERGED) | merge --no-ff verified; no code tests | be0e368
+2026-11-13T16:15+05:30 | WP-05 | review | Space Apps Resources review (2026-11-13) completed; region confirmed as Gale / Mount Sharp | docs consistency check → 0 issues; no code tests (documents only) | [WP-05]
 ```

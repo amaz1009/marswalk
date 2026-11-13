@@ -26,11 +26,11 @@ Update this block after every step. It is what an interrupted session resumes fr
 ACTIVE_WP: WP-03
 BRANCH: wp/WP-03-coordinates
 STEP: 4 of 4
-LAST_COMPLETED: Coordinates, normalisation, IAU 2000 geodesy, and projection transformer implemented [WP-03]
-NEXT_ACTION: Awaiting owner test run and approval to merge wp/WP-03-coordinates into develop
+LAST_COMPLETED: Added pyproj dependency, migrated transformer to pyproj.Transformer, and corrected 45° planetocentric test constant [WP-03]
+NEXT_ACTION: Awaiting owner pyproj installation, test run, and merge approval
 BLOCKERS: none
-WAITING_FOR_OWNER: yes — WP-03 complete; awaiting owner test execution and review
-UPDATED: 2026-11-14T02:18+05:30
+WAITING_FOR_OWNER: yes — WP-03 updated; awaiting owner pyproj install and test run
+UPDATED: 2026-11-14T02:28+05:30
 ```
 
 ---
@@ -161,4 +161,5 @@ Format: `timestamp | WP | step | action | tests (command → passed/failed/skipp
 2026-11-14T02:08+05:30 | WP-02 | 4 of 4 | Merged wp/WP-02-shared-models into develop (status MERGED) | merge --no-ff verified; no code tests | 0369071
 2026-11-14T02:12+05:30 | WP-03 | 0 of 4 | Step 0: reformatted WP-01 config.py and errors.py with ruff format | ruff format app/config.py app/core/errors.py → 2 files formatted | 59b2e6c
 2026-11-14T02:18+05:30 | WP-03 | 4 of 4 | Coordinates, normalisation, IAU 2000 geodesy, and equirectangular transformer implemented | cd backend; ruff check . ..\scripts → passed; ruff format --check → 5 files passed; pytest owner-run pending | [WP-03]
+2026-11-14T02:28+05:30 | WP-03 | 4 of 4 | Pre-merge fix: added pyproj to pyproject.toml, updated transformer to pyproj.Transformer (WKT-only), corrected 45° test constant | cd backend; ruff check . ..\scripts → passed; ruff format --check → 2 files passed; pytest owner-run pending | [WP-03]
 ```

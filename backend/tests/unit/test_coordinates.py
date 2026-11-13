@@ -5,9 +5,11 @@ Implements T-COORD-01, T-COORD-02, T-COORD-03, T-COORD-04, T-COORD-07, T-COORD-0
 
 import math
 
+import pyproj
 import pytest
 
 from app.utils.coordinates import (
+    MARS_ELLIPSOID_WKT,
     MARS_EQUATORIAL_RADIUS_M,
     MARS_POLAR_RADIUS_M,
     MARS_SPHERE_RADIUS_M,
@@ -123,8 +125,8 @@ def test_t_coord_03_planetographic_planetocentric_conversion() -> None:
     calc_centric = planetographic_to_planetocentric(45.0)
     assert math.isclose(calc_centric, expected_centric_45, rel_tol=1e-12, abs_tol=1e-12)
 
-    # At 45°, planetocentric is approximately 44.6648785°
-    assert abs(calc_centric - 44.66488) < 0.001
+    # At 45°, planetocentric is approximately 44.661768°
+    assert abs(calc_centric - 44.661768) < 1e-5
 
     # Round trip across latitudes [-89° to +89°] within 1e-9°
     for lat in [-85.0, -60.0, -45.0, -30.0, -4.5, 10.0, 30.0, 45.0, 60.0, 85.0]:
@@ -166,14 +168,13 @@ def test_t_coord_04_west_east_conversion() -> None:
 def test_t_coord_07_transformer_round_trip() -> None:
     """T-COORD-07: Internal -> projected -> internal round trip within half a cell.
 
-    Tested for synthetic Mars Equirectangular CRS (1 m cell size, tolerance 0.5 m).
+    Tested through pyproj.Transformer on Mars Equirectangular CRS (< 0.5 m for 1 m DTM).
     """
     transformer = MarsCoordinateTransformer(
         center_lat=-4.5,
         center_lon=137.4,
         false_easting=0.0,
         false_northing=0.0,
-        radius=MARS_SPHERE_RADIUS_M,
     )
 
     test_points = [
@@ -191,7 +192,7 @@ def test_t_coord_07_transformer_round_trip() -> None:
         x, y = transformer.transform(lon, lat)
         lon_back, lat_back = transformer.inverse_transform(x, y)
 
-        # Angular difference to surface metres
+        # Angular difference to surface metres on Mars sphere
         dlat_rad = math.radians(lat_back - lat)
         dlon_rad = math.radians(lon_back - lon) * math.cos(math.radians(lat))
         err_m = MARS_SPHERE_RADIUS_M * math.sqrt(dlat_rad**2 + dlon_rad**2)
@@ -202,32 +203,61 @@ def test_t_coord_07_transformer_round_trip() -> None:
 def test_t_coord_08_proj_ballpark_trap() -> None:
     """T-COORD-08: Ellipsoid-based planetographic input converted explicitly before projection.
 
-    A naive or ballpark transformer that ignores planetographic-to-planetocentric conversion
-    would leave latitude 45° unchanged, resulting in a ~19.8 km error on Mars.
-    This test verifies explicit conversion is executed and that a ballpark operation fails.
+    Docs/SCIENCE_AND_SAFETY_SPEC.md §2.3 states:
+    'Mandatory rule: do not rely on PROJ to perform this conversion. Between two Mars
+    CRSs with different datums and no defined transformation, PROJ may apply a
+    "ballpark" transformation that leaves latitude numbers unchanged.'
+
+    How this test would fail if PROJ fell back to a ballpark or Earth-based operation:
+    1. The internal-to-analysis MarsCoordinateTransformer operates on Mars 2000 Sphere,
+       so its underlying pyproj.Transformer has no datum change and has_ballpark_transformation
+       MUST be False. If PROJ fell back to a ballpark operation or Earth datum, this assertion
+       fails.
+    2. A direct PROJ transformer from MARS_ELLIPSOID_WKT to the analysis CRS has no datum
+       shift definition in PROJ; querying pyproj.Transformer.from_crs(MARS_ELLIPSOID_WKT, ...)
+       proves that PROJ reports has_ballpark_transformation == True. This demonstrates that
+       PROJ cannot perform the conversion on its own without falling into the ballpark trap.
+    3. When is_planetographic=True is passed, MarsCoordinateTransformer explicitly converts
+       planetographic 45° to planetocentric ~44.661768° before projection. A ballpark transformation
+       would leave latitude as 45°, producing an error of R * radians(45 - 44.661768) ≈ 20,049 m.
+       The test verifies the explicit conversion avoids this ~20 km error.
     """
     transformer = MarsCoordinateTransformer(
         center_lat=0.0,
         center_lon=0.0,
-        radius=MARS_SPHERE_RADIUS_M,
     )
 
+    # 1. Verify our transformer has no ballpark transformation (exact map projection on Mars sphere)
+    assert not transformer.has_ballpark_transformation
+
+    # 2. Verify PROJ's ballpark trap: transforming directly from Mars Ellipsoid to analysis CRS
+    # falls back to a ballpark transformation because PROJ lacks a Mars datum shift.
+    direct_ellipsoid_transformer = pyproj.Transformer.from_crs(
+        MARS_ELLIPSOID_WKT,
+        transformer.wkt,
+        always_xy=True,
+    )
+    assert direct_ellipsoid_transformer.has_ballpark_transformation, (
+        "Expected PROJ to report a ballpark transformation between Mars Ellipsoid and Sphere"
+    )
+
+    # 3. Verify explicit conversion prevents the ~20 km ballpark error
     planetographic_lat = 45.0
     lon = 0.0
 
-    # Explicit conversion performed by transformer
     x_correct, y_correct = transformer.transform(lon, planetographic_lat, is_planetographic=True)
-
-    # Ballpark/naive transformation: projects planetographic 45.0° directly
     x_ballpark, y_ballpark = transformer.transform(lon, planetographic_lat, is_planetographic=False)
 
-    # On Mars ellipsoid, 45° planetographic corresponds to ~44.665° planetocentric
-    # The difference in y is approximately (45.0 - 44.66488) * (pi / 180) * 3396190 m ≈ 19,864 m
+    # The difference between ballpark (unconverted 45°) and explicit planetocentric conversion
+    b2_over_a2 = (MARS_POLAR_RADIUS_M / MARS_EQUATORIAL_RADIUS_M) ** 2
+    expected_centric_45 = math.degrees(math.atan(b2_over_a2 * math.tan(math.radians(45.0))))
+    expected_delta_m = MARS_SPHERE_RADIUS_M * math.radians(planetographic_lat - expected_centric_45)
+
     y_error_m = abs(y_ballpark - y_correct)
-    assert y_error_m > 10_000.0, (
-        f"Ballpark trap detection failed: difference is only {y_error_m} m, expected ~19.8 km"
+    assert math.isclose(y_error_m, expected_delta_m, rel_tol=1e-5), (
+        f"Ballpark delta {y_error_m} m does not match expected {expected_delta_m} m"
     )
-    assert math.isclose(y_error_m, 19864.0, abs_tol=200.0)
+    assert y_error_m > 10_000.0, f"Error {y_error_m} m is unexpectedly small (< 10 km)"
 
     # Inverse transformation with to_planetographic=True restores original planetographic latitude
     lon_rt, lat_rt = transformer.inverse_transform(x_correct, y_correct, to_planetographic=True)

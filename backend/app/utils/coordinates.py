@@ -7,6 +7,8 @@ Uses Mars datums only; no terrestrial coordinate systems.
 
 import math
 
+import pyproj
+
 # IAU 2000 Mars constants (docs/SCIENCE_AND_SAFETY_SPEC.md §2.1)
 MARS_SPHERE_RADIUS_M: float = 3_396_190.0
 MARS_EQUATORIAL_RADIUS_M: float = 3_396_190.0
@@ -192,7 +194,7 @@ class MarsCoordinateTransformer:
     """Transformation helper between Mars internal geographic CRS and projected analysis CRS.
 
     Implements docs/SCIENCE_AND_SAFETY_SPEC.md §2.5 with explicit latitude handling (§2.3).
-    Follows pyproj 'always_xy=True' convention: coordinates are passed and returned as
+    Uses pyproj.Transformer with always_xy=True. Coordinates are passed and returned as
     (x, y) or (lon, lat) where the horizontal/easting/longitude axis is first.
     """
 
@@ -212,15 +214,34 @@ class MarsCoordinateTransformer:
         self.false_northing = false_northing
         self.radius = radius
 
+        self.source_crs_wkt = MARS_SPHERE_WKT
+        self.target_crs_wkt = build_mars_equirectangular_wkt(
+            center_lat=center_lat,
+            center_lon=center_lon,
+            false_easting=false_easting,
+            false_northing=false_northing,
+        )
+
+        self._forward_transformer = pyproj.Transformer.from_crs(
+            self.source_crs_wkt,
+            self.target_crs_wkt,
+            always_xy=True,
+        )
+        self._inverse_transformer = pyproj.Transformer.from_crs(
+            self.target_crs_wkt,
+            self.source_crs_wkt,
+            always_xy=True,
+        )
+
+    @property
+    def has_ballpark_transformation(self) -> bool:
+        """Whether the underlying PROJ pipeline uses a ballpark transformation."""
+        return self._forward_transformer.has_ballpark_transformation
+
     @property
     def wkt(self) -> str:
         """WKT specification of this projected analysis CRS."""
-        return build_mars_equirectangular_wkt(
-            center_lat=self.center_lat,
-            center_lon=self.center_lon,
-            false_easting=self.false_easting,
-            false_northing=self.false_northing,
-        )
+        return self.target_crs_wkt
 
     def transform(
         self, lon: float, lat: float, is_planetographic: bool = False
@@ -228,7 +249,7 @@ class MarsCoordinateTransformer:
         """Transform geographic coordinates (lon, lat) to projected (x, y) metres.
 
         If is_planetographic is True, explicitly converts planetographic latitude to
-        planetocentric latitude before projection (avoiding the PROJ ballpark trap).
+        planetocentric latitude before projection per docs/SCIENCE_AND_SAFETY_SPEC.md §2.3.
 
         Returns:
             tuple[float, float]: (x, y) in metres (always_xy=True ordering).
@@ -236,30 +257,17 @@ class MarsCoordinateTransformer:
         validate_latitude(lat)
         validate_longitude(lon)
 
-        # Explicit planetographic handling per §2.3
+        # Explicit planetographic handling per §2.3 before PROJ transformation
         if is_planetographic:
             lat = planetographic_to_planetocentric(lat)
 
-        phi = math.radians(lat)
-        phi_0 = math.radians(self.center_lat)
-
-        # Longitude difference wrapped to (-180, 180]
-        dlon_deg = (lon - self.center_lon + 180.0) % 360.0 - 180.0
-        if dlon_deg == -180.0:
-            dlon_deg = 180.0
-        dlon_rad = math.radians(dlon_deg)
-
-        x = self.radius * dlon_rad * math.cos(phi_0) + self.false_easting
-        y = self.radius * (phi - phi_0) + self.false_northing
-        return x, y
+        x, y = self._forward_transformer.transform(lon, lat)
+        return float(x), float(y)
 
     def inverse_transform(
         self, x: float, y: float, to_planetographic: bool = False
     ) -> tuple[float, float]:
         """Inverse transform projected (x, y) metres to geographic (lon, lat) in degrees.
-
-        If to_planetographic is True, converts resulting planetocentric latitude to
-        planetographic latitude.
 
         Returns:
             tuple[float, float]: (lon, lat) in degrees (always_xy=True ordering).
@@ -267,17 +275,9 @@ class MarsCoordinateTransformer:
         if math.isnan(x) or math.isnan(y) or math.isinf(x) or math.isinf(y):
             raise ValueError(f"Projected coordinates must be finite, got x={x}, y={y}")
 
-        phi_0 = math.radians(self.center_lat)
-        cos_phi_0 = math.cos(phi_0)
-        if cos_phi_0 == 0.0:
-            raise ValueError(f"Standard parallel {self.center_lat}° has zero cosine; cannot invert")
-
-        phi = phi_0 + (y - self.false_northing) / self.radius
-        dlon_rad = (x - self.false_easting) / (self.radius * cos_phi_0)
-
-        lat = math.degrees(phi)
-        lon = normalize_longitude(self.center_lon + math.degrees(dlon_rad))
-
+        lon, lat = self._inverse_transformer.transform(x, y)
+        lon = normalize_longitude(float(lon))
+        lat = float(lat)
         validate_latitude(lat)
 
         if to_planetographic:

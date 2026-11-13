@@ -206,7 +206,11 @@ visual aid with data class `DERIVED` and is never used in calculations.
 
 Rule (`ASSUMPTION`): features smaller than about three times the DTM post spacing are
 not reliably resolved. With a 1 m HiRISE DTM, rocks smaller than about 3 m may not
-appear. Every route lists this limitation.
+appear. In addition:
+- DTM-derived roughness is a computational proxy for surface obstacles, not an explicit measurement of individual rocks.
+- Rock-abundance data (e.g. derived from thermal inertia or boulder distribution models) is not included in the first version.
+- Large rock formations, steep overhangs, and sub-pixel obstacles are not guaranteed to be detected.
+Every route lists these limitations.
 
 ---
 

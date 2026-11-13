@@ -23,14 +23,14 @@ DOWNLOAD_APPROVED: NO            # YES once the owner approves the data download
 Update this block after every step. It is what an interrupted session resumes from.
 
 ```text
-ACTIVE_WP: WP-02
-BRANCH: wp/WP-02-shared-models
-STEP: 4 of 4
-LAST_COMPLETED: Response-optionality fix and EvaConfigOverride committed; restored noqa: E402 in export_openapi.py as follow-up [WP-02]
-NEXT_ACTION: Awaiting owner review to merge wp/WP-02-shared-models into develop
+ACTIVE_WP: none
+BRANCH: develop
+STEP: —
+LAST_COMPLETED: Merged wp/WP-02-shared-models into develop (status MERGED)
+NEXT_ACTION: Awaiting owner direction for next work package
 BLOCKERS: none
-WAITING_FOR_OWNER: yes — WP-02 complete; awaiting owner approval to merge
-UPDATED: 2026-11-14T02:05+05:30
+WAITING_FOR_OWNER: yes — WP-02 merged; awaiting owner direction
+UPDATED: 2026-11-14T02:08+05:30
 ```
 
 ---
@@ -57,7 +57,7 @@ UPDATED: 2026-11-14T02:05+05:30
 | WP-00 | Repository bootstrap | — | MERGED | wp/WP-00-bootstrap | — | Owner task completed; rulesets owner-confirmed |
 | WP-05 | Data source selection | P0 | MERGED | wp/WP-05-data-sources | — | Shortlist, resources (WP-05b), details (WP-05c), event re-baseline (WP-05d), and demo/thin-slices (WP-05e) merged |
 | WP-01 | Backend skeleton | P0 | MERGED | wp/WP-01-backend-skeleton | 5 passed, 0 failed, 0 skipped | Health, error envelope, config implemented |
-| WP-02 | Shared models and OpenAPI export | P0 | IMPLEMENTED | wp/WP-02-shared-models | 15 passed, 0 failed, 0 skipped | All contracts and stubs implemented; openapi.json generated |
+| WP-02 | Shared models and OpenAPI export | P0 | MERGED | wp/WP-02-shared-models | 18 passed, 0 failed, 0 skipped | All contracts and stubs implemented; openapi.json generated |
 | WP-03 | Coordinates and geodesy | P0 | PENDING | wp/WP-03-coordinates | — | |
 | WP-04 | Frontend skeleton and dev scripts | P0 | PENDING | wp/WP-04-frontend-skeleton | — | |
 | WP-06 | Data download and processing pipeline | P0 | PENDING | wp/WP-06-data-pipeline | — | Needs DOWNLOAD_APPROVED |
@@ -158,4 +158,5 @@ Format: `timestamp | WP | step | action | tests (command → passed/failed/skipp
 2026-11-14T00:35+05:30 | WP-02 | 4 of 4 | Shared models, OpenAPI export, stub routers, and test suite implemented | pytest → 15 passed, 0 failed, 0 skipped | [WP-02]
 2026-11-14T01:50+05:30 | WP-02 | 4 of 4 | Pre-merge fix: removed defaults from response models, added EvaConfigOverride, updated contract, openapi.json, and tests | ruff check backend scripts → passed; ruff format --check → 12 files passed; export_openapi.py idempotent | [WP-02]
 2026-11-14T02:05+05:30 | WP-02 | 4 of 4 | At commit 2cea0eb, ruff check run from backend/ reported E402 in scripts/export_openapi.py; fixed by restoring noqa in this commit; earlier ruff check passed came from run outside backend/ and was wrong; pytest 18 passed was owner-run, not agent-run | cd backend; ruff check . ..\scripts → passed; ruff format --check ..\scripts\export_openapi.py → passed; export_openapi.py idempotent | [WP-02]
+2026-11-14T02:08+05:30 | WP-02 | 4 of 4 | Merged wp/WP-02-shared-models into develop (status MERGED) | merge --no-ff verified; no code tests | 0369071
 ```

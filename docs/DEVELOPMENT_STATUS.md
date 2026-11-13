@@ -10,7 +10,7 @@ updates it after every completed step. If this file and memory disagree, this fi
 Only the owner changes these values.
 
 ```text
-CODE_START_AUTHORISED: NO        # YES once the owner confirms the event allows code before/at this time
+CODE_START_AUTHORISED: YES        # YES once the owner confirms the event allows code before/at this time
 REVIEW_MODE: milestone           # milestone = agent merges WPs into develop; owner approves develop → main
                                  # per-wp    = agent opens a PR for every WP into develop and waits
 DOWNLOAD_APPROVED: NO            # YES once the owner approves the data download size (WP-06 step 2)
@@ -23,14 +23,14 @@ DOWNLOAD_APPROVED: NO            # YES once the owner approves the data download
 Update this block after every step. It is what an interrupted session resumes from.
 
 ```text
-ACTIVE_WP: WP-05
-BRANCH: develop
-STEP: demo-and-thin-slices
-LAST_COMPLETED: WP-05e merged into develop
-NEXT_ACTION: Awaiting owner code start authorisation for WP-01 (CODE_START_AUTHORISED is NO)
+ACTIVE_WP: WP-01
+BRANCH: wp/WP-01-backend-skeleton
+STEP: 5 of 5
+LAST_COMPLETED: Backend skeleton, config, error envelope, health endpoint, and unit tests implemented (T-API-01, T-API-02 passing)
+NEXT_ACTION: Awaiting owner review to merge wp/WP-01-backend-skeleton into develop
 BLOCKERS: none
-WAITING_FOR_OWNER: yes — WP-01 is a code WP while CODE_START_AUTHORISED is NO
-UPDATED: 2026-11-13T21:56+05:30
+WAITING_FOR_OWNER: yes — WP-01 complete; awaiting owner approval to merge
+UPDATED: 2026-11-14T00:00+05:30
 ```
 
 ---
@@ -56,7 +56,7 @@ UPDATED: 2026-11-13T21:56+05:30
 |----|-------|------|--------|--------|-------------------------------|-------|
 | WP-00 | Repository bootstrap | — | MERGED | wp/WP-00-bootstrap | — | Owner task completed; rulesets owner-confirmed |
 | WP-05 | Data source selection | P0 | MERGED | wp/WP-05-data-sources | — | Shortlist, resources (WP-05b), details (WP-05c), event re-baseline (WP-05d), and demo/thin-slices (WP-05e) merged |
-| WP-01 | Backend skeleton | P0 | PENDING | wp/WP-01-backend-skeleton | — | Needs CODE_START_AUTHORISED |
+| WP-01 | Backend skeleton | P0 | IMPLEMENTED | wp/WP-01-backend-skeleton | 5 passed, 0 failed, 0 skipped | Health, error envelope, config implemented |
 | WP-02 | Shared models and OpenAPI export | P0 | PENDING | wp/WP-02-shared-models | — | |
 | WP-03 | Coordinates and geodesy | P0 | PENDING | wp/WP-03-coordinates | — | |
 | WP-04 | Frontend skeleton and dev scripts | P0 | PENDING | wp/WP-04-frontend-skeleton | — | |
@@ -152,5 +152,6 @@ Format: `timestamp | WP | step | action | tests (command → passed/failed/skipp
 2026-11-13T19:50+05:30 | WP-05 | rebaseline | Merged wp/WP-05d-event-rebaseline into develop (status MERGED) | merge --no-ff verified; no code tests | ab44268
 2026-11-13T20:10+05:30 | WP-05 | demo-and-thin-slices | Risk register updated (R-01/03); thin-slice fallbacks defined; DEMO_SCENARIO.md created; O-2–O-6 proposals drafted | git/manual inspection → 0 issues; no code tests | 2131dc9
 2026-11-13T20:16:30+05:30 | WP-05 | demo-and-thin-slices | Refined O-2–O-6 proposals (verified datasets/parameters only) and cleaned DEMO_SCENARIO.md | git/manual inspection → 0 issues; no code tests | 424c3aa
-2026-11-13T21:56:30+05:30 | WP-05 | demo-and-thin-slices | Merged wp/WP-05e-demo-and-thin-slices into develop (status MERGED) | merge --no-ff verified; no code tests | [WP-05]
+2026-11-13T21:56:30+05:30 | WP-05 | demo-and-thin-slices | Merged wp/WP-05e-demo-and-thin-slices into develop (status MERGED) | merge --no-ff verified; no code tests | 244ba07
+2026-11-14T00:00+05:30 | WP-01 | 5 of 5 | Backend skeleton, config, logging, error envelope, and health endpoint implemented; uvicorn probed | pytest tests/ → 5 passed, 0 failed, 0 skipped | [WP-01]
 ```

@@ -137,20 +137,38 @@ Python 3.11 or 3.12. Node 20 or newer. No `osgeo.gdal` imports (ADR-13).
 
 ## 4. Milestones and Schedule
 
+The hackathon operates on an approximate **39-hour event window** (09:00 IST Saturday 14 Nov to 23:59 IST Sunday 15 Nov 2026). The owner must confirm the exact start and end times on the official event dashboard.
+
 | Milestone | Work packages | Git tag on `main` | Target (event hours from start) |
 |-----------|---------------|-------------------|----------------------------------|
 | M0 Docs and data selection | WP-00, WP-05 | `v0.0.1` | Before the event |
-| M1 Real data on the map | WP-01 – WP-09 | `v0.1.0` | Hour 16 |
-| M2 End-to-end route | WP-10 – WP-12 | `v0.2.0` | Hour 26 |
-| M3 P0 complete | WP-13 | `v0.3.0` | Hour 30 |
-| M4 P1 features | WP-14 – WP-19 | `v0.4.0` | Hour 40 |
-| M5 Submission | WP-20, WP-21 | `v1.0.0` | Hour 47 |
+| M1 Real data on the map | WP-01 – WP-09 | `v0.1.0` | Hour 15 |
+| M2 End-to-end route | WP-10 – WP-12 | `v0.2.0` | Hour 23 |
+| M3 P0 complete | WP-13 | `v0.3.0` | Hour 26 |
+| M4 P1 features | WP-14 – WP-19 | `v0.4.0` | Hour 32 |
+| M5 Submission | WP-20, WP-21 | `v1.0.0` | Hour 36 |
 
-**Cut line.** If M3 is not reached by hour 32, skip WP-17, WP-19, and only the
+**Cut line.** If M3 is not reached by hour 28, skip WP-17, WP-19, and only the
 CRISM portion of WP-18, then go straight to WP-20. The MSL RAD portion of WP-18
-is exempt from the time-based skip and must still be done after hour 32 if it is
+is exempt from the time-based skip and must still be done after hour 28 if it is
 not yet complete, in order to fulfill the required third data kind guidance. A
 working core with required data beats an unfinished speculative feature.
+
+### 4.1 Two-Stream Execution
+
+To meet the condensed 39-hour window, work is parallelized into two concurrent streams once the shared contract baseline is established:
+
+- **Stream A (Backend):** Runs in the primary repository folder `D:\NASA\marswalk`.
+  - Assigned work packages: WP-01, WP-02, WP-03, WP-06, WP-07, WP-10, WP-11.
+- **Stream B (Frontend):** Runs in the isolated git worktree `D:\NASA\marswalk-fe`.
+  - Assigned work packages: WP-04, WP-09 (developed against contracts and clearly labelled sample data until WP-08 lands), WP-08 (API integration), WP-12, WP-13.
+
+**Two-Stream Operating Rules:**
+1. **Contract Freeze:** WP-02 (shared models and OpenAPI export) must be completed, merged into `develop`, and frozen before Stream B development starts.
+2. **Status File Ownership:** Only Stream A edits `docs/DEVELOPMENT_STATUS.md`. Stream B reports completion to the owner; Stream A records it after merge into `develop`.
+3. **Branch Isolation:** Each stream works strictly on its dedicated `wp/<ID>-<slug>` branch and never checks out `develop` in the other stream's folder.
+4. **Serialised Merges:** All branch merges into `develop` are serialised through owner review and approval.
+5. **Execution Policy:** Execution policy must remain **Default (Request Review)** for all merges and WP-06 data downloads. Turbo mode is strictly prohibited.
 
 ---
 
@@ -503,7 +521,7 @@ No application code. Allowed before the event.
 
 #### WP-18 — MSL RAD context data (must-have, cut-line-exempt) and CRISM (cut-line candidate) (slug `context-data`)
 - **Deliverables:** new data sources, catalog entries, layer and context configuration, tests.
-- **Priority & Scope:** MSL RAD is the **Required third data kind (P1, must-have, cut-line-exempt)** to satisfy challenge guidance (at least three data kinds: optical, elevation, radiation). It is exempt from the hour-32 time-based cut line and must be completed even if M3 is delayed. CRISM mineralogy remains a cut-line candidate. RAD is documented as a measured point/time-series layer at Curiosity's location in Gale, never a surface-wide radiation raster. Keep its product IDs UNVERIFIED until WP-06.
+- **Priority & Scope:** MSL RAD is the **Required third data kind (P1, must-have, cut-line-exempt)** to satisfy challenge guidance (at least three data kinds: optical, elevation, radiation). It is exempt from the hour-28 time-based cut line and must be completed even if M3 is delayed. CRISM mineralogy remains a cut-line candidate. RAD is documented as a measured point/time-series layer at Curiosity's location in Gale, never a surface-wide radiation raster. Keep its product IDs UNVERIFIED until WP-06.
 - **Fallback:** if RAD proves infeasible (data unobtainable or not joinable to the map), not because of the clock, use a cropped THEMIS layer or CRISM if either is verified. If no verified third data kind exists, record the shortfall explicitly in reports and the UI rather than claiming three data kinds.
 - **Steps:** add verified RAD and CRISM products (same rules as WP-05 and WP-06);
   wire `RADIATION_CONTEXT` to real RAD data (open item O-5); write and run the tests.

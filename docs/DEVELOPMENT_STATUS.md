@@ -24,13 +24,13 @@ Update this block after every step. It is what an interrupted session resumes fr
 
 ```text
 ACTIVE_WP: WP-05
-BRANCH: wp/WP-05c-details-review
+BRANCH: develop
 STEP: review
-LAST_COMPLETED: Exempted MSL RAD from hour-32 cut line in IMPLEMENTATION_PLAN.md, DATA_SOURCES.md, and DEVELOPMENT_STATUS.md
+LAST_COMPLETED: WP-05c merged into develop
 NEXT_ACTION: Awaiting owner code start authorisation for WP-01 (CODE_START_AUTHORISED is NO)
 BLOCKERS: none
 WAITING_FOR_OWNER: yes — WP-01 is a code WP while CODE_START_AUTHORISED is NO
-UPDATED: 2026-11-13T18:20+05:30
+UPDATED: 2026-11-13T18:35+05:30
 ```
 
 ---
@@ -55,7 +55,7 @@ UPDATED: 2026-11-13T18:20+05:30
 | ID | Title | Tier | Status | Branch | Tests (passed/failed/skipped) | Notes |
 |----|-------|------|--------|--------|-------------------------------|-------|
 | WP-00 | Repository bootstrap | — | MERGED | wp/WP-00-bootstrap | — | Owner task completed; rulesets owner-confirmed |
-| WP-05 | Data source selection | P0 | MERGED | wp/WP-05-data-sources | — | Shortlist and Nov 13 resources review merged (WP-05, WP-05b) |
+| WP-05 | Data source selection | P0 | MERGED | wp/WP-05-data-sources | — | Shortlist, resources review (WP-05b), and details review (WP-05c) merged |
 | WP-01 | Backend skeleton | P0 | PENDING | wp/WP-01-backend-skeleton | — | Needs CODE_START_AUTHORISED |
 | WP-02 | Shared models and OpenAPI export | P0 | PENDING | wp/WP-02-shared-models | — | |
 | WP-03 | Coordinates and geodesy | P0 | PENDING | wp/WP-03-coordinates | — | |
@@ -141,5 +141,6 @@ Format: `timestamp | WP | step | action | tests (command → passed/failed/skipp
 2026-11-13T16:15+05:30 | WP-05 | review | Space Apps Resources review (2026-11-13) completed; region confirmed as Gale / Mount Sharp | docs consistency check → 0 issues; no code tests (documents only) | d838ece
 2026-11-13T16:31+05:30 | WP-05 | review | Merged wp/WP-05b-resources-review into develop (status MERGED) | merge --no-ff verified; no code tests | 368fa4c
 2026-11-13T16:45+05:30 | WP-05 | review | Challenge Details tab review completed; MSL RAD promoted to required P1; limitations and fallbacks documented | git/manual inspection → 0 issues; no code tests | 6847e3e
-2026-11-13T18:20+05:30 | WP-05 | review | MSL RAD exempted from hour-32 cut line; fallback aligned to infeasibility only | git/manual inspection → 0 issues; no code tests | [WP-05]
+2026-11-13T18:20+05:30 | WP-05 | review | MSL RAD exempted from hour-32 cut line; fallback aligned to infeasibility only | git/manual inspection → 0 issues; no code tests | 1c88e4f
+2026-11-13T18:35+05:30 | WP-05 | review | Merged wp/WP-05c-details-review into develop (status MERGED) | merge --no-ff verified; no code tests | [WP-05]
 ```

@@ -26,11 +26,11 @@ Update this block after every step. It is what an interrupted session resumes fr
 ACTIVE_WP: WP-02
 BRANCH: wp/WP-02-shared-models
 STEP: 4 of 4
-LAST_COMPLETED: Reconciled response optionality, added EvaConfigOverride, resolved Ruff/export issues [WP-02]
+LAST_COMPLETED: Response-optionality fix and EvaConfigOverride committed; restored noqa: E402 in export_openapi.py as follow-up [WP-02]
 NEXT_ACTION: Awaiting owner review to merge wp/WP-02-shared-models into develop
 BLOCKERS: none
 WAITING_FOR_OWNER: yes — WP-02 complete; awaiting owner approval to merge
-UPDATED: 2026-11-14T01:50+05:30
+UPDATED: 2026-11-14T02:05+05:30
 ```
 
 ---
@@ -157,4 +157,5 @@ Format: `timestamp | WP | step | action | tests (command → passed/failed/skipp
 2026-11-14T00:15+05:30 | WP-01 | 5 of 5 | Merged wp/WP-01-backend-skeleton into develop (status MERGED) | merge --no-ff verified; no code tests | ff6ca03
 2026-11-14T00:35+05:30 | WP-02 | 4 of 4 | Shared models, OpenAPI export, stub routers, and test suite implemented | pytest → 15 passed, 0 failed, 0 skipped | [WP-02]
 2026-11-14T01:50+05:30 | WP-02 | 4 of 4 | Pre-merge fix: removed defaults from response models, added EvaConfigOverride, updated contract, openapi.json, and tests | ruff check backend scripts → passed; ruff format --check → 12 files passed; export_openapi.py idempotent | [WP-02]
+2026-11-14T02:05+05:30 | WP-02 | 4 of 4 | At commit 2cea0eb, ruff check run from backend/ reported E402 in scripts/export_openapi.py; fixed by restoring noqa in this commit; earlier ruff check passed came from run outside backend/ and was wrong; pytest 18 passed was owner-run, not agent-run | cd backend; ruff check . ..\scripts → passed; ruff format --check ..\scripts\export_openapi.py → passed; export_openapi.py idempotent | [WP-02]
 ```

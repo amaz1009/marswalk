@@ -6,6 +6,9 @@ import { apiClient } from './services/apiClient';
 import { useMissionStore } from './store/missionStore';
 import { Activity, ShieldAlert, Cpu, Layers, Crosshair, Compass } from 'lucide-react';
 
+// ASSUMPTION: placeholder initial view; real region bounds come from /regions
+const INITIAL_VIEW_CENTER: [number, number] = [-5.4, 137.8];
+
 export const App: React.FC = () => {
   const { health, isBackendHealthy, setHealth } = useMissionStore();
   const [isConnecting, setIsConnecting] = useState(true);
@@ -84,15 +87,24 @@ export const App: React.FC = () => {
           >
             <Cpu className="h-3.5 w-3.5" />
             <span className="font-mono">
-              LLM: {health?.llm_mode || 'DISABLED'}
+              LLM: {health ? health.llm_mode : 'UNKNOWN'}
             </span>
           </div>
 
           {/* Data Status Indicator */}
-          <div className="hidden md:flex items-center space-x-2 text-gray-400 border-l border-[#282c37] pl-3">
-            <span>Datasets: {health?.datasets_available ?? 0} avail</span>
-            <span>/</span>
-            <span>{health?.datasets_unavailable ?? 0} unavail</span>
+          <div
+            data-testid="dataset-indicator"
+            className="hidden md:flex items-center space-x-2 text-gray-400 border-l border-[#282c37] pl-3"
+          >
+            {health ? (
+              <>
+                <span>Datasets: {health.datasets_available} avail</span>
+                <span>/</span>
+                <span>{health.datasets_unavailable} unavail</span>
+              </>
+            ) : (
+              <span>Datasets: unknown</span>
+            )}
           </div>
         </div>
       </header>
@@ -108,16 +120,11 @@ export const App: React.FC = () => {
             </div>
           </div>
           <div className="p-4 flex-1 overflow-y-auto space-y-4 text-xs text-gray-400">
-            <div className="p-3 rounded bg-[#181b24] border border-[#252a38] space-y-1">
-              <div className="text-gray-300 font-medium">Target: Mount Sharp Boxwork</div>
-              <div>Center: Lat -5.4°, Lon 137.8° E</div>
-              <div>Datum: Mars IAU 2000 Sphere / EPSG:4326</div>
+            <div className="p-3 rounded bg-[#181b24] border border-[#252a38] text-gray-300">
+              Region: Gale / Mount Sharp. No region data loaded yet.
             </div>
             <div className="p-3 rounded border border-dashed border-[#2d3242] text-center text-gray-500">
-              No active layers loaded in skeleton.
-              <div className="mt-1 text-[11px] text-gray-600">
-                DTM and orthoimages load in WP-08 & WP-09.
-              </div>
+              No data layers loaded yet.
             </div>
           </div>
         </aside>
@@ -125,7 +132,7 @@ export const App: React.FC = () => {
         {/* Center: Leaflet Mars Map */}
         <main className="flex-1 relative h-full bg-[#0a0b0e] overflow-hidden">
           <MapContainer
-            center={[-5.4, 137.8]}
+            center={INITIAL_VIEW_CENTER}
             zoom={9}
             crs={L.CRS.EPSG4326}
             zoomControl={true}
@@ -133,16 +140,15 @@ export const App: React.FC = () => {
             className="w-full h-full"
           >
             {/* 
-              No Earth basemap tiles or place labels:
-              This is a Mars coordinate map using L.CRS.EPSG4326.
-              Data overlays will be loaded via WP-09 layer endpoints.
+              No Earth basemap tiles or place labels.
+              Mars coordinate display only. Data overlays will load via layer endpoints.
             */}
           </MapContainer>
 
           {/* Coordinate HUD Overlay */}
           <div className="absolute top-3 left-14 z-[400] bg-[#12141acc] backdrop-blur-sm border border-[#282c37] rounded px-3 py-1.5 text-xs font-mono text-gray-300 flex items-center space-x-2">
             <Compass className="h-3.5 w-3.5 text-[#d9532f]" />
-            <span>Mars IAU 2000 | L.CRS.EPSG4326 | Lat [-5.4°], Lon [137.8°]</span>
+            <span>Mars map: no data layers loaded</span>
           </div>
         </main>
 
@@ -165,7 +171,7 @@ export const App: React.FC = () => {
               </p>
             </div>
             <div className="p-3 rounded border border-dashed border-[#2d3242] text-center text-gray-500">
-              Awaiting terrain point inspection (WP-08 / WP-09).
+              Awaiting terrain point inspection. No data loaded yet.
             </div>
           </div>
         </aside>
@@ -175,7 +181,7 @@ export const App: React.FC = () => {
       <footer className="h-32 border-t border-[#282c37] bg-[#12141a] px-4 py-2 z-20 shrink-0 flex flex-col">
         <div className="flex items-center justify-between text-xs border-b border-[#202430] pb-1.5 text-gray-400">
           <span className="font-semibold text-gray-300">Traverse Planner & Profile</span>
-          <span>Awaiting Route Engine (WP-10 / WP-12)</span>
+          <span>No route planned</span>
         </div>
         <div className="flex-1 flex items-center justify-center text-xs text-gray-500">
           Elevation profiles, EVA timeline, and three-route comparison appear here after route generation.

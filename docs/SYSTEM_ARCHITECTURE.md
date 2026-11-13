@@ -492,11 +492,41 @@ files. Cross-area changes go through the Orchestrator role and are logged.
 
 ## 16. Open Items
 
-| ID | Item | Resolution point |
-|----|------|------------------|
-| O-1 | Confirm region and data products against the official challenge resources | 2026-11-13, WP-05 |
-| O-2 | Select specific HiRISE and CTX DTM products covering the boxwork area | WP-05 |
-| O-3 | Human-EVA defaults are cited in `SCIENCE_AND_SAFETY_SPEC.md` §6. Revisit if better Mars-specific sources are found. | WP-11 |
-| O-4 | Confirm the event rule on writing code before 2026-11-14 | Owner, before WP-01 |
-| O-5 | Confirm an MSL RAD product suitable for site-level context display | WP-18 |
-| O-6 | Verify that the chosen PDS formats open with the GDAL bundled in rasterio wheels on Windows | WP-06 |
+| ID | Item | Resolution point | Status |
+|----|------|------------------|--------|
+| O-1 | Confirm region and data products against the official challenge resources | 2026-11-13, WP-05 | RESOLVED (2026-11-13) |
+| O-2 | Select specific HiRISE and CTX DTM products covering the boxwork area | WP-05 | OPEN (Proposal pending owner review) |
+| O-3 | Human-EVA defaults are cited in `SCIENCE_AND_SAFETY_SPEC.md` §6. Revisit if better Mars-specific sources are found. | WP-11 | OPEN (Proposal pending owner review) |
+| O-4 | Confirm the event rule on writing code before 2026-11-14 | Owner, before WP-01 | OPEN (Proposal pending owner review) |
+| O-5 | Confirm an MSL RAD product suitable for site-level context display | WP-18 | OPEN (Proposal pending owner review) |
+| O-6 | Verify that the chosen PDS formats open with the GDAL bundled in rasterio wheels on Windows | WP-06 | OPEN (Proposal pending owner review) |
+
+### 16.1 Item Details and Proposed Resolutions (Owner Review Pending)
+
+> [!NOTE]
+> The resolutions below are **PROPOSALS** drafted for owner consideration. None are marked resolved; existing architectural decisions remain unchanged until the owner explicitly accepts or rejects each proposal.
+
+#### O-2: Select specific HiRISE and CTX DTM products covering the boxwork area
+- **Current Wording:** Select specific HiRISE and CTX DTM products covering the boxwork area (Resolution point: WP-05).
+- **PROPOSED Resolution:** Adopt shortlisted and verified HiRISE DTM `DTEEC_001488_1750_001752_1750_U02.IMG` (1 m post spacing, 360.4 MB) and its co-registered orthorectified image `PSP_001752_1750_RED_C_01_ORTHO.JP2` (33.3 MB) for primary terrain and routing, and use the already-verified `USGS_GALE_MERGED_DEM` (product `MSL_Gale_DEM_Mosaic_1m_v3.tif`, optional, 3.87 GB) for regional context. Defer new CTX stereo DTM generation.
+- **Reason:** HiRISE provides the necessary 1 m resolution for slope and roughness hazard routing over Mount Sharp boxwork structures, while the verified USGS merged mosaic provides regional Gale Crater coverage; generating custom CTX stereo products during a condensed hackathon introduces unnecessary photogrammetry pipeline risk.
+
+#### O-3: Human-EVA defaults are cited in `SCIENCE_AND_SAFETY_SPEC.md` §6. Revisit if better Mars-specific sources are found.
+- **Current Wording:** Human-EVA defaults are cited in `SCIENCE_AND_SAFETY_SPEC.md` §6. Revisit if better Mars-specific sources are found. (Resolution point: WP-11).
+- **PROPOSED Resolution:** Retain the default parameters specified in `SCIENCE_AND_SAFETY_SPEC.md` §6.2: `base_speed_kmh` = 2.7 (REFERENCE), `max_slope_deg` = 15 (REFERENCE), `warning_slope_deg` = 10 (REFERENCE), `max_eva_hours` = 6.0 (ASSUMPTION), `roughness_warning_m` = 0.30 (ASSUMPTION), `return_reserve_fraction` = 0.25 (ASSUMPTION), `traverse_time_margin` = 1.25 (ASSUMPTION), `default_work_time_min` = 20 (ASSUMPTION), and `max_distance_from_base_m` = 2000 (REFERENCE). Keep the REFERENCE and ASSUMPTION classification labels; do not treat them as fixed mission rules. The model is Apollo-anchored (REFERENCE) and should be revisited if better Mars-specific sources are found.
+- **Reason:** Reflects verified parameter names and classes from `SCIENCE_AND_SAFETY_SPEC.md` §6.2, maintaining transparency on what is reference-derived versus assumed without making unverified claims.
+
+#### O-4: Confirm the event rule on writing code before 2026-11-14
+- **Current Wording:** Confirm the event rule on writing code before 2026-11-14 (Resolution point: Owner, before WP-01).
+- **PROPOSED Resolution:** The owner confirms the official event rules and schedule times on the event dashboard (risk R-01) before setting `CODE_START_AUTHORISED` to `YES`. Because `develop` is a protected branch, the owner either commits this change directly if authorized or follows `docs/GIT_WORKFLOW.md` (creating a dedicated docs branch such as `wp/WP-00-code-authorisation`, pushing it, and merging into `develop`). Until `CODE_START_AUTHORISED` is set to `YES`, no code work packages may start.
+- **Reason:** Ensures verified alignment with event rules before commencing code packages, following proper git workflow for protected branch updates.
+
+#### O-5: Confirm an MSL RAD product suitable for site-level context display
+- **Current Wording:** Confirm an MSL RAD product suitable for site-level context display (Resolution point: WP-18).
+- **PROPOSED Resolution:** In WP-06, evaluate the MSL RAD collection URL recorded in `DATA_SOURCES.md` (`https://pds-ppi.igpp.ucla.edu/collection/MSL-M-RAD-3-RDR-V1.0`) to inspect available surface RDR tables at Curiosity's Gale Crater traverse stops; specific product IDs and measurement units remain `UNVERIFIED` until WP-06. If table ingestion or coordinate alignment proves infeasible, fall back to marking radiation context as `UNAVAILABLE` with an explicit reason per the WP-18 fallback policy.
+- **Reason:** Satisfies the challenge's third data kind guidance as measured point/time-series context without synthesizing data or fabricating an unphysical surface-wide radiation raster.
+
+#### O-6: Verify that the chosen PDS formats open with the GDAL bundled in rasterio wheels on Windows
+- **Current Wording:** Verify that the chosen PDS formats open with the GDAL bundled in rasterio wheels on Windows (Resolution point: WP-06).
+- **PROPOSED Resolution:** Implement WP-06 Step 1 as an immediate fail-fast smoke test that uses `rasterio.open()` to read a small sub-window from the downloaded HiRISE PDS3 `.IMG` file on Windows. If the rasterio GDAL PDS driver encounters compatibility errors on Windows, the fallback is the verified `USGS_GALE_MERGED_DEM` GeoTIFF (`MSL_Gale_DEM_Mosaic_1m_v3.tif`, 3.87 GB), which uses the standard GTiff driver. In addition, WP-06 may test reading a small window straight from the USGS URL via HTTP range requests before deciding whether to download all 3.87 GB (only if the file really is Cloud-Optimized; marked as untested).
+- **Reason:** Validates raster I/O on Windows before investing effort into downstream pipeline transforms, with an already-verified GeoTIFF fallback available.

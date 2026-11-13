@@ -170,6 +170,23 @@ To meet the condensed 39-hour window, work is parallelized into two concurrent s
 4. **Serialised Merges:** All branch merges into `develop` are serialised through owner review and approval.
 5. **Execution Policy:** The working execution policy is Default; the owner switches the session to Request Review for merges and for the WP-06 data downloads; Turbo is prohibited.
 
+### 4.2 Thin-Slice Fallbacks
+
+If development time runs short prior to or at the Hour 28 cut line, the following thin slices define the minimal functional implementations derived strictly from the existing WP-17, WP-18 (CRISM part), and WP-19 cards. No new scope or dataset IDs are introduced:
+
+1. **WP-18 (CRISM Spectral Mineralogy portion):**
+   - **Smallest functional thin-slice:** If a verified CRISM product is confirmed, integrate it strictly as a single qualitative overlay layer or bounding-box context indicator in the frontend layer switcher without multi-band parameter math (CRISM products remain `UNVERIFIED — candidate only` in `DATA_SOURCES.md` §4.2 until verified).
+   - **What it does NOT include:** Does not include specialized MTRDR spectral parameter pipelines (`cat-pds`), ratio processing, or automated mineral classification. If not verified or if time does not permit, CRISM is completely omitted and the UI shows `CRISM mineralogy: not integrated / candidate only`.
+   - **MSL RAD Exemption:** MSL RAD is the **Required third data kind (P1, must-have, cut-line-exempt)** and is **NOT** a thin-slice item. It must be implemented in full as a measured point/time-series context layer at Curiosity's location, or trigger the explicit shortfall disclosure.
+
+2. **WP-17 (Agent System):**
+   - **Smallest functional thin-slice:** Implement a purely deterministic rules-based briefing generator (`POST /agents/analyze`) that formats existing route safety check outputs, slope statistics, and environmental indicators into a structured Markdown summary using template formatting without LLM calls.
+   - **What it does NOT include:** Does not include LangGraph multi-node graph orchestration, external LLM adapters (Anthropic/OpenAI), parallel debate/contradiction resolution loops, or interactive re-prompting.
+
+3. **WP-19 (Site Selection):**
+   - **Smallest functional thin-slice:** Implement deterministic evaluation of predefined candidate coordinates against slope and walk-back constraints only (`POST /sites/evaluate`), returning pass/fail status and basic ranking based on slope.
+   - **What it does NOT include:** Does not include multi-criterion weighted science scoring, dynamic renormalization matrices, interactive candidate drawing on the map, or landing-ellipse analysis.
+
 ---
 
 ## 5. Work Packages

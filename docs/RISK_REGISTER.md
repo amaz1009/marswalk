@@ -16,9 +16,9 @@ This register tracks operational, technical, and process risks for the MARSWALK 
 
 | ID | Risk Title | Severity / Impact | Owner | Mitigation Summary | Status |
 |----|------------|-------------------|-------|--------------------|--------|
-| R-01 | Submission requirements unknown | High | Owner | Inspect event dashboard at start; reserve final 1 h (Hour 36–37) for submission materials | OPEN |
+| R-01 | Submission requirements unknown | High | Owner | Inspect event dashboard at start; reserve final 1 h (Hour 36–37) for submission; local schedule unconfirmed | OPEN |
 | R-02 | Real Mars rasters not yet read with rasterio | Critical | A1 Data | WP-06 step 1 smoke test reads real raster window; GeoTIFF fallback; mark `UNAVAILABLE` rather than synthesise | OPEN |
-| R-03 | Antigravity quota or rate limits | High | Owner | Pre-configure fallback model / backup account credentials in settings | OPEN |
+| R-03 | Antigravity quota or rate limits | High | Owner | Use Claude/GPT for hard backend WPs (100% pool left); Flash for frontend/docs; reserve Pro backup accounts | OPEN |
 | R-04 | AI positioning and judging expectations | Medium | Orchestrator | Core routing & safety is 100% deterministic; LLM is optional add-on; pitch and README state this prominently | OPEN |
 | R-05 | Test suites unexecuted or weakened | High | A6 QA | Every WP must execute automated tests and log real command output before merge approval | OPEN |
 | R-06 | Owner review bottleneck on merges | Medium | Owner | Follow strict per-WP checklist; working execution policy Default, switch to Request Review for merges/downloads; Turbo prohibited | OPEN |
@@ -32,7 +32,7 @@ This register tracks operational, technical, and process risks for the MARSWALK 
 ## 2. Risk Cards
 
 ### R-01: Submission Requirements Unknown
-- **Risk:** Specific submission deliverables, video length limits, mandatory slide deck templates, or questions on the Space Apps dashboard may differ from planning assumptions.
+- **Risk:** Specific submission deliverables, video length limits, mandatory slide deck templates, or questions on the Space Apps dashboard may differ from planning assumptions. On Nov 13, the Kolkata local event page Details tab showed dates only (Nov 14-15) and the Local Event Schedule tab was empty; the owner decided to plan on 09:00 IST Sat 14 Nov to 23:59 IST Sun 15 Nov; the submission deadline and submission requirements are still unconfirmed.
 - **Impact:** High. Late discovery of submission rules could require rushed rework during final submission hours.
 - **Owner:** Owner.
 - **Mitigation:** Owner checks the official event dashboard immediately upon opening at 09:00 IST Saturday. Reserve a dedicated 1-hour buffer (Hour 36 to Hour 37) solely for packaging submission text, repo links, and video upload.
@@ -50,9 +50,16 @@ This register tracks operational, technical, and process risks for the MARSWALK 
 
 ### R-03: Antigravity Quota or Rate Limits
 - **Risk:** Token limits, model quotas, or API throttling during intense multi-turn development could stall agent progress.
+- **Quota Status & Inspection (Nov 13 20:04 IST):**
+  - Gemini pool: 88% weekly quota left (resets in 4 days, i.e. after the event window starts) and 87% of the 5-hour limit left.
+  - Claude and GPT models operate on a separate pool, with both limits at 100%.
+  - Models offered besides Gemini 3.8 Flash: Claude Sonnet 4.6 (Thinking), Claude Opus 4.6 (Thinking), GPT-OSS 120B. Gemini 4 models showed Unavailable.
 - **Impact:** High. Blocks progress if developer cannot invoke agent commands.
 - **Owner:** Owner.
-- **Mitigation:** Owner records a fallback model / secondary connected account in Antigravity settings beforehand. Ensure deterministic fallback offline workflows are known.
+- **Mitigation:**
+  1. Run the harder backend work (WP-06 data pipeline, WP-07 terrain engine, WP-10 routing engine, WP-11 EVA safety) on a model from the separate Claude/GPT pool, keeping Flash for frontend, docs, and simple tasks.
+  2. Owner has two further Pro accounts available as a third tier (owner to check Antigravity terms and verify whether the account can be switched mid-session before relying on it).
+  3. Owner to read the "Notice" tags on the Claude/GPT models before the event.
 - **Status:** OPEN.
 
 ### R-04: AI Positioning and Evaluation Alignment

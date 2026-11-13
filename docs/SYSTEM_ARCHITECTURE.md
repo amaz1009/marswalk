@@ -492,11 +492,41 @@ files. Cross-area changes go through the Orchestrator role and are logged.
 
 ## 16. Open Items
 
-| ID | Item | Resolution point |
-|----|------|------------------|
-| O-1 | Confirm region and data products against the official challenge resources | 2026-11-13, WP-05 |
-| O-2 | Select specific HiRISE and CTX DTM products covering the boxwork area | WP-05 |
-| O-3 | Human-EVA defaults are cited in `SCIENCE_AND_SAFETY_SPEC.md` §6. Revisit if better Mars-specific sources are found. | WP-11 |
-| O-4 | Confirm the event rule on writing code before 2026-11-14 | Owner, before WP-01 |
-| O-5 | Confirm an MSL RAD product suitable for site-level context display | WP-18 |
-| O-6 | Verify that the chosen PDS formats open with the GDAL bundled in rasterio wheels on Windows | WP-06 |
+| ID | Item | Resolution point | Status |
+|----|------|------------------|--------|
+| O-1 | Confirm region and data products against the official challenge resources | 2026-11-13, WP-05 | RESOLVED (2026-11-13) |
+| O-2 | Select specific HiRISE and CTX DTM products covering the boxwork area | WP-05 | OPEN (Proposal pending owner review) |
+| O-3 | Human-EVA defaults are cited in `SCIENCE_AND_SAFETY_SPEC.md` §6. Revisit if better Mars-specific sources are found. | WP-11 | OPEN (Proposal pending owner review) |
+| O-4 | Confirm the event rule on writing code before 2026-11-14 | Owner, before WP-01 | OPEN (Proposal pending owner review) |
+| O-5 | Confirm an MSL RAD product suitable for site-level context display | WP-18 | OPEN (Proposal pending owner review) |
+| O-6 | Verify that the chosen PDS formats open with the GDAL bundled in rasterio wheels on Windows | WP-06 | OPEN (Proposal pending owner review) |
+
+### 16.1 Item Details and Proposed Resolutions (Owner Review Pending)
+
+> [!NOTE]
+> The resolutions below are **PROPOSALS** drafted for owner consideration. None are marked resolved; existing architectural decisions remain unchanged until the owner explicitly accepts or rejects each proposal.
+
+#### O-2: Select specific HiRISE and CTX DTM products covering the boxwork area
+- **Current Wording:** Select specific HiRISE and CTX DTM products covering the boxwork area (Resolution point: WP-05).
+- **PROPOSED Resolution:** Adopt shortlisted and verified HiRISE DTM `DTEEC_001488_1750_001752_1750_U02.IMG` (1 m/px, 360.4 MB) and its co-registered orthorectified image `PSP_001752_1750_RED_C_01_ORTHO.JP2` (33.3 MB), complemented by the USGS Gale Crater 50 m DEM GeoTIFF (`Gale_HRSC_MOLA_Elevation_50m_v3.tif`, 74.3 MB) for regional context. Defer new CTX stereo DTM generation.
+- **Reason:** HiRISE provides the necessary 1 m resolution for slope and roughness hazard routing over Mount Sharp boxwork structures, while the USGS DEM covers the full crater; generating custom CTX stereo products during a condensed hackathon introduces unnecessary photogrammetry pipeline risk.
+
+#### O-3: Human-EVA defaults are cited in `SCIENCE_AND_SAFETY_SPEC.md` §6. Revisit if better Mars-specific sources are found.
+- **Current Wording:** Human-EVA defaults are cited in `SCIENCE_AND_SAFETY_SPEC.md` §6. Revisit if better Mars-specific sources are found. (Resolution point: WP-11).
+- **PROPOSED Resolution:** Retain the Apollo lunar surface and NASA EVA standard defaults specified in `SCIENCE_AND_SAFETY_SPEC.md` §6 (`base_speed_kmh = 2.7 km/h`, `slope_max_hard_deg = 20.0°`, `slope_warning_deg = 15.0°`, `roughness_warning_m = 0.3 m`, `max_eva_hours = 6.0 h`) as the fixed mission rules, and document in the mission report that lunar walk-back data serves as a conservative proxy for Martian gravity until empirical human Mars traverse data is established.
+- **Reason:** Peer-reviewed human Mars surface locomotion data does not yet exist; established Apollo walk-back constraints and NASA EVA suit mobility standards represent the most defensible scientific baseline.
+
+#### O-4: Confirm the event rule on writing code before 2026-11-14
+- **Current Wording:** Confirm the event rule on writing code before 2026-11-14 (Resolution point: Owner, before WP-01).
+- **PROPOSED Resolution:** The owner checks the local event dashboard at 09:00 IST on Saturday 14 Nov 2026 and explicitly switches `CODE_START_AUTHORISED` from `NO` to `YES` in `docs/DEVELOPMENT_STATUS.md`; until that action occurs, the agent remains restricted to docs-only work packages.
+- **Reason:** Protects the team against disqualification by strictly adhering to Space Apps rules prohibiting pre-event coding.
+
+#### O-5: Confirm an MSL RAD product suitable for site-level context display
+- **Current Wording:** Confirm an MSL RAD product suitable for site-level context display (Resolution point: WP-18).
+- **PROPOSED Resolution:** In WP-06, evaluate the PDS PPI MSL RAD surface RDR bundle (`urn:nasa:pds:msl_rad_rdr`) to extract a curated tabular record of measured surface dose rates (µGy/day or mSv/sol) at Curiosity's Gale Crater traverse stops; if table ingestion or coordinate alignment proves infeasible, fall back to marking radiation context as `UNAVAILABLE` with an explicit reason per the WP-18 fallback policy.
+- **Reason:** Satisfies the challenge's third data kind guidance as measured point/time-series context without synthesizing data or fabricating an unphysical surface-wide radiation raster.
+
+#### O-6: Verify that the chosen PDS formats open with the GDAL bundled in rasterio wheels on Windows
+- **Current Wording:** Verify that the chosen PDS formats open with the GDAL bundled in rasterio wheels on Windows (Resolution point: WP-06).
+- **PROPOSED Resolution:** Implement WP-06 Step 1 as an immediate fail-fast smoke test that uses `rasterio.open()` to read a small sub-window from the downloaded HiRISE PDS3 `.IMG` file on Windows; if the rasterio GDAL PDS driver encounters compatibility errors on Windows, fall back immediately to the USGS 50 m GeoTIFF (`Gale_HRSC_MOLA_Elevation_50m_v3.tif`), which relies on the universally supported GDAL GTiff driver.
+- **Reason:** Validates raster I/O on Windows before investing time into downstream pipeline transforms, with a verified GeoTIFF fallback readily available.

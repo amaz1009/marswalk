@@ -96,9 +96,7 @@ def register_exception_handlers(app: FastAPI) -> None:
         return JSONResponse(status_code=422, content=content)
 
     @app.exception_handler(StarletteHTTPException)
-    async def http_exception_handler(
-        request: Request, exc: StarletteHTTPException
-    ) -> JSONResponse:
+    async def http_exception_handler(request: Request, exc: StarletteHTTPException) -> JSONResponse:
         request_id = _get_request_id(request)
         # Default error code mapping
         code_map = {

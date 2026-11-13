@@ -26,11 +26,11 @@ Update this block after every step. It is what an interrupted session resumes fr
 ACTIVE_WP: none
 BRANCH: develop
 STEP: —
-LAST_COMPLETED: Merged wp/WP-03-coordinates into develop (status MERGED)
+LAST_COMPLETED: Merged wp/WP-04-frontend-skeleton into develop (status MERGED)
 NEXT_ACTION: Awaiting owner direction for next work package
 BLOCKERS: none
-WAITING_FOR_OWNER: yes — WP-03 merged; awaiting owner direction
-UPDATED: 2026-11-14T02:40+05:30
+WAITING_FOR_OWNER: yes — WP-04 merged; awaiting owner direction
+UPDATED: 2026-11-14T03:30+05:30
 ```
 
 ---
@@ -59,7 +59,7 @@ UPDATED: 2026-11-14T02:40+05:30
 | WP-01 | Backend skeleton | P0 | MERGED | wp/WP-01-backend-skeleton | 5 passed, 0 failed, 0 skipped | Health, error envelope, config implemented |
 | WP-02 | Shared models and OpenAPI export | P0 | MERGED | wp/WP-02-shared-models | 18 passed, 0 failed, 0 skipped | All contracts and stubs implemented; openapi.json generated |
 | WP-03 | Coordinates and geodesy | P0 | MERGED | wp/WP-03-coordinates | 28 passed, 0 failed in the full backend suite (owner-run, not agent-run) | Mars coordinate conversions, IAU 2000 geodesy, and projection transformer |
-| WP-04 | Frontend skeleton and dev scripts | P0 | PENDING | wp/WP-04-frontend-skeleton | — | |
+| WP-04 | Frontend skeleton and dev scripts | P0 | MERGED | wp/WP-04-frontend-skeleton | owner-run: typecheck exit 0, build exit 0, vitest 14 passed (3 files), scripts/test.ps1 exit 0 (backend pytest 28 passed) | (1) owner exception: backend/pyproject.toml package discovery fix; (2) package.json versions from memory, npm audit 6 dev vulnerabilities accepted; (3) owner-committed due to sandbox .git lock |
 | WP-06 | Data download and processing pipeline | P0 | PENDING | wp/WP-06-data-pipeline | — | Needs DOWNLOAD_APPROVED |
 | WP-07 | Terrain and hazard engines | P0 | PENDING | wp/WP-07-terrain-engine | — | |
 | WP-08 | Region, dataset, layer and terrain APIs | P0 | PENDING | wp/WP-08-layer-api | — | |
@@ -164,4 +164,5 @@ Format: `timestamp | WP | step | action | tests (command → passed/failed/skipp
 2026-11-14T02:28+05:30 | WP-03 | 4 of 4 | Pre-merge fix: added pyproj to pyproject.toml, updated transformer to pyproj.Transformer (WKT-only), corrected 45° test constant | cd backend; ruff check . ..\scripts → passed; ruff format --check → 2 files passed; pytest owner-run pending | [WP-03]
 2026-11-14T02:35+05:30 | WP-03 | 4 of 4 | At commit e81eef2 owner-run pytest gave 27 passed, 1 failed (T-COORD-08, non-existent pyproj attribute); fixed in this commit; pyproj pinned to 3.8.0; pytest for this commit owner-run pending | cd backend; ruff check . ..\scripts → passed; ruff format --check → 2 files passed | [WP-03]
 2026-11-14T02:40+05:30 | WP-03 | 4 of 4 | Merged wp/WP-03-coordinates into develop (status MERGED) | merge --no-ff verified; owner-run full backend suite on c195f4c: 28 passed, 0 failed | 4113489
+2026-11-14T03:30+05:30 | WP-04 | 6 of 6 | Merged wp/WP-04-frontend-skeleton into develop (status MERGED); frontend skeleton, apiClient, store, Mars map shell, dev scripts, and unit tests | owner-run: typecheck exit 0, build exit 0, vitest 14 passed (3 files), scripts\test.ps1 exit 0 (backend pytest 28 passed); dev proxy /api/v1/health returned ok / DISABLED via port 5173 | c49b3ff
 ```

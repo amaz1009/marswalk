@@ -7,7 +7,19 @@ from fastapi.middleware.cors import CORSMiddleware
 from starlette.types import ASGIApp, Message, Receive, Scope, Send
 
 from app import __version__
-from app.api.routes import health
+from app.api.routes import (
+    agents,
+    datasets,
+    eva,
+    health,
+    imagery,
+    layers,
+    mission,
+    regions,
+    routes,
+    sites,
+    terrain,
+)
 from app.config import get_settings
 from app.core.errors import register_exception_handlers
 from app.core.logging import setup_logging
@@ -74,9 +86,19 @@ app.add_middleware(
 # Register custom exception handlers (including standard error envelope)
 register_exception_handlers(app)
 
-# Mount API v1 router
+# Mount API v1 router with all contracted endpoints
 api_v1_router = APIRouter(prefix="/api/v1")
 api_v1_router.include_router(health.router)
+api_v1_router.include_router(regions.router)
+api_v1_router.include_router(datasets.router)
+api_v1_router.include_router(layers.router)
+api_v1_router.include_router(terrain.router)
+api_v1_router.include_router(eva.router)
+api_v1_router.include_router(routes.router)
+api_v1_router.include_router(mission.router)
+api_v1_router.include_router(imagery.router)
+api_v1_router.include_router(sites.router)
+api_v1_router.include_router(agents.router)
 
 app.include_router(api_v1_router)
 

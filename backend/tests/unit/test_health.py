@@ -1,21 +1,18 @@
 """Tests for health endpoint and error envelope (T-API-01, T-API-02)."""
 
-from fastapi import APIRouter, Query
+from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
-from app.core.errors import AppException
-from app.main import app
+from app.core.errors import AppException, register_exception_handlers
+from app.main import RequestIdMiddleware
 
-# Add a test-only router to verify validation and internal error handlers
-_test_router = APIRouter(prefix="/_test", tags=["TestOnly"])
-
-
-@_test_router.get("/validation")
-def _sample_validation_endpoint(count: int = Query(..., description="Integer count")):
-    return {"count": count}
+# Test-specific app to test custom exceptions and 500 handler without polluting main app routes
+_test_app = FastAPI()
+_test_app.add_middleware(RequestIdMiddleware)
+register_exception_handlers(_test_app)
 
 
-@_test_router.get("/app-error")
+@_test_app.get("/_test/app-error")
 def _sample_app_error_endpoint():
     raise AppException(
         error_code="POINT_OUTSIDE_REGION",
@@ -25,12 +22,9 @@ def _sample_app_error_endpoint():
     )
 
 
-@_test_router.get("/server-error")
+@_test_app.get("/_test/server-error")
 def _sample_server_error_endpoint():
     raise RuntimeError("Simulated unexpected crash")
-
-
-app.include_router(_test_router)
 
 
 def test_health_returns_schema_and_disabled_mode(client: TestClient) -> None:
@@ -72,7 +66,8 @@ def test_404_error_envelope(client: TestClient) -> None:
 
 def test_422_validation_error_envelope(client: TestClient) -> None:
     """T-API-02: 422 validation response replaces FastAPI default with envelope."""
-    response = client.get("/_test/validation?count=not_an_int")
+    # Use real contracted endpoint with invalid query parameter to trigger validation
+    response = client.get("/api/v1/terrain/point?region_id=gale&lat=not_a_float&lon=100")
     assert response.status_code == 422
 
     data = response.json()
@@ -84,22 +79,24 @@ def test_422_validation_error_envelope(client: TestClient) -> None:
     assert "traceback" not in response.text.lower()
 
 
-def test_app_exception_envelope(client: TestClient) -> None:
+def test_app_exception_envelope() -> None:
     """T-API-02: Controlled AppException returns specified error envelope and status."""
-    response = client.get("/_test/app-error")
-    assert response.status_code == 422
+    with TestClient(_test_app) as client:
+        response = client.get("/_test/app-error")
+        assert response.status_code == 422
 
-    data = response.json()
-    assert data["error_code"] == "POINT_OUTSIDE_REGION"
-    assert data["message"] == "The point (lat -5.3, lon 137.9) is outside region gale_mount_sharp."
-    assert data["details"] == {"region_id": "gale_mount_sharp"}
-    assert data["request_id"].startswith("req_")
+        data = response.json()
+        assert data["error_code"] == "POINT_OUTSIDE_REGION"
+        assert (
+            data["message"] == "The point (lat -5.3, lon 137.9) is outside region gale_mount_sharp."
+        )
+        assert data["details"] == {"region_id": "gale_mount_sharp"}
+        assert data["request_id"].startswith("req_")
 
 
 def test_500_internal_error_envelope_suppresses_traceback() -> None:
     """T-API-02: Unhandled exception returns 500 INTERNAL_ERROR without leaking traceback."""
-    # Use client with raise_server_exceptions=False to receive the 500 response
-    with TestClient(app, raise_server_exceptions=False) as no_raise_client:
+    with TestClient(_test_app, raise_server_exceptions=False) as no_raise_client:
         response = no_raise_client.get("/_test/server-error")
         assert response.status_code == 500
 

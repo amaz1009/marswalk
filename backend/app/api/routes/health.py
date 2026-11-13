@@ -1,26 +1,12 @@
 """Health endpoint implementing docs/API_CONTRACTS.md §4.1."""
 
-from typing import Literal
-
 from fastapi import APIRouter
-from pydantic import BaseModel
 
 from app import __version__
 from app.config import get_settings
+from app.models import HealthResponse, LlmMode
 
 router = APIRouter(tags=["Health"])
-
-
-class HealthResponse(BaseModel):
-    """Health check response schema."""
-
-    status: str = "ok"
-    version: str
-    llm_mode: Literal["DISABLED", "ENABLED"]
-    llm_provider: str | None = None
-    regions_loaded: int = 0
-    datasets_available: int = 0
-    datasets_unavailable: int = 0
 
 
 @router.get(
@@ -34,11 +20,14 @@ async def get_health() -> HealthResponse:
     settings = get_settings()
 
     provider = settings.MARSWALK_LLM_PROVIDER.strip().lower()
-    if provider and provider != "none":
-        llm_mode: Literal["DISABLED", "ENABLED"] = "ENABLED"
+    if provider == "anthropic" and settings.ANTHROPIC_API_KEY.strip():
+        llm_mode = LlmMode.ENABLED
+        llm_provider = settings.MARSWALK_LLM_PROVIDER
+    elif provider == "openai" and settings.OPENAI_API_KEY.strip():
+        llm_mode = LlmMode.ENABLED
         llm_provider = settings.MARSWALK_LLM_PROVIDER
     else:
-        llm_mode = "DISABLED"
+        llm_mode = LlmMode.DISABLED
         llm_provider = None
 
     return HealthResponse(

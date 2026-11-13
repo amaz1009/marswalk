@@ -1,0 +1,4210 @@
+{
+  "components": {
+    "schemas": {
+      "AgentAnalysisRequest": {
+        "description": "Request payload for multi-agent mission evaluation.",
+        "properties": {
+          "mission_state": {
+            "$ref": "#/components/schemas/MissionState",
+            "description": "Mission state to analyze"
+          },
+          "question": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Optional operator query",
+            "title": "Question"
+          }
+        },
+        "required": [
+          "mission_state"
+        ],
+        "title": "AgentAnalysisRequest",
+        "type": "object"
+      },
+      "AgentAnalysisResponse": {
+        "description": "Complete multi-agent analysis response.",
+        "properties": {
+          "agents": {
+            "description": "Outputs from individual agents",
+            "items": {
+              "$ref": "#/components/schemas/AgentResult"
+            },
+            "title": "Agents",
+            "type": "array"
+          },
+          "computed_at": {
+            "description": "Completion timestamp in UTC",
+            "format": "date-time",
+            "title": "Computed At",
+            "type": "string"
+          },
+          "llm_mode": {
+            "$ref": "#/components/schemas/LlmMode",
+            "description": "LLM enablement mode"
+          },
+          "run_id": {
+            "description": "Unique run identifier with run_ prefix",
+            "title": "Run Id",
+            "type": "string"
+          },
+          "synthesis": {
+            "$ref": "#/components/schemas/AgentSynthesis",
+            "description": "Integrated consensus synthesis"
+          }
+        },
+        "required": [
+          "run_id",
+          "llm_mode",
+          "agents",
+          "synthesis",
+          "computed_at"
+        ],
+        "title": "AgentAnalysisResponse",
+        "type": "object"
+      },
+      "AgentResult": {
+        "description": "Outcome and analytical output from an individual specialized agent.",
+        "properties": {
+          "agent": {
+            "description": "Agent specialist role",
+            "enum": [
+              "coordinator",
+              "terrain",
+              "geology",
+              "thermal",
+              "resource",
+              "safety",
+              "traverse",
+              "mission",
+              "synthesis"
+            ],
+            "title": "Agent",
+            "type": "string"
+          },
+          "duration_ms": {
+            "description": "Execution time in milliseconds",
+            "minimum": 0.0,
+            "title": "Duration Ms",
+            "type": "integer"
+          },
+          "findings": {
+            "description": "Structured agent findings",
+            "items": {
+              "$ref": "#/components/schemas/Finding"
+            },
+            "title": "Findings",
+            "type": "array"
+          },
+          "mode": {
+            "description": "Execution engine mode",
+            "enum": [
+              "deterministic",
+              "llm"
+            ],
+            "title": "Mode",
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/AgentRunStatus",
+            "description": "Execution status"
+          },
+          "summary": {
+            "description": "Executive summary of agent findings",
+            "title": "Summary",
+            "type": "string"
+          },
+          "warnings": {
+            "description": "Operational warnings or safety concerns",
+            "items": {
+              "type": "string"
+            },
+            "title": "Warnings",
+            "type": "array"
+          }
+        },
+        "required": [
+          "agent",
+          "status",
+          "mode",
+          "summary",
+          "duration_ms"
+        ],
+        "title": "AgentResult",
+        "type": "object"
+      },
+      "AgentRunStatus": {
+        "enum": [
+          "SUCCESS",
+          "DEGRADED",
+          "FAILED",
+          "SKIPPED"
+        ],
+        "title": "AgentRunStatus",
+        "type": "string"
+      },
+      "AgentSynthesis": {
+        "description": "Integrated multi-agent consensus synthesis and mission guidance.",
+        "properties": {
+          "data_class": {
+            "$ref": "#/components/schemas/DataClass",
+            "default": "AI_INTERPRETATION",
+            "description": "Scientific classification of synthesis"
+          },
+          "recommendations": {
+            "description": "Actionable mission recommendations",
+            "items": {
+              "type": "string"
+            },
+            "title": "Recommendations",
+            "type": "array"
+          },
+          "summary": {
+            "description": "Executive synthesis across all agent domains",
+            "title": "Summary",
+            "type": "string"
+          },
+          "unresolved_issues": {
+            "description": "Identified conflicts or open questions",
+            "items": {
+              "type": "string"
+            },
+            "title": "Unresolved Issues",
+            "type": "array"
+          }
+        },
+        "required": [
+          "summary"
+        ],
+        "title": "AgentSynthesis",
+        "type": "object"
+      },
+      "AnalysisSettings": {
+        "description": "Geospatial processing and grid parameters for a region.",
+        "properties": {
+          "analysis_crs": {
+            "description": "Local projected coordinate reference system",
+            "title": "Analysis Crs",
+            "type": "string"
+          },
+          "cell_size_m": {
+            "description": "Grid cell resolution in metres",
+            "exclusiveMinimum": 0.0,
+            "title": "Cell Size M",
+            "type": "number"
+          },
+          "max_grid_cells": {
+            "description": "Upper bound on analysis grid size",
+            "exclusiveMinimum": 0.0,
+            "title": "Max Grid Cells",
+            "type": "integer"
+          },
+          "primary_dtm_dataset_id": {
+            "description": "Base elevation model product ID",
+            "title": "Primary Dtm Dataset Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "primary_dtm_dataset_id",
+          "analysis_crs",
+          "cell_size_m",
+          "max_grid_cells"
+        ],
+        "title": "AnalysisSettings",
+        "type": "object"
+      },
+      "AssessmentStatus": {
+        "enum": [
+          "PASS",
+          "WARNING",
+          "BLOCKED",
+          "UNKNOWN"
+        ],
+        "title": "AssessmentStatus",
+        "type": "string"
+      },
+      "AssumptionRecord": {
+        "description": "Explicitly documented operational assumption or reference parameter.",
+        "properties": {
+          "basis": {
+            "description": "Concise rationale or origin statement",
+            "title": "Basis",
+            "type": "string"
+          },
+          "citation": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Reference key from SCIENCE_AND_SAFETY_SPEC.md \u00a715",
+            "title": "Citation"
+          },
+          "data_class": {
+            "$ref": "#/components/schemas/DataClass",
+            "description": "Classification: ASSUMPTION or REFERENCE"
+          },
+          "key": {
+            "description": "Parameter key matching an EvaConfig field or documented parameter",
+            "title": "Key",
+            "type": "string"
+          },
+          "units": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Units of measurement if applicable",
+            "title": "Units"
+          },
+          "value": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "boolean"
+              }
+            ],
+            "description": "Parameter value",
+            "title": "Value"
+          }
+        },
+        "required": [
+          "key",
+          "value",
+          "data_class",
+          "basis"
+        ],
+        "title": "AssumptionRecord",
+        "type": "object"
+      },
+      "ConfidenceLevel": {
+        "enum": [
+          "HIGH",
+          "MEDIUM",
+          "LOW",
+          "NONE"
+        ],
+        "title": "ConfidenceLevel",
+        "type": "string"
+      },
+      "ContextIndicator": {
+        "description": "Environmental context indicator (e.g. ambient radiation or thermal conditions).",
+        "properties": {
+          "data_class": {
+            "$ref": "#/components/schemas/DataClass",
+            "description": "Scientific classification"
+          },
+          "evidence": {
+            "description": "Supporting evidence",
+            "items": {
+              "$ref": "#/components/schemas/EvidenceRef"
+            },
+            "title": "Evidence",
+            "type": "array"
+          },
+          "indicator_id": {
+            "$ref": "#/components/schemas/ContextIndicatorId",
+            "description": "Indicator type"
+          },
+          "limitations": {
+            "description": "Caveats and limitations",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "title": "Limitations",
+            "type": "array"
+          },
+          "period": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Observation timeframe or diurnal sol phase",
+            "title": "Period"
+          },
+          "status": {
+            "$ref": "#/components/schemas/ContextStatus",
+            "description": "Data availability status"
+          },
+          "summary": {
+            "description": "Plain language assessment",
+            "title": "Summary",
+            "type": "string"
+          },
+          "units": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Physical units",
+            "title": "Units"
+          },
+          "value": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Quantitative measurement if available",
+            "title": "Value"
+          }
+        },
+        "required": [
+          "indicator_id",
+          "status",
+          "summary",
+          "data_class",
+          "limitations"
+        ],
+        "title": "ContextIndicator",
+        "type": "object"
+      },
+      "ContextIndicatorId": {
+        "enum": [
+          "RADIATION_CONTEXT",
+          "THERMAL_CONTEXT"
+        ],
+        "title": "ContextIndicatorId",
+        "type": "string"
+      },
+      "ContextStatus": {
+        "enum": [
+          "AVAILABLE",
+          "UNAVAILABLE"
+        ],
+        "title": "ContextStatus",
+        "type": "string"
+      },
+      "CriterionScores": {
+        "description": "Scores for individual site evaluation criteria (0-100 or null if unevaluable).",
+        "properties": {
+          "accessibility": {
+            "anyOf": [
+              {
+                "maximum": 100.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Accessibility score (0-100)",
+            "title": "Accessibility"
+          },
+          "human_safety": {
+            "anyOf": [
+              {
+                "maximum": 100.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Safety score (0-100)",
+            "title": "Human Safety"
+          },
+          "resources": {
+            "anyOf": [
+              {
+                "maximum": 100.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Resources score (0-100)",
+            "title": "Resources"
+          },
+          "science": {
+            "anyOf": [
+              {
+                "maximum": 100.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Science score (0-100)",
+            "title": "Science"
+          },
+          "terrain": {
+            "anyOf": [
+              {
+                "maximum": 100.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Terrain score (0-100)",
+            "title": "Terrain"
+          }
+        },
+        "title": "CriterionScores",
+        "type": "object"
+      },
+      "DataClass": {
+        "enum": [
+          "MEASURED",
+          "DERIVED",
+          "MODEL",
+          "REFERENCE",
+          "ASSUMPTION",
+          "SAMPLE",
+          "AI_INTERPRETATION"
+        ],
+        "title": "DataClass",
+        "type": "string"
+      },
+      "DataType": {
+        "enum": [
+          "ELEVATION",
+          "OPTICAL",
+          "THERMAL",
+          "GEOLOGY",
+          "MINERALOGY",
+          "RADIATION",
+          "SURFACE_IMAGE",
+          "ICE",
+          "DERIVED"
+        ],
+        "title": "DataType",
+        "type": "string"
+      },
+      "DatasetRecord": {
+        "description": "Metadata record for a primary or derived dataset product.",
+        "properties": {
+          "citation": {
+            "description": "Full scholarly or archive citation",
+            "title": "Citation",
+            "type": "string"
+          },
+          "coverage_bounds": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/GeoBounds"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Spatial bounding box"
+          },
+          "data_class": {
+            "$ref": "#/components/schemas/DataClass",
+            "description": "Classification category"
+          },
+          "data_type": {
+            "$ref": "#/components/schemas/DataType",
+            "description": "Primary data kind"
+          },
+          "dataset_id": {
+            "description": "Unique UPPERCASE snake_case product ID",
+            "title": "Dataset Id",
+            "type": "string"
+          },
+          "instrument": {
+            "description": "Acquiring instrument",
+            "title": "Instrument",
+            "type": "string"
+          },
+          "limitations": {
+            "description": "Known operational limitations",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "title": "Limitations",
+            "type": "array"
+          },
+          "mission": {
+            "description": "Sponsoring mission",
+            "title": "Mission",
+            "type": "string"
+          },
+          "name": {
+            "description": "Human-readable title",
+            "title": "Name",
+            "type": "string"
+          },
+          "native_resolution_m": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Post spacing or resolution in metres",
+            "title": "Native Resolution M"
+          },
+          "processed_path": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Path relative to data directory",
+            "title": "Processed Path"
+          },
+          "processing_steps": {
+            "description": "Processing history",
+            "items": {
+              "$ref": "#/components/schemas/ProcessingStep"
+            },
+            "title": "Processing Steps",
+            "type": "array"
+          },
+          "product_ids": {
+            "description": "Source product identifiers",
+            "items": {
+              "type": "string"
+            },
+            "title": "Product Ids",
+            "type": "array"
+          },
+          "region_coverage_fraction": {
+            "anyOf": [
+              {
+                "maximum": 1.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Share of region covered (0-1)",
+            "title": "Region Coverage Fraction"
+          },
+          "retrieved_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Download or verification timestamp",
+            "title": "Retrieved At"
+          },
+          "source_archive": {
+            "description": "Publishing archive node or organization",
+            "title": "Source Archive",
+            "type": "string"
+          },
+          "source_conventions": {
+            "description": "Latitude type and longitude direction",
+            "title": "Source Conventions",
+            "type": "string"
+          },
+          "source_crs": {
+            "description": "WKT or PROJ string of source",
+            "title": "Source Crs",
+            "type": "string"
+          },
+          "source_url": {
+            "description": "Landing page or download URL",
+            "title": "Source Url",
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/DatasetStatus",
+            "description": "Availability status"
+          },
+          "status_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Reason if not AVAILABLE",
+            "title": "Status Reason"
+          },
+          "temporal_coverage": {
+            "$ref": "#/components/schemas/TemporalCoverage",
+            "description": "Temporal coverage"
+          },
+          "units": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Physical units",
+            "title": "Units"
+          },
+          "usage_note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Licensing or usage guidelines",
+            "title": "Usage Note"
+          }
+        },
+        "required": [
+          "dataset_id",
+          "name",
+          "mission",
+          "instrument",
+          "source_archive",
+          "source_url",
+          "product_ids",
+          "citation",
+          "data_type",
+          "data_class",
+          "source_crs",
+          "source_conventions",
+          "temporal_coverage",
+          "status",
+          "limitations"
+        ],
+        "title": "DatasetRecord",
+        "type": "object"
+      },
+      "DatasetStatus": {
+        "enum": [
+          "AVAILABLE",
+          "PARTIAL",
+          "UNAVAILABLE"
+        ],
+        "title": "DatasetStatus",
+        "type": "string"
+      },
+      "EnvelopeRequest": {
+        "description": "Request payload to compute the reachable walk-back safety envelope.",
+        "properties": {
+          "base": {
+            "$ref": "#/components/schemas/GeoPoint",
+            "description": "Habitat base coordinate"
+          },
+          "eva_config": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/EvaConfig"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Optional configuration overrides"
+          },
+          "region_id": {
+            "description": "Region identifier",
+            "title": "Region Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "region_id",
+          "base"
+        ],
+        "title": "EnvelopeRequest",
+        "type": "object"
+      },
+      "EnvelopeResponse": {
+        "description": "Reachability boundary and raster map of permissible traverse territory.",
+        "properties": {
+          "assumptions": {
+            "description": "Parameter assumptions",
+            "items": {
+              "$ref": "#/components/schemas/AssumptionRecord"
+            },
+            "title": "Assumptions",
+            "type": "array"
+          },
+          "bounds": {
+            "$ref": "#/components/schemas/GeoBounds",
+            "description": "Geographic extent of envelope"
+          },
+          "computed_at": {
+            "description": "Computation timestamp in UTC",
+            "format": "date-time",
+            "title": "Computed At",
+            "type": "string"
+          },
+          "envelope_id": {
+            "description": "Unique envelope identifier with env_ prefix",
+            "title": "Envelope Id",
+            "type": "string"
+          },
+          "eva_config": {
+            "$ref": "#/components/schemas/EvaConfig",
+            "description": "Effective parameters used"
+          },
+          "image_png_base64": {
+            "description": "Base64-encoded PNG coverage mask",
+            "title": "Image Png Base64",
+            "type": "string"
+          },
+          "limitations": {
+            "description": "Envelope computation limitations",
+            "items": {
+              "type": "string"
+            },
+            "title": "Limitations",
+            "type": "array"
+          },
+          "max_reach_m": {
+            "description": "Maximum radial distance reachable from base in metres",
+            "minimum": 0.0,
+            "title": "Max Reach M",
+            "type": "number"
+          },
+          "reachable_area_km2": {
+            "description": "Total reachable surface area in square km",
+            "minimum": 0.0,
+            "title": "Reachable Area Km2",
+            "type": "number"
+          }
+        },
+        "required": [
+          "envelope_id",
+          "bounds",
+          "image_png_base64",
+          "reachable_area_km2",
+          "max_reach_m",
+          "eva_config",
+          "computed_at"
+        ],
+        "title": "EnvelopeResponse",
+        "type": "object"
+      },
+      "EvaConfig": {
+        "description": "Operational parameters and physiological constraints for an EVA traverse.",
+        "properties": {
+          "base_speed_kmh": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0.0,
+                "maximum": 6.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Nominal walking speed on flat terrain (km/h)",
+            "title": "Base Speed Kmh"
+          },
+          "default_work_time_min": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Default scientific work duration per stop in minutes",
+            "title": "Default Work Time Min"
+          },
+          "max_distance_from_base_m": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Maximum allowable straight-line radius from habitat in metres",
+            "title": "Max Distance From Base M"
+          },
+          "max_eva_hours": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0.0,
+                "maximum": 10.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Maximum permissible total EVA duration in hours",
+            "title": "Max Eva Hours"
+          },
+          "max_slope_deg": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0.0,
+                "maximum": 30.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Hard traversal slope limit in degrees",
+            "title": "Max Slope Deg"
+          },
+          "return_reserve_fraction": {
+            "anyOf": [
+              {
+                "maximum": 0.9,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Fraction of EVA time reserved for contingency return",
+            "title": "Return Reserve Fraction"
+          },
+          "roughness_warning_m": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Residual surface roughness warning limit in metres",
+            "title": "Roughness Warning M"
+          },
+          "traverse_time_margin": {
+            "anyOf": [
+              {
+                "maximum": 3.0,
+                "minimum": 1.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Multiplicative safety margin applied to walking time",
+            "title": "Traverse Time Margin"
+          },
+          "warning_slope_deg": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Caution slope threshold in degrees",
+            "title": "Warning Slope Deg"
+          }
+        },
+        "title": "EvaConfig",
+        "type": "object"
+      },
+      "EvaDefaultsResponse": {
+        "description": "Default EVA operational configuration and parameter assumptions.",
+        "properties": {
+          "assumptions": {
+            "description": "Supporting assumption records",
+            "items": {
+              "$ref": "#/components/schemas/AssumptionRecord"
+            },
+            "title": "Assumptions",
+            "type": "array"
+          },
+          "config": {
+            "$ref": "#/components/schemas/EvaConfig",
+            "description": "Effective default configuration"
+          }
+        },
+        "required": [
+          "config",
+          "assumptions"
+        ],
+        "title": "EvaDefaultsResponse",
+        "type": "object"
+      },
+      "EvidenceRef": {
+        "description": "Reference linking an assessment or value to its data or model origin.",
+        "properties": {
+          "detail": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Field, product, or methodology detail",
+            "title": "Detail"
+          },
+          "source_id": {
+            "description": "Dataset identifier, engine module name, or assumption/reference key",
+            "title": "Source Id",
+            "type": "string"
+          },
+          "source_type": {
+            "description": "Type of source backing this evidence",
+            "enum": [
+              "dataset",
+              "engine",
+              "assumption",
+              "reference"
+            ],
+            "title": "Source Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "source_type",
+          "source_id"
+        ],
+        "title": "EvidenceRef",
+        "type": "object"
+      },
+      "Finding": {
+        "description": "Specific factual finding produced by an AI or deterministic agent.",
+        "properties": {
+          "confidence": {
+            "$ref": "#/components/schemas/ConfidenceLevel",
+            "description": "Confidence assessment"
+          },
+          "data_class": {
+            "$ref": "#/components/schemas/DataClass",
+            "description": "Scientific classification"
+          },
+          "evidence": {
+            "description": "Supporting evidence references (mandatory for all findings)",
+            "items": {
+              "$ref": "#/components/schemas/EvidenceRef"
+            },
+            "minItems": 1,
+            "title": "Evidence",
+            "type": "array"
+          },
+          "statement": {
+            "description": "Factual observation or analytical conclusion",
+            "title": "Statement",
+            "type": "string"
+          }
+        },
+        "required": [
+          "statement",
+          "data_class",
+          "evidence",
+          "confidence"
+        ],
+        "title": "Finding",
+        "type": "object"
+      },
+      "GeoBounds": {
+        "description": "Geographic bounding box on Mars.",
+        "properties": {
+          "lat_max": {
+            "description": "Maximum latitude in degrees [-90, 90]",
+            "maximum": 90.0,
+            "minimum": -90.0,
+            "title": "Lat Max",
+            "type": "number"
+          },
+          "lat_min": {
+            "description": "Minimum latitude in degrees [-90, 90]",
+            "maximum": 90.0,
+            "minimum": -90.0,
+            "title": "Lat Min",
+            "type": "number"
+          },
+          "lon_max": {
+            "description": "Maximum longitude in degrees [0, 360)",
+            "title": "Lon Max",
+            "type": "number"
+          },
+          "lon_min": {
+            "description": "Minimum longitude in degrees [0, 360)",
+            "title": "Lon Min",
+            "type": "number"
+          }
+        },
+        "required": [
+          "lat_min",
+          "lat_max",
+          "lon_min",
+          "lon_max"
+        ],
+        "title": "GeoBounds",
+        "type": "object"
+      },
+      "GeoPoint": {
+        "description": "Planetocentric coordinate on Mars.",
+        "properties": {
+          "lat": {
+            "description": "Planetocentric latitude in degrees [-90, 90]",
+            "maximum": 90.0,
+            "minimum": -90.0,
+            "title": "Lat",
+            "type": "number"
+          },
+          "lon": {
+            "description": "East-positive longitude in degrees [0, 360)",
+            "title": "Lon",
+            "type": "number"
+          }
+        },
+        "required": [
+          "lat",
+          "lon"
+        ],
+        "title": "GeoPoint",
+        "type": "object"
+      },
+      "GridInfo": {
+        "description": "Dimensions and spatial reference of the route planning raster grid.",
+        "properties": {
+          "analysis_crs": {
+            "description": "Coordinate reference system",
+            "title": "Analysis Crs",
+            "type": "string"
+          },
+          "cell_size_m": {
+            "description": "Grid cell resolution in metres",
+            "exclusiveMinimum": 0.0,
+            "title": "Cell Size M",
+            "type": "number"
+          },
+          "cols": {
+            "description": "Number of raster columns",
+            "exclusiveMinimum": 0.0,
+            "title": "Cols",
+            "type": "integer"
+          },
+          "rows": {
+            "description": "Number of raster rows",
+            "exclusiveMinimum": 0.0,
+            "title": "Rows",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "analysis_crs",
+          "cell_size_m",
+          "rows",
+          "cols"
+        ],
+        "title": "GridInfo",
+        "type": "object"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail",
+            "type": "array"
+          }
+        },
+        "title": "HTTPValidationError",
+        "type": "object"
+      },
+      "HealthResponse": {
+        "description": "Health check response schema.",
+        "properties": {
+          "datasets_available": {
+            "default": 0,
+            "description": "Count of online datasets",
+            "minimum": 0.0,
+            "title": "Datasets Available",
+            "type": "integer"
+          },
+          "datasets_unavailable": {
+            "default": 0,
+            "description": "Count of offline or unretrieved datasets",
+            "minimum": 0.0,
+            "title": "Datasets Unavailable",
+            "type": "integer"
+          },
+          "llm_mode": {
+            "$ref": "#/components/schemas/LlmMode",
+            "description": "LLM enablement mode"
+          },
+          "llm_provider": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Active LLM provider if enabled",
+            "title": "Llm Provider"
+          },
+          "regions_loaded": {
+            "default": 0,
+            "description": "Number of loaded regions",
+            "minimum": 0.0,
+            "title": "Regions Loaded",
+            "type": "integer"
+          },
+          "status": {
+            "default": "ok",
+            "description": "Service status indicator",
+            "title": "Status",
+            "type": "string"
+          },
+          "version": {
+            "description": "API package version",
+            "title": "Version",
+            "type": "string"
+          }
+        },
+        "required": [
+          "version",
+          "llm_mode"
+        ],
+        "title": "HealthResponse",
+        "type": "object"
+      },
+      "LayerInfo": {
+        "description": "Client layer manifest entry for map visualization.",
+        "properties": {
+          "bounds": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/GeoBounds"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Spatial extent"
+          },
+          "data_class": {
+            "$ref": "#/components/schemas/DataClass",
+            "description": "Scientific classification"
+          },
+          "data_type": {
+            "$ref": "#/components/schemas/DataType",
+            "description": "Data kind"
+          },
+          "dataset_ids": {
+            "description": "Contributing dataset product IDs",
+            "items": {
+              "type": "string"
+            },
+            "title": "Dataset Ids",
+            "type": "array"
+          },
+          "features_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Relative URL to GeoJSON vector features",
+            "title": "Features Url"
+          },
+          "image_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Relative URL to PNG image overlay",
+            "title": "Image Url"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/LayerKind",
+            "description": "Raster or vector layer"
+          },
+          "layer_id": {
+            "description": "Unique lowercase snake_case layer identifier",
+            "title": "Layer Id",
+            "type": "string"
+          },
+          "legend": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Legend"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Rendering legend"
+          },
+          "limitations": {
+            "description": "Layer caveats and limitations",
+            "items": {
+              "type": "string"
+            },
+            "title": "Limitations",
+            "type": "array"
+          },
+          "name": {
+            "description": "Human-readable layer name",
+            "title": "Name",
+            "type": "string"
+          },
+          "native_resolution_m": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Native resolution in metres",
+            "title": "Native Resolution M"
+          },
+          "status": {
+            "$ref": "#/components/schemas/DatasetStatus",
+            "description": "Operational status"
+          },
+          "status_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Reason when unavailable",
+            "title": "Status Reason"
+          }
+        },
+        "required": [
+          "layer_id",
+          "name",
+          "kind",
+          "data_type",
+          "status",
+          "dataset_ids",
+          "data_class"
+        ],
+        "title": "LayerInfo",
+        "type": "object"
+      },
+      "LayerKind": {
+        "enum": [
+          "RASTER",
+          "VECTOR"
+        ],
+        "title": "LayerKind",
+        "type": "string"
+      },
+      "LayerValue": {
+        "description": "Inspected value for a specific layer at a geographic point.",
+        "properties": {
+          "data_class": {
+            "$ref": "#/components/schemas/DataClass",
+            "description": "Scientific classification"
+          },
+          "dataset_ids": {
+            "description": "Source dataset IDs",
+            "items": {
+              "type": "string"
+            },
+            "title": "Dataset Ids",
+            "type": "array"
+          },
+          "layer_id": {
+            "description": "Target layer identifier",
+            "title": "Layer Id",
+            "type": "string"
+          },
+          "native_resolution_m": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Native spatial resolution",
+            "title": "Native Resolution M"
+          },
+          "status": {
+            "$ref": "#/components/schemas/ValueStatus",
+            "description": "Sampling outcome status"
+          },
+          "units": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Physical units",
+            "title": "Units"
+          },
+          "value": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Sampled layer value",
+            "title": "Value"
+          }
+        },
+        "required": [
+          "layer_id",
+          "status",
+          "data_class"
+        ],
+        "title": "LayerValue",
+        "type": "object"
+      },
+      "Legend": {
+        "description": "Colormap or categorical rendering specification.",
+        "properties": {
+          "categories": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/LegendCategory"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Discrete categories",
+            "title": "Categories"
+          },
+          "colormap": {
+            "description": "Colormap name or categorical marker",
+            "title": "Colormap",
+            "type": "string"
+          },
+          "units": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Display units",
+            "title": "Units"
+          },
+          "vmax": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Maximum data value for raster color mapping",
+            "title": "Vmax"
+          },
+          "vmin": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Minimum data value for raster color mapping",
+            "title": "Vmin"
+          }
+        },
+        "required": [
+          "colormap"
+        ],
+        "title": "Legend",
+        "type": "object"
+      },
+      "LegendCategory": {
+        "description": "Discrete category mapping for categorical layers.",
+        "properties": {
+          "color": {
+            "description": "Hex or CSS color representation",
+            "title": "Color",
+            "type": "string"
+          },
+          "label": {
+            "description": "Descriptive category label",
+            "title": "Label",
+            "type": "string"
+          },
+          "value": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              }
+            ],
+            "description": "Category code or pixel value",
+            "title": "Value"
+          }
+        },
+        "required": [
+          "value",
+          "label",
+          "color"
+        ],
+        "title": "LegendCategory",
+        "type": "object"
+      },
+      "LlmMode": {
+        "enum": [
+          "DISABLED",
+          "ENABLED"
+        ],
+        "title": "LlmMode",
+        "type": "string"
+      },
+      "MissionReport": {
+        "description": "Integrated mission report document.",
+        "properties": {
+          "assumptions": {
+            "description": "Applied assumptions",
+            "items": {
+              "$ref": "#/components/schemas/AssumptionRecord"
+            },
+            "title": "Assumptions",
+            "type": "array"
+          },
+          "datasets": {
+            "description": "All contributing datasets",
+            "items": {
+              "$ref": "#/components/schemas/DatasetRecord"
+            },
+            "title": "Datasets",
+            "type": "array"
+          },
+          "disclaimer": {
+            "description": "Prototype safety disclaimer",
+            "title": "Disclaimer",
+            "type": "string"
+          },
+          "engine_version": {
+            "description": "Generating engine version",
+            "title": "Engine Version",
+            "type": "string"
+          },
+          "generated_at": {
+            "description": "Report synthesis timestamp in UTC",
+            "format": "date-time",
+            "title": "Generated At",
+            "type": "string"
+          },
+          "limitations": {
+            "description": "Mission limitations",
+            "items": {
+              "type": "string"
+            },
+            "title": "Limitations",
+            "type": "array"
+          },
+          "markdown": {
+            "description": "Full concatenated markdown document",
+            "title": "Markdown",
+            "type": "string"
+          },
+          "mission_id": {
+            "description": "Originating mission identifier",
+            "title": "Mission Id",
+            "type": "string"
+          },
+          "report_id": {
+            "description": "Unique report identifier with rpt_ prefix",
+            "title": "Report Id",
+            "type": "string"
+          },
+          "sections": {
+            "description": "Ordered report chapters",
+            "items": {
+              "$ref": "#/components/schemas/ReportSection"
+            },
+            "title": "Sections",
+            "type": "array"
+          },
+          "unresolved_issues": {
+            "description": "Open issues and safety warnings",
+            "items": {
+              "type": "string"
+            },
+            "title": "Unresolved Issues",
+            "type": "array"
+          }
+        },
+        "required": [
+          "report_id",
+          "generated_at",
+          "mission_id",
+          "disclaimer",
+          "sections",
+          "markdown",
+          "engine_version"
+        ],
+        "title": "MissionReport",
+        "type": "object"
+      },
+      "MissionReportRequest": {
+        "description": "Request payload to synthesize a mission briefing report.",
+        "properties": {
+          "mission_state": {
+            "$ref": "#/components/schemas/MissionState",
+            "description": "Current mission state to compile"
+          }
+        },
+        "required": [
+          "mission_state"
+        ],
+        "title": "MissionReportRequest",
+        "type": "object"
+      },
+      "MissionState": {
+        "description": "Client-managed mission planning state.",
+        "properties": {
+          "agent_analysis": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AgentAnalysisResponse"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Latest agent assessment"
+          },
+          "base": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/GeoPoint"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Habitat or landing base coordinate"
+          },
+          "created_at": {
+            "description": "Creation timestamp in UTC",
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "destination": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/GeoPoint"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Primary destination coordinate"
+          },
+          "envelope": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/EnvelopeResponse"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Computed walk-back envelope"
+          },
+          "eva_config": {
+            "$ref": "#/components/schemas/EvaConfig",
+            "description": "Active EVA configuration"
+          },
+          "mission_id": {
+            "description": "Unique mission identifier starting with msn_",
+            "title": "Mission Id",
+            "type": "string"
+          },
+          "name": {
+            "description": "Mission display name",
+            "title": "Name",
+            "type": "string"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Operator mission notes",
+            "title": "Notes"
+          },
+          "objective_text": {
+            "description": "Science objective statement",
+            "title": "Objective Text",
+            "type": "string"
+          },
+          "plan": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RoutePlanResponse"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Latest calculated route plan"
+          },
+          "region_id": {
+            "description": "Target exploration region identifier",
+            "title": "Region Id",
+            "type": "string"
+          },
+          "selected_route_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Currently selected route profile ID",
+            "title": "Selected Route Id"
+          },
+          "stops": {
+            "description": "Ordered scientific waypoints",
+            "items": {
+              "$ref": "#/components/schemas/Stop"
+            },
+            "title": "Stops",
+            "type": "array"
+          }
+        },
+        "required": [
+          "mission_id",
+          "created_at",
+          "name",
+          "region_id",
+          "objective_text",
+          "eva_config"
+        ],
+        "title": "MissionState",
+        "type": "object"
+      },
+      "OmittedObjective": {
+        "description": "Record explaining why an optimization objective could not be generated.",
+        "properties": {
+          "objective": {
+            "$ref": "#/components/schemas/RouteObjective",
+            "description": "Omitted objective profile"
+          },
+          "reason": {
+            "description": "Explanation for omission",
+            "title": "Reason",
+            "type": "string"
+          }
+        },
+        "required": [
+          "objective",
+          "reason"
+        ],
+        "title": "OmittedObjective",
+        "type": "object"
+      },
+      "PlanStatus": {
+        "enum": [
+          "OK",
+          "NO_FEASIBLE_ROUTE",
+          "INSUFFICIENT_DATA"
+        ],
+        "title": "PlanStatus",
+        "type": "string"
+      },
+      "PointInspection": {
+        "description": "Complete multi-layer query response at a single coordinate.",
+        "properties": {
+          "context": {
+            "description": "Context indicators",
+            "items": {
+              "$ref": "#/components/schemas/ContextIndicator"
+            },
+            "title": "Context",
+            "type": "array"
+          },
+          "data_confidence": {
+            "$ref": "#/components/schemas/ConfidenceLevel",
+            "description": "Overall confidence level"
+          },
+          "limitations": {
+            "description": "Inspection caveats",
+            "items": {
+              "type": "string"
+            },
+            "title": "Limitations",
+            "type": "array"
+          },
+          "point": {
+            "$ref": "#/components/schemas/GeoPoint",
+            "description": "Sampled point coordinate"
+          },
+          "region_id": {
+            "description": "Region identifier",
+            "title": "Region Id",
+            "type": "string"
+          },
+          "values": {
+            "description": "Layer values",
+            "items": {
+              "$ref": "#/components/schemas/LayerValue"
+            },
+            "title": "Values",
+            "type": "array"
+          }
+        },
+        "required": [
+          "region_id",
+          "point",
+          "data_confidence"
+        ],
+        "title": "PointInspection",
+        "type": "object"
+      },
+      "ProcessingStep": {
+        "description": "Provenance record of a single pipeline transformation step.",
+        "properties": {
+          "completed_at": {
+            "description": "Timestamp of completion",
+            "format": "date-time",
+            "title": "Completed At",
+            "type": "string"
+          },
+          "parameters": {
+            "additionalProperties": true,
+            "description": "Execution parameters",
+            "title": "Parameters",
+            "type": "object"
+          },
+          "step": {
+            "description": "Pipeline stage identifier",
+            "title": "Step",
+            "type": "string"
+          },
+          "tool": {
+            "description": "Library and exact version",
+            "title": "Tool",
+            "type": "string"
+          }
+        },
+        "required": [
+          "step",
+          "tool",
+          "completed_at"
+        ],
+        "title": "ProcessingStep",
+        "type": "object"
+      },
+      "ProfilePoint": {
+        "description": "Sample point along an elevation and slope cross-section.",
+        "properties": {
+          "distance_m": {
+            "description": "Cumulative horizontal distance from profile start",
+            "minimum": 0.0,
+            "title": "Distance M",
+            "type": "number"
+          },
+          "elevation_m": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Elevation in metres",
+            "title": "Elevation M"
+          },
+          "point": {
+            "$ref": "#/components/schemas/GeoPoint",
+            "description": "Point location"
+          },
+          "slope_deg": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Local slope in degrees",
+            "title": "Slope Deg"
+          }
+        },
+        "required": [
+          "distance_m",
+          "point"
+        ],
+        "title": "ProfilePoint",
+        "type": "object"
+      },
+      "ProfileRequest": {
+        "description": "Request payload for terrain cross-section profiling.",
+        "properties": {
+          "points": {
+            "description": "Vertices defining the polyline path (2-200 points)",
+            "items": {
+              "$ref": "#/components/schemas/GeoPoint"
+            },
+            "maxItems": 200,
+            "minItems": 2,
+            "title": "Points",
+            "type": "array"
+          },
+          "region_id": {
+            "description": "Region identifier",
+            "title": "Region Id",
+            "type": "string"
+          },
+          "sample_spacing_m": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Sample spacing along polyline; defaults to analysis cell size",
+            "title": "Sample Spacing M"
+          }
+        },
+        "required": [
+          "region_id",
+          "points"
+        ],
+        "title": "ProfileRequest",
+        "type": "object"
+      },
+      "ProfileResponse": {
+        "description": "Cross-section profile response containing sampled points.",
+        "properties": {
+          "evidence": {
+            "description": "Contributing elevation datasets",
+            "items": {
+              "$ref": "#/components/schemas/EvidenceRef"
+            },
+            "title": "Evidence",
+            "type": "array"
+          },
+          "limitations": {
+            "description": "Resolution and interpolation limitations",
+            "items": {
+              "type": "string"
+            },
+            "title": "Limitations",
+            "type": "array"
+          },
+          "samples": {
+            "description": "Sampled profile points",
+            "items": {
+              "$ref": "#/components/schemas/ProfilePoint"
+            },
+            "title": "Samples",
+            "type": "array"
+          },
+          "total_horizontal_distance_m": {
+            "description": "Total polyline horizontal length in metres",
+            "minimum": 0.0,
+            "title": "Total Horizontal Distance M",
+            "type": "number"
+          }
+        },
+        "required": [
+          "samples",
+          "total_horizontal_distance_m"
+        ],
+        "title": "ProfileResponse",
+        "type": "object"
+      },
+      "RegionDataStatus": {
+        "description": "Count of available and unavailable datasets configured for a region.",
+        "properties": {
+          "datasets_available": {
+            "description": "Number of accessible datasets",
+            "minimum": 0.0,
+            "title": "Datasets Available",
+            "type": "integer"
+          },
+          "datasets_unavailable": {
+            "description": "Number of missing or offline datasets",
+            "minimum": 0.0,
+            "title": "Datasets Unavailable",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "datasets_available",
+          "datasets_unavailable"
+        ],
+        "title": "RegionDataStatus",
+        "type": "object"
+      },
+      "RegionDetail": {
+        "description": "Detailed specification and configuration of a region.",
+        "properties": {
+          "analysis": {
+            "$ref": "#/components/schemas/AnalysisSettings",
+            "description": "Geospatial parameters"
+          },
+          "bounds": {
+            "$ref": "#/components/schemas/GeoBounds",
+            "description": "Bounding box"
+          },
+          "data_status": {
+            "$ref": "#/components/schemas/RegionDataStatus",
+            "description": "Availability counts"
+          },
+          "default_base": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/GeoPoint"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Suggested habitat/base location"
+          },
+          "default_base_basis": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Rationale for default base location",
+            "title": "Default Base Basis"
+          },
+          "description": {
+            "description": "Regional setting description",
+            "title": "Description",
+            "type": "string"
+          },
+          "layer_ids": {
+            "description": "Available layer IDs",
+            "items": {
+              "type": "string"
+            },
+            "title": "Layer Ids",
+            "type": "array"
+          },
+          "name": {
+            "description": "Display title",
+            "title": "Name",
+            "type": "string"
+          },
+          "region_id": {
+            "description": "Unique region identifier",
+            "title": "Region Id",
+            "type": "string"
+          },
+          "science_objective": {
+            "description": "Primary exploration objective",
+            "title": "Science Objective",
+            "type": "string"
+          },
+          "science_targets": {
+            "description": "Designated targets",
+            "items": {
+              "$ref": "#/components/schemas/ScienceTarget"
+            },
+            "title": "Science Targets",
+            "type": "array"
+          }
+        },
+        "required": [
+          "region_id",
+          "name",
+          "description",
+          "science_objective",
+          "bounds",
+          "analysis",
+          "data_status"
+        ],
+        "title": "RegionDetail",
+        "type": "object"
+      },
+      "RegionSummary": {
+        "description": "High-level summary of an exploration region.",
+        "properties": {
+          "bounds": {
+            "$ref": "#/components/schemas/GeoBounds",
+            "description": "Bounding box"
+          },
+          "description": {
+            "description": "Regional setting description",
+            "title": "Description",
+            "type": "string"
+          },
+          "name": {
+            "description": "Display title",
+            "title": "Name",
+            "type": "string"
+          },
+          "region_id": {
+            "description": "Unique region identifier",
+            "title": "Region Id",
+            "type": "string"
+          },
+          "science_objective": {
+            "description": "Primary exploration objective",
+            "title": "Science Objective",
+            "type": "string"
+          }
+        },
+        "required": [
+          "region_id",
+          "name",
+          "description",
+          "science_objective",
+          "bounds"
+        ],
+        "title": "RegionSummary",
+        "type": "object"
+      },
+      "ReportSection": {
+        "description": "Structured markdown chapter within a mission report.",
+        "properties": {
+          "body_markdown": {
+            "description": "Markdown section content",
+            "title": "Body Markdown",
+            "type": "string"
+          },
+          "data_class": {
+            "$ref": "#/components/schemas/DataClass",
+            "description": "Scientific classification of chapter content"
+          },
+          "section_id": {
+            "description": "Unique section key",
+            "title": "Section Id",
+            "type": "string"
+          },
+          "title": {
+            "description": "Chapter title",
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "section_id",
+          "title",
+          "body_markdown",
+          "data_class"
+        ],
+        "title": "ReportSection",
+        "type": "object"
+      },
+      "Route": {
+        "description": "Complete computed traverse path and evaluation profile.",
+        "properties": {
+          "elevation_profile": {
+            "description": "Sampled elevation cross-section",
+            "items": {
+              "$ref": "#/components/schemas/ProfilePoint"
+            },
+            "title": "Elevation Profile",
+            "type": "array"
+          },
+          "evidence": {
+            "description": "Supporting evidence",
+            "items": {
+              "$ref": "#/components/schemas/EvidenceRef"
+            },
+            "title": "Evidence",
+            "type": "array"
+          },
+          "fraction_above_warning_slope": {
+            "description": "Fraction of route exceeding warning slope (0-1)",
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Fraction Above Warning Slope",
+            "type": "number"
+          },
+          "identical_to": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Identifier of duplicate route profile",
+            "title": "Identical To"
+          },
+          "legs": {
+            "description": "Ordered outbound and return segments",
+            "items": {
+              "$ref": "#/components/schemas/RouteLeg"
+            },
+            "title": "Legs",
+            "type": "array"
+          },
+          "limitations": {
+            "description": "Route caveats",
+            "items": {
+              "type": "string"
+            },
+            "title": "Limitations",
+            "type": "array"
+          },
+          "max_distance_from_base_m": {
+            "description": "Farthest distance from base in metres",
+            "minimum": 0.0,
+            "title": "Max Distance From Base M",
+            "type": "number"
+          },
+          "objective": {
+            "$ref": "#/components/schemas/RouteObjective",
+            "description": "Routing optimization profile"
+          },
+          "path": {
+            "description": "Full concatenated polyline",
+            "items": {
+              "$ref": "#/components/schemas/GeoPoint"
+            },
+            "title": "Path",
+            "type": "array"
+          },
+          "primary_coverage_fraction": {
+            "description": "Share of traverse covered by high-res DTM (0-1)",
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Primary Coverage Fraction",
+            "type": "number"
+          },
+          "roughness_stats": {
+            "$ref": "#/components/schemas/StatSummary",
+            "description": "Roughness statistics in metres"
+          },
+          "route_id": {
+            "description": "Unique route plan identifier",
+            "title": "Route Id",
+            "type": "string"
+          },
+          "safety": {
+            "$ref": "#/components/schemas/SafetyAssessment",
+            "description": "Safety check assessment"
+          },
+          "slope_stats": {
+            "$ref": "#/components/schemas/StatSummary",
+            "description": "Slope statistics in degrees"
+          },
+          "timeline": {
+            "description": "Chronological schedule",
+            "items": {
+              "$ref": "#/components/schemas/TimelineEntry"
+            },
+            "title": "Timeline",
+            "type": "array"
+          },
+          "totals": {
+            "$ref": "#/components/schemas/RouteTotals",
+            "description": "Total time and distance budget"
+          }
+        },
+        "required": [
+          "route_id",
+          "objective",
+          "legs",
+          "path",
+          "elevation_profile",
+          "slope_stats",
+          "roughness_stats",
+          "fraction_above_warning_slope",
+          "max_distance_from_base_m",
+          "timeline",
+          "totals",
+          "safety",
+          "primary_coverage_fraction"
+        ],
+        "title": "Route",
+        "type": "object"
+      },
+      "RouteLeg": {
+        "description": "Traverse segment between two consecutive stops or bases.",
+        "properties": {
+          "ascent_m": {
+            "description": "Cumulative elevation gain in metres",
+            "minimum": 0.0,
+            "title": "Ascent M",
+            "type": "number"
+          },
+          "descent_m": {
+            "description": "Cumulative elevation loss in metres",
+            "minimum": 0.0,
+            "title": "Descent M",
+            "type": "number"
+          },
+          "from_label": {
+            "description": "Origin label",
+            "title": "From Label",
+            "type": "string"
+          },
+          "horizontal_distance_m": {
+            "description": "Planar distance in metres",
+            "minimum": 0.0,
+            "title": "Horizontal Distance M",
+            "type": "number"
+          },
+          "path": {
+            "description": "Ordered polyline vertices",
+            "items": {
+              "$ref": "#/components/schemas/GeoPoint"
+            },
+            "title": "Path",
+            "type": "array"
+          },
+          "surface_distance_m": {
+            "description": "Surface 3D distance in metres",
+            "minimum": 0.0,
+            "title": "Surface Distance M",
+            "type": "number"
+          },
+          "to_label": {
+            "description": "Destination label",
+            "title": "To Label",
+            "type": "string"
+          },
+          "walk_time_s": {
+            "description": "Estimated nominal walking time in seconds",
+            "minimum": 0.0,
+            "title": "Walk Time S",
+            "type": "number"
+          }
+        },
+        "required": [
+          "from_label",
+          "to_label",
+          "path",
+          "horizontal_distance_m",
+          "surface_distance_m",
+          "ascent_m",
+          "descent_m",
+          "walk_time_s"
+        ],
+        "title": "RouteLeg",
+        "type": "object"
+      },
+      "RouteObjective": {
+        "enum": [
+          "LOWEST_RISK",
+          "BALANCED",
+          "MAX_SCIENCE"
+        ],
+        "title": "RouteObjective",
+        "type": "string"
+      },
+      "RoutePlanRequest": {
+        "description": "Input payload for multi-objective traverse optimization.",
+        "properties": {
+          "base": {
+            "$ref": "#/components/schemas/GeoPoint",
+            "description": "Traverse base or habitat start location"
+          },
+          "destination": {
+            "$ref": "#/components/schemas/GeoPoint",
+            "description": "Primary turnaround or destination point"
+          },
+          "eva_config": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/EvaConfig"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Traverse configuration overrides"
+          },
+          "objectives": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/RouteObjective"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Requested profiles; defaults to all three",
+            "title": "Objectives"
+          },
+          "region_id": {
+            "description": "Target exploration region",
+            "title": "Region Id",
+            "type": "string"
+          },
+          "return_to_base": {
+            "default": true,
+            "description": "Whether route must return to base location",
+            "title": "Return To Base",
+            "type": "boolean"
+          },
+          "stops": {
+            "description": "Ordered intermediate science stops (0-8)",
+            "items": {
+              "$ref": "#/components/schemas/Stop"
+            },
+            "maxItems": 8,
+            "title": "Stops",
+            "type": "array"
+          }
+        },
+        "required": [
+          "region_id",
+          "base",
+          "destination"
+        ],
+        "title": "RoutePlanRequest",
+        "type": "object"
+      },
+      "RoutePlanResponse": {
+        "description": "Optimization response containing generated routes across requested profiles.",
+        "properties": {
+          "assumptions": {
+            "description": "Assumptions applied",
+            "items": {
+              "$ref": "#/components/schemas/AssumptionRecord"
+            },
+            "title": "Assumptions",
+            "type": "array"
+          },
+          "blocking_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Explanation when no feasible route is found",
+            "title": "Blocking Reason"
+          },
+          "computed_at": {
+            "description": "Computation timestamp in UTC",
+            "format": "date-time",
+            "title": "Computed At",
+            "type": "string"
+          },
+          "engine_version": {
+            "description": "Routing engine version",
+            "title": "Engine Version",
+            "type": "string"
+          },
+          "eva_config": {
+            "$ref": "#/components/schemas/EvaConfig",
+            "description": "Effective configuration used"
+          },
+          "grid": {
+            "$ref": "#/components/schemas/GridInfo",
+            "description": "Analysis grid metrics"
+          },
+          "omitted_objectives": {
+            "description": "Omitted profiles",
+            "items": {
+              "$ref": "#/components/schemas/OmittedObjective"
+            },
+            "title": "Omitted Objectives",
+            "type": "array"
+          },
+          "plan_id": {
+            "description": "Unique plan identifier with pln_ prefix",
+            "title": "Plan Id",
+            "type": "string"
+          },
+          "plan_status": {
+            "$ref": "#/components/schemas/PlanStatus",
+            "description": "Overall planning outcome"
+          },
+          "region_id": {
+            "description": "Region identifier",
+            "title": "Region Id",
+            "type": "string"
+          },
+          "routes": {
+            "description": "Computed feasible routes",
+            "items": {
+              "$ref": "#/components/schemas/Route"
+            },
+            "title": "Routes",
+            "type": "array"
+          }
+        },
+        "required": [
+          "plan_id",
+          "region_id",
+          "plan_status",
+          "eva_config",
+          "grid",
+          "computed_at",
+          "engine_version"
+        ],
+        "title": "RoutePlanResponse",
+        "type": "object"
+      },
+      "RouteTotals": {
+        "description": "Integrated distance and time metrics for an entire route.",
+        "properties": {
+          "horizontal_distance_m": {
+            "description": "Total planar distance in metres",
+            "minimum": 0.0,
+            "title": "Horizontal Distance M",
+            "type": "number"
+          },
+          "margin_time_s": {
+            "description": "Allocated safety margin time in seconds",
+            "minimum": 0.0,
+            "title": "Margin Time S",
+            "type": "number"
+          },
+          "reserve_remaining_s": {
+            "description": "Remaining unused reserve in seconds",
+            "title": "Reserve Remaining S",
+            "type": "number"
+          },
+          "reserve_required_s": {
+            "description": "Required contingency reserve in seconds",
+            "minimum": 0.0,
+            "title": "Reserve Required S",
+            "type": "number"
+          },
+          "surface_distance_m": {
+            "description": "Total surface distance in metres",
+            "minimum": 0.0,
+            "title": "Surface Distance M",
+            "type": "number"
+          },
+          "time_available_s": {
+            "description": "Total permissible duration in seconds",
+            "exclusiveMinimum": 0.0,
+            "title": "Time Available S",
+            "type": "number"
+          },
+          "total_time_s": {
+            "description": "Combined walk, margin, and work time in seconds",
+            "minimum": 0.0,
+            "title": "Total Time S",
+            "type": "number"
+          },
+          "walk_time_s": {
+            "description": "Total walking time in seconds before margin",
+            "minimum": 0.0,
+            "title": "Walk Time S",
+            "type": "number"
+          },
+          "work_time_s": {
+            "description": "Total scientific work duration in seconds",
+            "minimum": 0.0,
+            "title": "Work Time S",
+            "type": "number"
+          }
+        },
+        "required": [
+          "horizontal_distance_m",
+          "surface_distance_m",
+          "walk_time_s",
+          "margin_time_s",
+          "work_time_s",
+          "total_time_s",
+          "time_available_s",
+          "reserve_required_s",
+          "reserve_remaining_s"
+        ],
+        "title": "RouteTotals",
+        "type": "object"
+      },
+      "SafetyAssessment": {
+        "description": "Aggregated safety evaluation across all critical and non-critical checks.",
+        "properties": {
+          "checks": {
+            "description": "All 7 safety checks",
+            "items": {
+              "$ref": "#/components/schemas/SafetyCheck"
+            },
+            "maxItems": 7,
+            "minItems": 7,
+            "title": "Checks",
+            "type": "array"
+          },
+          "context": {
+            "description": "Environmental context indicators",
+            "items": {
+              "$ref": "#/components/schemas/ContextIndicator"
+            },
+            "title": "Context",
+            "type": "array"
+          },
+          "disclaimer": {
+            "description": "Mandatory safety disclaimer text",
+            "title": "Disclaimer",
+            "type": "string"
+          },
+          "overall_status": {
+            "$ref": "#/components/schemas/AssessmentStatus",
+            "description": "Aggregated safety outcome"
+          }
+        },
+        "required": [
+          "overall_status",
+          "checks",
+          "disclaimer"
+        ],
+        "title": "SafetyAssessment",
+        "type": "object"
+      },
+      "SafetyCheck": {
+        "description": "Outcome of an individual constraint or safety rule evaluation.",
+        "properties": {
+          "check_id": {
+            "$ref": "#/components/schemas/SafetyCheckId",
+            "description": "Unique safety check identifier"
+          },
+          "critical": {
+            "description": "Whether failure of this check blocks the mission",
+            "title": "Critical",
+            "type": "boolean"
+          },
+          "evidence": {
+            "description": "Supporting evidence",
+            "items": {
+              "$ref": "#/components/schemas/EvidenceRef"
+            },
+            "title": "Evidence",
+            "type": "array"
+          },
+          "message": {
+            "description": "Human-readable explanation of result",
+            "title": "Message",
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/AssessmentStatus",
+            "description": "Evaluation outcome status"
+          },
+          "threshold": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Safety limit compared against",
+            "title": "Threshold"
+          },
+          "units": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Physical units",
+            "title": "Units"
+          },
+          "value": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Observed or calculated parameter value",
+            "title": "Value"
+          }
+        },
+        "required": [
+          "check_id",
+          "critical",
+          "status",
+          "message"
+        ],
+        "title": "SafetyCheck",
+        "type": "object"
+      },
+      "SafetyCheckId": {
+        "enum": [
+          "SLOPE_MAX",
+          "HAZARD_INTERSECTION",
+          "TERRAIN_DATA_COVERAGE",
+          "EVA_DURATION",
+          "RETURN_RESERVE",
+          "ROUGHNESS",
+          "DISTANCE_FROM_BASE"
+        ],
+        "title": "SafetyCheckId",
+        "type": "string"
+      },
+      "ScienceTarget": {
+        "description": "Identified scientific target or sampling location.",
+        "properties": {
+          "citation": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Scholarly publication citation",
+            "title": "Citation"
+          },
+          "data_class": {
+            "$ref": "#/components/schemas/DataClass",
+            "default": "REFERENCE",
+            "description": "Scientific data classification"
+          },
+          "evidence": {
+            "description": "Supporting evidence references",
+            "items": {
+              "$ref": "#/components/schemas/EvidenceRef"
+            },
+            "minItems": 1,
+            "title": "Evidence",
+            "type": "array"
+          },
+          "name": {
+            "description": "Human-readable target name",
+            "title": "Name",
+            "type": "string"
+          },
+          "point": {
+            "$ref": "#/components/schemas/GeoPoint",
+            "description": "Target coordinate"
+          },
+          "rationale": {
+            "description": "Scientific motivation and justification",
+            "title": "Rationale",
+            "type": "string"
+          },
+          "target_id": {
+            "description": "Unique target identifier",
+            "title": "Target Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "target_id",
+          "name",
+          "point",
+          "rationale",
+          "evidence"
+        ],
+        "title": "ScienceTarget",
+        "type": "object"
+      },
+      "SiteCandidate": {
+        "description": "Candidate landing or base site coordinate and evaluation radius.",
+        "properties": {
+          "point": {
+            "$ref": "#/components/schemas/GeoPoint",
+            "description": "Center coordinate of candidate site"
+          },
+          "radius_m": {
+            "description": "Evaluation radius in metres",
+            "exclusiveMinimum": 0.0,
+            "title": "Radius M",
+            "type": "number"
+          },
+          "site_id": {
+            "description": "Unique site candidate identifier",
+            "title": "Site Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "site_id",
+          "point",
+          "radius_m"
+        ],
+        "title": "SiteCandidate",
+        "type": "object"
+      },
+      "SiteEvaluation": {
+        "description": "Evaluation outcome and ranking for an individual site candidate.",
+        "properties": {
+          "criterion_scores": {
+            "$ref": "#/components/schemas/CriterionScores",
+            "description": "Breakdown of individual criteria scores"
+          },
+          "evidence": {
+            "description": "Supporting evidence references",
+            "items": {
+              "$ref": "#/components/schemas/EvidenceRef"
+            },
+            "title": "Evidence",
+            "type": "array"
+          },
+          "excluded": {
+            "description": "True if any hard safety constraint is violated",
+            "title": "Excluded",
+            "type": "boolean"
+          },
+          "hard_constraint_violations": {
+            "description": "Violated hard constraints",
+            "items": {
+              "type": "string"
+            },
+            "title": "Hard Constraint Violations",
+            "type": "array"
+          },
+          "limitations": {
+            "description": "Evaluation caveats",
+            "items": {
+              "type": "string"
+            },
+            "title": "Limitations",
+            "type": "array"
+          },
+          "point": {
+            "$ref": "#/components/schemas/GeoPoint",
+            "description": "Site coordinate"
+          },
+          "rank": {
+            "anyOf": [
+              {
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Overall rank order (1 is highest)",
+            "title": "Rank"
+          },
+          "site_id": {
+            "description": "Candidate site identifier",
+            "title": "Site Id",
+            "type": "string"
+          },
+          "uncertainties": {
+            "description": "Missing or unevaluable criteria notes",
+            "items": {
+              "type": "string"
+            },
+            "title": "Uncertainties",
+            "type": "array"
+          },
+          "weighted_score": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Overall weighted composite score (0-100)",
+            "title": "Weighted Score"
+          }
+        },
+        "required": [
+          "site_id",
+          "point",
+          "excluded",
+          "criterion_scores"
+        ],
+        "title": "SiteEvaluation",
+        "type": "object"
+      },
+      "SiteEvaluationRequest": {
+        "description": "Input payload for multi-criteria site ranking.",
+        "properties": {
+          "candidates": {
+            "description": "List of candidate locations (1-20)",
+            "items": {
+              "$ref": "#/components/schemas/SiteCandidate"
+            },
+            "maxItems": 20,
+            "minItems": 1,
+            "title": "Candidates",
+            "type": "array"
+          },
+          "eva_config": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/EvaConfig"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Traverse configuration for reachability analysis"
+          },
+          "region_id": {
+            "description": "Region identifier",
+            "title": "Region Id",
+            "type": "string"
+          },
+          "weights": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SiteWeights"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Custom criteria weights; defaults to balanced"
+          }
+        },
+        "required": [
+          "region_id",
+          "candidates"
+        ],
+        "title": "SiteEvaluationRequest",
+        "type": "object"
+      },
+      "SiteWeights": {
+        "description": "Multi-criteria evaluation weighting factors (must sum to 1.0 \u00b1 0.001).",
+        "properties": {
+          "accessibility": {
+            "description": "Weight for landing/traverse accessibility",
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Accessibility",
+            "type": "number"
+          },
+          "human_safety": {
+            "description": "Weight for human traverse safety",
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Human Safety",
+            "type": "number"
+          },
+          "resources": {
+            "description": "Weight for proximity to potential in-situ resources",
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Resources",
+            "type": "number"
+          },
+          "science": {
+            "description": "Weight for proximity to science targets",
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Science",
+            "type": "number"
+          },
+          "terrain": {
+            "description": "Weight for slope and roughness",
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Terrain",
+            "type": "number"
+          }
+        },
+        "required": [
+          "terrain",
+          "human_safety",
+          "science",
+          "resources",
+          "accessibility"
+        ],
+        "title": "SiteWeights",
+        "type": "object"
+      },
+      "StatSummary": {
+        "description": "Statistical summary of terrain parameters along a traverse.",
+        "properties": {
+          "max": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Maximum observed value",
+            "title": "Max"
+          },
+          "mean": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Mean observed value",
+            "title": "Mean"
+          },
+          "p95": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "95th percentile value",
+            "title": "P95"
+          },
+          "units": {
+            "description": "Physical units",
+            "title": "Units",
+            "type": "string"
+          }
+        },
+        "required": [
+          "units"
+        ],
+        "title": "StatSummary",
+        "type": "object"
+      },
+      "Stop": {
+        "description": "Intermediate waypoint or scientific stop on an EVA traverse.",
+        "properties": {
+          "name": {
+            "description": "Waypoint name",
+            "title": "Name",
+            "type": "string"
+          },
+          "point": {
+            "$ref": "#/components/schemas/GeoPoint",
+            "description": "Coordinate location"
+          },
+          "stop_id": {
+            "description": "Unique waypoint identifier",
+            "title": "Stop Id",
+            "type": "string"
+          },
+          "target_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Associated ScienceTarget identifier",
+            "title": "Target Id"
+          },
+          "work_time_min": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Work time override in minutes",
+            "title": "Work Time Min"
+          }
+        },
+        "required": [
+          "stop_id",
+          "name",
+          "point"
+        ],
+        "title": "Stop",
+        "type": "object"
+      },
+      "SurfaceImage": {
+        "description": "Rover ground-level surface image metadata.",
+        "properties": {
+          "acquired_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Acquisition timestamp in UTC",
+            "title": "Acquired At"
+          },
+          "camera": {
+            "description": "Camera instrument name",
+            "title": "Camera",
+            "type": "string"
+          },
+          "caption": {
+            "description": "Descriptive image caption",
+            "title": "Caption",
+            "type": "string"
+          },
+          "data_class": {
+            "$ref": "#/components/schemas/DataClass",
+            "default": "MEASURED",
+            "description": "Scientific classification"
+          },
+          "dataset_id": {
+            "description": "Originating catalog dataset product ID",
+            "title": "Dataset Id",
+            "type": "string"
+          },
+          "distance_m": {
+            "description": "Distance from query coordinate in metres",
+            "minimum": 0.0,
+            "title": "Distance M",
+            "type": "number"
+          },
+          "image_id": {
+            "description": "Unique surface image identifier",
+            "title": "Image Id",
+            "type": "string"
+          },
+          "image_url": {
+            "description": "Relative API URL to retrieve image file",
+            "title": "Image Url",
+            "type": "string"
+          },
+          "mission": {
+            "description": "Rover mission name (e.g. MSL)",
+            "title": "Mission",
+            "type": "string"
+          },
+          "point": {
+            "$ref": "#/components/schemas/GeoPoint",
+            "description": "Rover location when image was taken"
+          },
+          "position_basis": {
+            "description": "Method used to localize rover position",
+            "title": "Position Basis",
+            "type": "string"
+          },
+          "product_id": {
+            "description": "Archive product identifier",
+            "title": "Product Id",
+            "type": "string"
+          },
+          "sol": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Mission sol of acquisition",
+            "title": "Sol"
+          },
+          "source_url": {
+            "description": "Archive source URL",
+            "title": "Source Url",
+            "type": "string"
+          }
+        },
+        "required": [
+          "image_id",
+          "dataset_id",
+          "mission",
+          "camera",
+          "product_id",
+          "point",
+          "position_basis",
+          "distance_m",
+          "image_url",
+          "caption",
+          "source_url"
+        ],
+        "title": "SurfaceImage",
+        "type": "object"
+      },
+      "TemporalCoverage": {
+        "description": "Observation period or time bounds of a dataset.",
+        "properties": {
+          "description": {
+            "description": "Summary of temporal extent",
+            "title": "Description",
+            "type": "string"
+          },
+          "end": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "End timestamp in UTC",
+            "title": "End"
+          },
+          "start": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Start timestamp in UTC",
+            "title": "Start"
+          }
+        },
+        "required": [
+          "description"
+        ],
+        "title": "TemporalCoverage",
+        "type": "object"
+      },
+      "TimelineEntry": {
+        "description": "Time-budget allocation block within an EVA mission timeline.",
+        "properties": {
+          "duration_s": {
+            "description": "Duration of activity in seconds",
+            "minimum": 0.0,
+            "title": "Duration S",
+            "type": "number"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/TimelineKind",
+            "description": "Activity category"
+          },
+          "label": {
+            "description": "Description or leg/stop label",
+            "title": "Label",
+            "type": "string"
+          },
+          "start_s": {
+            "description": "Start offset from EVA initiation in seconds",
+            "minimum": 0.0,
+            "title": "Start S",
+            "type": "number"
+          }
+        },
+        "required": [
+          "kind",
+          "label",
+          "start_s",
+          "duration_s"
+        ],
+        "title": "TimelineEntry",
+        "type": "object"
+      },
+      "TimelineKind": {
+        "enum": [
+          "WALK",
+          "WORK",
+          "MARGIN",
+          "RESERVE"
+        ],
+        "title": "TimelineKind",
+        "type": "string"
+      },
+      "ValidationError": {
+        "properties": {
+          "ctx": {
+            "title": "Context",
+            "type": "object"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "title": "Location",
+            "type": "array"
+          },
+          "msg": {
+            "title": "Message",
+            "type": "string"
+          },
+          "type": {
+            "title": "Error Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError",
+        "type": "object"
+      },
+      "ValueStatus": {
+        "enum": [
+          "OK",
+          "NO_COVERAGE",
+          "UNAVAILABLE"
+        ],
+        "title": "ValueStatus",
+        "type": "string"
+      }
+    }
+  },
+  "info": {
+    "description": "Human-scale Mars EVA route planning backend",
+    "title": "MARSWALK API",
+    "version": "0.1.0"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/api/v1/agents/analyze": {
+      "post": {
+        "description": "Invokes specialist agents to review mission traverse and synthesize guidance.",
+        "operationId": "analyze_mission_api_v1_agents_analyze_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AgentAnalysisRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgentAnalysisResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Multi-agent plan evaluation",
+        "tags": [
+          "Agents"
+        ]
+      }
+    },
+    "/api/v1/datasets": {
+      "get": {
+        "description": "Returns metadata records for datasets available in a region.",
+        "operationId": "list_datasets_api_v1_datasets_get",
+        "parameters": [
+          {
+            "description": "Filter datasets by region ID",
+            "in": "query",
+            "name": "region_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filter datasets by region ID",
+              "title": "Region Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/DatasetRecord"
+                  },
+                  "title": "Response List Datasets Api V1 Datasets Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List catalog datasets",
+        "tags": [
+          "Datasets"
+        ]
+      }
+    },
+    "/api/v1/datasets/{dataset_id}": {
+      "get": {
+        "description": "Returns complete metadata and provenance for a single dataset product.",
+        "operationId": "get_dataset_api_v1_datasets__dataset_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "dataset_id",
+            "required": true,
+            "schema": {
+              "title": "Dataset Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DatasetRecord"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get dataset record",
+        "tags": [
+          "Datasets"
+        ]
+      }
+    },
+    "/api/v1/eva/defaults": {
+      "get": {
+        "description": "Returns baseline EVA physiological parameters and explicit reference assumptions.",
+        "operationId": "get_eva_defaults_api_v1_eva_defaults_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EvaDefaultsResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Get default EVA configuration",
+        "tags": [
+          "EVA"
+        ]
+      }
+    },
+    "/api/v1/eva/envelope": {
+      "post": {
+        "description": "Computes reachable safety perimeter from a habitat base given consumable limits.",
+        "operationId": "compute_envelope_api_v1_eva_envelope_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EnvelopeRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnvelopeResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Compute walk-back envelope",
+        "tags": [
+          "EVA"
+        ]
+      }
+    },
+    "/api/v1/health": {
+      "get": {
+        "description": "Returns server status, version, LLM configuration mode, and loaded data counts.",
+        "operationId": "get_health_api_v1_health_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Service health check",
+        "tags": [
+          "Health"
+        ]
+      }
+    },
+    "/api/v1/imagery/surface": {
+      "get": {
+        "description": "Returns ground-level rover images proximate to a coordinate, sorted by distance.",
+        "operationId": "query_surface_imagery_api_v1_imagery_surface_get",
+        "parameters": [
+          {
+            "description": "Region identifier",
+            "in": "query",
+            "name": "region_id",
+            "required": true,
+            "schema": {
+              "description": "Region identifier",
+              "title": "Region Id",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Latitude in planetocentric degrees [-90, 90]",
+            "in": "query",
+            "name": "lat",
+            "required": true,
+            "schema": {
+              "description": "Latitude in planetocentric degrees [-90, 90]",
+              "maximum": 90.0,
+              "minimum": -90.0,
+              "title": "Lat",
+              "type": "number"
+            }
+          },
+          {
+            "description": "Longitude in east-positive degrees [0, 360)",
+            "in": "query",
+            "name": "lon",
+            "required": true,
+            "schema": {
+              "description": "Longitude in east-positive degrees [0, 360)",
+              "title": "Lon",
+              "type": "number"
+            }
+          },
+          {
+            "description": "Search radius in metres",
+            "in": "query",
+            "name": "radius_m",
+            "required": false,
+            "schema": {
+              "default": 1000.0,
+              "description": "Search radius in metres",
+              "exclusiveMinimum": 0.0,
+              "title": "Radius M",
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/SurfaceImage"
+                  },
+                  "title": "Response Query Surface Imagery Api V1 Imagery Surface Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Query surface imagery",
+        "tags": [
+          "Imagery"
+        ]
+      }
+    },
+    "/api/v1/imagery/surface/{image_id}/file": {
+      "get": {
+        "description": "Returns JPEG/PNG binary image bytes for a surface image.",
+        "operationId": "get_surface_image_file_api_v1_imagery_surface__image_id__file_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "image_id",
+            "required": true,
+            "schema": {
+              "title": "Image Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              },
+              "image/jpeg": {},
+              "image/png": {}
+            },
+            "description": "Binary image file bytes"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Download surface image file",
+        "tags": [
+          "Imagery"
+        ]
+      }
+    },
+    "/api/v1/layers": {
+      "get": {
+        "description": "Returns display manifests for map layers configured for a region.",
+        "operationId": "list_layers_api_v1_layers_get",
+        "parameters": [
+          {
+            "description": "Region identifier",
+            "in": "query",
+            "name": "region_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Region identifier",
+              "title": "Region Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/LayerInfo"
+                  },
+                  "title": "Response List Layers Api V1 Layers Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List map layers",
+        "tags": [
+          "Layers"
+        ]
+      }
+    },
+    "/api/v1/layers/{layer_id}/features": {
+      "get": {
+        "description": "Returns GeoJSON FeatureCollection clipped to the region.",
+        "operationId": "get_layer_features_api_v1_layers__layer_id__features_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "layer_id",
+            "required": true,
+            "schema": {
+              "title": "Layer Id",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Region identifier",
+            "in": "query",
+            "name": "region_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Region identifier",
+              "title": "Region Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/geo+json": {},
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Get Layer Features Api V1 Layers  Layer Id  Features Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "GeoJSON FeatureCollection"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get vector layer features",
+        "tags": [
+          "Layers"
+        ]
+      }
+    },
+    "/api/v1/layers/{layer_id}/image": {
+      "get": {
+        "description": "Returns PNG image overlay covering the layer bounding box.",
+        "operationId": "get_layer_image_api_v1_layers__layer_id__image_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "layer_id",
+            "required": true,
+            "schema": {
+              "title": "Layer Id",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Region identifier",
+            "in": "query",
+            "name": "region_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Region identifier",
+              "title": "Region Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              },
+              "image/png": {}
+            },
+            "description": "PNG image overlay covering LayerInfo.bounds"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get raster layer image",
+        "tags": [
+          "Layers"
+        ]
+      }
+    },
+    "/api/v1/mission/report": {
+      "post": {
+        "description": "Synthesizes structured mission documentation, disclaimers, and Markdown report.",
+        "operationId": "generate_mission_report_api_v1_mission_report_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MissionReportRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MissionReport"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Generate mission report",
+        "tags": [
+          "Mission"
+        ]
+      }
+    },
+    "/api/v1/regions": {
+      "get": {
+        "description": "Returns high-level summaries of all supported Mars exploration regions.",
+        "operationId": "list_regions_api_v1_regions_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/RegionSummary"
+                  },
+                  "title": "Response List Regions Api V1 Regions Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "List exploration regions",
+        "tags": [
+          "Regions"
+        ]
+      }
+    },
+    "/api/v1/regions/{region_id}": {
+      "get": {
+        "description": "Returns CRS, analysis configuration, layers, and science targets for a region.",
+        "operationId": "get_region_api_v1_regions__region_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "region_id",
+            "required": true,
+            "schema": {
+              "title": "Region Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RegionDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get region details",
+        "tags": [
+          "Regions"
+        ]
+      }
+    },
+    "/api/v1/routes/plan": {
+      "post": {
+        "description": "Computes optimized traverse routes across risk, balanced, and science profiles.",
+        "operationId": "plan_routes_api_v1_routes_plan_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RoutePlanRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RoutePlanResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Plan multi-objective traverse routes",
+        "tags": [
+          "Routes"
+        ]
+      }
+    },
+    "/api/v1/sites/evaluate": {
+      "post": {
+        "description": "Multi-criteria assessment and ranking of candidate landing or base locations.",
+        "operationId": "evaluate_sites_api_v1_sites_evaluate_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SiteEvaluationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/SiteEvaluation"
+                  },
+                  "title": "Response Evaluate Sites Api V1 Sites Evaluate Post",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Evaluate candidate sites",
+        "tags": [
+          "Sites"
+        ]
+      }
+    },
+    "/api/v1/terrain/point": {
+      "get": {
+        "description": "Returns multi-layer sampled values and contextual safety data at a point.",
+        "operationId": "inspect_point_api_v1_terrain_point_get",
+        "parameters": [
+          {
+            "description": "Region identifier",
+            "in": "query",
+            "name": "region_id",
+            "required": true,
+            "schema": {
+              "description": "Region identifier",
+              "title": "Region Id",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Latitude in planetocentric degrees [-90, 90]",
+            "in": "query",
+            "name": "lat",
+            "required": true,
+            "schema": {
+              "description": "Latitude in planetocentric degrees [-90, 90]",
+              "maximum": 90.0,
+              "minimum": -90.0,
+              "title": "Lat",
+              "type": "number"
+            }
+          },
+          {
+            "description": "Longitude in east-positive degrees [0, 360)",
+            "in": "query",
+            "name": "lon",
+            "required": true,
+            "schema": {
+              "description": "Longitude in east-positive degrees [0, 360)",
+              "title": "Lon",
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PointInspection"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Inspect terrain at coordinate",
+        "tags": [
+          "Terrain"
+        ]
+      }
+    },
+    "/api/v1/terrain/profile": {
+      "post": {
+        "description": "Samples elevation and slope along an ordered polyline path.",
+        "operationId": "compute_profile_api_v1_terrain_profile_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProfileRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProfileResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Compute cross-section profile",
+        "tags": [
+          "Terrain"
+        ]
+      }
+    }
+  }
+}

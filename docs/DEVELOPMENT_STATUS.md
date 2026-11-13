@@ -13,7 +13,7 @@ Only the owner changes these values.
 CODE_START_AUTHORISED: YES        # YES once the owner confirms the event allows code before/at this time
 REVIEW_MODE: milestone           # milestone = agent merges WPs into develop; owner approves develop → main
                                  # per-wp    = agent opens a PR for every WP into develop and waits
-DOWNLOAD_APPROVED: NO            # YES once the owner approves the data download size (WP-06 step 2)
+DOWNLOAD_APPROVED: YES            # YES once the owner approves the data download size (WP-06 step 2)
 ```
 
 ---

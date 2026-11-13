@@ -23,14 +23,14 @@ DOWNLOAD_APPROVED: NO            # YES once the owner approves the data download
 Update this block after every step. It is what an interrupted session resumes from.
 
 ```text
-ACTIVE_WP: none
-BRANCH: develop
-STEP: —
-LAST_COMPLETED: Merged wp/WP-02-shared-models into develop (status MERGED)
-NEXT_ACTION: Awaiting owner direction for next work package
+ACTIVE_WP: WP-03
+BRANCH: wp/WP-03-coordinates
+STEP: 4 of 4
+LAST_COMPLETED: Pinned pyproj==3.8.0, configured Transformer(allow_ballpark=False), and rewrote T-COORD-08 [WP-03]
+NEXT_ACTION: Awaiting owner test run and approval to merge wp/WP-03-coordinates into develop
 BLOCKERS: none
-WAITING_FOR_OWNER: yes — WP-02 merged; awaiting owner direction
-UPDATED: 2026-11-14T02:08+05:30
+WAITING_FOR_OWNER: yes — WP-03 updated; awaiting owner test run
+UPDATED: 2026-11-14T02:35+05:30
 ```
 
 ---
@@ -58,7 +58,7 @@ UPDATED: 2026-11-14T02:08+05:30
 | WP-05 | Data source selection | P0 | MERGED | wp/WP-05-data-sources | — | Shortlist, resources (WP-05b), details (WP-05c), event re-baseline (WP-05d), and demo/thin-slices (WP-05e) merged |
 | WP-01 | Backend skeleton | P0 | MERGED | wp/WP-01-backend-skeleton | 5 passed, 0 failed, 0 skipped | Health, error envelope, config implemented |
 | WP-02 | Shared models and OpenAPI export | P0 | MERGED | wp/WP-02-shared-models | 18 passed, 0 failed, 0 skipped | All contracts and stubs implemented; openapi.json generated |
-| WP-03 | Coordinates and geodesy | P0 | PENDING | wp/WP-03-coordinates | — | |
+| WP-03 | Coordinates and geodesy | P0 | IMPLEMENTED | wp/WP-03-coordinates | owner-run pending | Mars coordinate conversions, IAU 2000 geodesy, and projection transformer |
 | WP-04 | Frontend skeleton and dev scripts | P0 | PENDING | wp/WP-04-frontend-skeleton | — | |
 | WP-06 | Data download and processing pipeline | P0 | PENDING | wp/WP-06-data-pipeline | — | Needs DOWNLOAD_APPROVED |
 | WP-07 | Terrain and hazard engines | P0 | PENDING | wp/WP-07-terrain-engine | — | |
@@ -159,4 +159,8 @@ Format: `timestamp | WP | step | action | tests (command → passed/failed/skipp
 2026-11-14T01:50+05:30 | WP-02 | 4 of 4 | Pre-merge fix: removed defaults from response models, added EvaConfigOverride, updated contract, openapi.json, and tests | ruff check backend scripts → passed; ruff format --check → 12 files passed; export_openapi.py idempotent | [WP-02]
 2026-11-14T02:05+05:30 | WP-02 | 4 of 4 | At commit 2cea0eb, ruff check run from backend/ reported E402 in scripts/export_openapi.py; fixed by restoring noqa in this commit; earlier ruff check passed came from run outside backend/ and was wrong; pytest 18 passed was owner-run, not agent-run | cd backend; ruff check . ..\scripts → passed; ruff format --check ..\scripts\export_openapi.py → passed; export_openapi.py idempotent | [WP-02]
 2026-11-14T02:08+05:30 | WP-02 | 4 of 4 | Merged wp/WP-02-shared-models into develop (status MERGED) | merge --no-ff verified; no code tests | 0369071
+2026-11-14T02:12+05:30 | WP-03 | 0 of 4 | Step 0: reformatted WP-01 config.py and errors.py with ruff format | ruff format app/config.py app/core/errors.py → 2 files formatted | 59b2e6c
+2026-11-14T02:18+05:30 | WP-03 | 4 of 4 | Coordinates, normalisation, IAU 2000 geodesy, and equirectangular transformer implemented | cd backend; ruff check . ..\scripts → passed; ruff format --check → 5 files passed; pytest owner-run pending | [WP-03]
+2026-11-14T02:28+05:30 | WP-03 | 4 of 4 | Pre-merge fix: added pyproj to pyproject.toml, updated transformer to pyproj.Transformer (WKT-only), corrected 45° test constant | cd backend; ruff check . ..\scripts → passed; ruff format --check → 2 files passed; pytest owner-run pending | [WP-03]
+2026-11-14T02:35+05:30 | WP-03 | 4 of 4 | At commit e81eef2 owner-run pytest gave 27 passed, 1 failed (T-COORD-08, non-existent pyproj attribute); fixed in this commit; pyproj pinned to 3.8.0; pytest for this commit owner-run pending | cd backend; ruff check . ..\scripts → passed; ruff format --check → 2 files passed | [WP-03]
 ```

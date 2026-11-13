@@ -82,9 +82,7 @@ class Settings(BaseSettings):
     def cors_origins_list(self) -> list[str]:
         """Parsed list of allowed CORS origins."""
         return [
-            origin.strip()
-            for origin in self.MARSWALK_CORS_ORIGINS.split(",")
-            if origin.strip()
+            origin.strip() for origin in self.MARSWALK_CORS_ORIGINS.split(",") if origin.strip()
         ]
 
     @property

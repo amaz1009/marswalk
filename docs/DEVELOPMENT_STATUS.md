@@ -24,13 +24,13 @@ Update this block after every step. It is what an interrupted session resumes fr
 
 ```text
 ACTIVE_WP: WP-05
-BRANCH: develop
-STEP: review
-LAST_COMPLETED: WP-05c merged into develop
+BRANCH: wp/WP-05d-event-rebaseline
+STEP: rebaseline
+LAST_COMPLETED: Clarified execution policy in IMPLEMENTATION_PLAN.md, RISK_REGISTER.md, and DEVELOPMENT_STATUS.md (D-007)
 NEXT_ACTION: Awaiting owner code start authorisation for WP-01 (CODE_START_AUTHORISED is NO)
 BLOCKERS: none
 WAITING_FOR_OWNER: yes — WP-01 is a code WP while CODE_START_AUTHORISED is NO
-UPDATED: 2026-11-13T18:35+05:30
+UPDATED: 2026-11-13T19:45+05:30
 ```
 
 ---
@@ -114,9 +114,11 @@ new decisions here.
 |----|------|----------|--------|----------------|
 | D-001 | 2026-11-11 | Provisional region: Gale Crater / Mount Sharp boxwork | Matches the challenge example; MSL RAD site data; HiRISE coverage | SYSTEM_ARCHITECTURE.md §1.4 |
 | D-002 | 2026-11-11 | Solo build; no LLM key; local demo with video; Windows | Owner answers | SYSTEM_ARCHITECTURE.md ADR-07, ADR-13, ADR-14, §13 |
-| D-003 | 2026-11-11 | Consumables model and exclusion zones moved to P2 | Fit the solo 48-hour scope | SYSTEM_ARCHITECTURE.md §15, SCIENCE_AND_SAFETY_SPEC.md §5, §12 |
+| D-003 | 2026-11-11 | Consumables model and exclusion zones moved to P2 | Fit the solo ~39-hour scope | SYSTEM_ARCHITECTURE.md §15, SCIENCE_AND_SAFETY_SPEC.md §5, §12 |
 | D-004 | 2026-11-13 | Region confirmed: Gale Crater / Mount Sharp | Space Apps Resources review confirmed region alignment with NASA-listed USGS mapping; Mars Trek added as candidate | DATA_SOURCES.md §7 |
-| D-005 | 2026-11-13 | MSL RAD promoted to required P1 (must-have, cut-line-exempt) | Challenge Details tab suggests at least three data kinds (radiation specified); measured point/time-series context at Curiosity site in Gale; exempt from hour-32 time skip | DATA_SOURCES.md §4, IMPLEMENTATION_PLAN.md §5 |
+| D-005 | 2026-11-13 | MSL RAD promoted to required P1 (must-have, cut-line-exempt) | Challenge Details tab suggests at least three data kinds (radiation specified); measured point/time-series context at Curiosity site in Gale; exempt from hour-28 time skip | DATA_SOURCES.md §4, IMPLEMENTATION_PLAN.md §5 |
+| D-006 | 2026-11-13 | Re-baseline schedule to ~39 h window and two-stream execution | Real event runs ~39 h (09:00 IST Sat to 23:59 IST Sun); M1 h15, M2 h23, M3 h26, cut line h28, M4 h32, M5 h36; Stream A (backend) and Stream B (frontend worktree) | IMPLEMENTATION_PLAN.md §4 |
+| D-007 | 2026-11-13 | Working execution policy Default; switch to Request Review for merges and downloads | The working execution policy is Default; the owner switches the session to Request Review for merges and for the WP-06 data downloads; Turbo is prohibited | IMPLEMENTATION_PLAN.md §4.1 |
 
 ---
 
@@ -125,6 +127,8 @@ new decisions here.
 | Date | WP | Issue | Impact | Status |
 |------|----|-------|--------|--------|
 | — | — | none | — | — |
+
+Live risk tracking (R-01 through R-10) is documented in [docs/RISK_REGISTER.md](RISK_REGISTER.md).
 
 ---
 
@@ -142,5 +146,7 @@ Format: `timestamp | WP | step | action | tests (command → passed/failed/skipp
 2026-11-13T16:31+05:30 | WP-05 | review | Merged wp/WP-05b-resources-review into develop (status MERGED) | merge --no-ff verified; no code tests | 368fa4c
 2026-11-13T16:45+05:30 | WP-05 | review | Challenge Details tab review completed; MSL RAD promoted to required P1; limitations and fallbacks documented | git/manual inspection → 0 issues; no code tests | 6847e3e
 2026-11-13T18:20+05:30 | WP-05 | review | MSL RAD exempted from hour-32 cut line; fallback aligned to infeasibility only | git/manual inspection → 0 issues; no code tests | 1c88e4f
-2026-11-13T18:35+05:30 | WP-05 | review | Merged wp/WP-05c-details-review into develop (status MERGED) | merge --no-ff verified; no code tests | [WP-05]
+2026-11-13T18:35+05:30 | WP-05 | review | Merged wp/WP-05c-details-review into develop (status MERGED) | merge --no-ff verified; no code tests | a7ca5b4
+2026-11-13T19:30+05:30 | WP-05 | rebaseline | Event re-baselined to ~39 h (cut line h28); two-stream execution and RISK_REGISTER.md added; D-006 & D-007 recorded | git/manual inspection → 0 issues; no code tests | 26b71cf
+2026-11-13T19:45+05:30 | WP-05 | rebaseline | Clarified execution policy (Default working policy; switch to Request Review for merges/downloads; Turbo prohibited) in docs | git/manual inspection → 0 issues; no code tests | [WP-05]
 ```

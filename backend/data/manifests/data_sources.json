@@ -63,10 +63,11 @@
     "dataset_id": "MSL_RAD_SURFACE_RDR",
     "product_id": "MSL-M-RAD-3-RDR-V1.0",
     "url": "https://pds-ppi.igpp.ucla.edu/collection/MSL-M-RAD-3-RDR-V1.0",
+    "status": "UNVERIFIED — candidate only",
     "expected_format": "PDS3_BUNDLE",
     "expected_size_bytes": null,
-    "purpose": "In-situ surface radiation environment measurements (dose rate, galactic cosmic rays, solar particle events) in Gale Crater.",
-    "selected_because": "NASA PDS Planetary Plasma Interactions (PPI) Node official collection for Curiosity RAD Reduced Data Records.",
+    "purpose": "Required third data kind (P1, must-have): in-situ surface radiation environment measurements (point time-series at Curiosity location in Gale Crater; not a surface-wide raster).",
+    "selected_because": "NASA PDS PPI Node official collection for Curiosity RAD RDR data. Collection URL verified, but specific sol product IDs remain unverified until WP-06. Fallback: cropped THEMIS or CRISM if verified by cut line, else record shortfall explicitly.",
     "verified_url_at": "2026-11-12T12:24:11Z"
   },
   {

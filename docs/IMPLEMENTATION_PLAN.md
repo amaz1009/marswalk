@@ -146,8 +146,11 @@ Python 3.11 or 3.12. Node 20 or newer. No `osgeo.gdal` imports (ADR-13).
 | M4 P1 features | WP-14 – WP-19 | `v0.4.0` | Hour 40 |
 | M5 Submission | WP-20, WP-21 | `v1.0.0` | Hour 47 |
 
-**Cut line.** If M3 is not reached by hour 32, skip WP-17, WP-18 and WP-19 and go
-straight to WP-20. A working P0 beats an unfinished P1.
+**Cut line.** If M3 is not reached by hour 32, skip WP-17, WP-19, and only the
+CRISM portion of WP-18, then go straight to WP-20. The MSL RAD portion of WP-18
+is exempt from the time-based skip and must still be done after hour 32 if it is
+not yet complete, in order to fulfill the required third data kind guidance. A
+working core with required data beats an unfinished speculative feature.
 
 ---
 
@@ -175,7 +178,7 @@ straight to WP-20. A working P0 beats an unfinished P1.
 | WP-15 | Rover-eye surface images | P1 | A1 Data + A5 | WP-13 | 2.5 |
 | WP-16 | Field View | P1 | A5 Frontend | WP-13 | 2 |
 | WP-17 | Agent system (deterministic default) | P1 | A3 AI + A5 | WP-13 | 4 |
-| WP-18 | CRISM and MSL RAD context data | P1 | A1 Data | WP-13 | 2 |
+| WP-18 | MSL RAD (must-have, cut-line-exempt) and CRISM (cut-line candidate) | P1 | A1 Data | WP-13 | 2 |
 | WP-19 | Site selection | P1 | A4 Routing + A5 | WP-13 | 2 |
 | WP-20 | QA, integration and test report | P0 | A6 QA | WP-13 (and any merged P1) | 3 |
 | WP-21 | Demo scenario and final documentation | P0 | Orchestrator | WP-20 | 3 |
@@ -321,6 +324,9 @@ No application code. Allowed before the event.
   6. Write the tests (synthetic fixtures only) and run them.
 - **Acceptance:** the region config loads. Every P0 dataset is `AVAILABLE` or has a
   documented reason. Manifests are complete. Raw and processed files are not committed.
+  Check whether the Mount Sharp boxwork areas fall inside the HiRISE DTM footprint or
+  the USGS Gale DEM footprint; if not verifiable from the data, record UNKNOWN. Do not
+  assume coordinates.
 - **Tests:** T-DATA-01 to T-DATA-08.
 
 ---
@@ -459,6 +465,7 @@ No application code. Allowed before the event.
 - **Deliverables:** curated entries and files in `backend/data/surface_images/`,
   catalog entries, `backend/app/services/imagery_service.py`,
   `backend/app/api/routes/imagery.py`, frontend preview at stops, tests.
+- **Demo Scope:** Mastcam point-of-view imagery stays a P2 candidate for the demo.
 - **Steps:** select real Curiosity images near the route area with documented rover
   positions; record provenance; implement the two imagery endpoints; show the nearest
   images at each stop; write and run the tests.
@@ -494,9 +501,11 @@ No application code. Allowed before the event.
 
 ---
 
-#### WP-18 — CRISM and MSL RAD context data (slug `context-data`)
+#### WP-18 — MSL RAD context data (must-have, cut-line-exempt) and CRISM (cut-line candidate) (slug `context-data`)
 - **Deliverables:** new data sources, catalog entries, layer and context configuration, tests.
-- **Steps:** add verified CRISM and RAD products (same rules as WP-05 and WP-06);
+- **Priority & Scope:** MSL RAD is the **Required third data kind (P1, must-have, cut-line-exempt)** to satisfy challenge guidance (at least three data kinds: optical, elevation, radiation). It is exempt from the hour-32 time-based cut line and must be completed even if M3 is delayed. CRISM mineralogy remains a cut-line candidate. RAD is documented as a measured point/time-series layer at Curiosity's location in Gale, never a surface-wide radiation raster. Keep its product IDs UNVERIFIED until WP-06.
+- **Fallback:** if RAD proves infeasible (data unobtainable or not joinable to the map), not because of the clock, use a cropped THEMIS layer or CRISM if either is verified. If no verified third data kind exists, record the shortfall explicitly in reports and the UI rather than claiming three data kinds.
+- **Steps:** add verified RAD and CRISM products (same rules as WP-05 and WP-06);
   wire `RADIATION_CONTEXT` to real RAD data (open item O-5); write and run the tests.
 - **Acceptance:** context indicators show real data with limitations, or
   `UNAVAILABLE` with a reason.

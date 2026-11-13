@@ -24,13 +24,13 @@ Update this block after every step. It is what an interrupted session resumes fr
 
 ```text
 ACTIVE_WP: WP-05
-BRANCH: develop
+BRANCH: wp/WP-05c-details-review
 STEP: review
-LAST_COMPLETED: WP-05b merged into develop
+LAST_COMPLETED: Exempted MSL RAD from hour-32 cut line in IMPLEMENTATION_PLAN.md, DATA_SOURCES.md, and DEVELOPMENT_STATUS.md
 NEXT_ACTION: Awaiting owner code start authorisation for WP-01 (CODE_START_AUTHORISED is NO)
 BLOCKERS: none
 WAITING_FOR_OWNER: yes — WP-01 is a code WP while CODE_START_AUTHORISED is NO
-UPDATED: 2026-11-13T16:31+05:30
+UPDATED: 2026-11-13T18:20+05:30
 ```
 
 ---
@@ -72,7 +72,7 @@ UPDATED: 2026-11-13T16:31+05:30
 | WP-15 | Rover-eye surface images | P1 | PENDING | wp/WP-15-surface-images | — | |
 | WP-16 | Field View | P1 | PENDING | wp/WP-16-field-view | — | |
 | WP-17 | Agent system (deterministic default) | P1 | PENDING | wp/WP-17-agents | — | Cut-line candidate |
-| WP-18 | CRISM and MSL RAD context data | P1 | PENDING | wp/WP-18-context-data | — | Cut-line candidate |
+| WP-18 | MSL RAD and CRISM context data | P1 | PENDING | wp/WP-18-context-data | — | RAD part must-have (cut-line exempt); CRISM part cut-line candidate |
 | WP-19 | Site selection | P1 | PENDING | wp/WP-19-site-selection | — | Cut-line candidate |
 | WP-20 | QA, integration and test report | P0 | PENDING | wp/WP-20-qa-integration | — | |
 | WP-21 | Demo scenario and final documentation | P0 | PENDING | wp/WP-21-demo-docs | — | Milestone M5 |
@@ -116,6 +116,7 @@ new decisions here.
 | D-002 | 2026-11-11 | Solo build; no LLM key; local demo with video; Windows | Owner answers | SYSTEM_ARCHITECTURE.md ADR-07, ADR-13, ADR-14, §13 |
 | D-003 | 2026-11-11 | Consumables model and exclusion zones moved to P2 | Fit the solo 48-hour scope | SYSTEM_ARCHITECTURE.md §15, SCIENCE_AND_SAFETY_SPEC.md §5, §12 |
 | D-004 | 2026-11-13 | Region confirmed: Gale Crater / Mount Sharp | Space Apps Resources review confirmed region alignment with NASA-listed USGS mapping; Mars Trek added as candidate | DATA_SOURCES.md §7 |
+| D-005 | 2026-11-13 | MSL RAD promoted to required P1 (must-have, cut-line-exempt) | Challenge Details tab suggests at least three data kinds (radiation specified); measured point/time-series context at Curiosity site in Gale; exempt from hour-32 time skip | DATA_SOURCES.md §4, IMPLEMENTATION_PLAN.md §5 |
 
 ---
 
@@ -138,5 +139,7 @@ Format: `timestamp | WP | step | action | tests (command → passed/failed/skipp
 2026-11-12T17:55+05:30 | WP-05 | 6 of 6 | Provisional data source shortlist and manifest documented | curl header checks (7/7 products HTTP 200/302 verified) → 0 issues; no code tests | afba586
 2026-11-12T18:35+05:30 | WP-05 | 6 of 6 | Merged wp/WP-05-data-sources into develop (status MERGED) | merge --no-ff verified; no code tests | be0e368
 2026-11-13T16:15+05:30 | WP-05 | review | Space Apps Resources review (2026-11-13) completed; region confirmed as Gale / Mount Sharp | docs consistency check → 0 issues; no code tests (documents only) | d838ece
-2026-11-13T16:31+05:30 | WP-05 | review | Merged wp/WP-05b-resources-review into develop (status MERGED) | merge --no-ff verified; no code tests | [WP-05]
+2026-11-13T16:31+05:30 | WP-05 | review | Merged wp/WP-05b-resources-review into develop (status MERGED) | merge --no-ff verified; no code tests | 368fa4c
+2026-11-13T16:45+05:30 | WP-05 | review | Challenge Details tab review completed; MSL RAD promoted to required P1; limitations and fallbacks documented | git/manual inspection → 0 issues; no code tests | 6847e3e
+2026-11-13T18:20+05:30 | WP-05 | review | MSL RAD exempted from hour-32 cut line; fallback aligned to infeasibility only | git/manual inspection → 0 issues; no code tests | [WP-05]
 ```

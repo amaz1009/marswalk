@@ -42,9 +42,9 @@ Per Scientific Integrity rules (§6) and WP-05 constraints:
 
 ---
 
-## 3. Verified Products Shortlist
+## 3. Verified Products Shortlist (Basemap & Terrain)
 
-Every URL below was checked and returned `HTTP 200 OK` (or valid redirect to public storage) during session testing on 2026-11-12.
+Every URL below was checked and returned `HTTP 200 OK` (or valid redirect to public storage) during session testing on 2026-11-12. These 6 products provide the primary elevation, slope, optical, and regional baseline for the route planning engine.
 
 | Dataset ID | Product ID | Instrument / Source | Format | Size | Resolution | Purpose | Verified Live URL |
 |:---|:---|:---|:---|:---|:---|:---|:---|
@@ -54,22 +54,40 @@ Every URL below was checked and returned `HTTP 200 OK` (or valid redirect to pub
 | `MOLA_MEGDR_GALE` | `MEGT00N090HB.IMG` | MGS MOLA (GSFC / PDS Geosciences) | PDS3 IMG | 129.8 MB | 128 px/deg (~463 m) | Regional topographic baseline (0°–44°S, 90°–180°E) and planetary datum reference | [PDS Geosciences Node](https://pds-geosciences.wustl.edu/mgs/mgs-m-mola-5-megdr-l3-v1/mgsl_300x/meg128/megt00n090hb.img) |
 | `USGS_GEOLOGY_SIM3292` | `sim3292_database.zip` | USGS Geologic Map of Mars (Tanaka et al. 2014) | ZIP (GIS Database) | 808.9 MB | 1:20M global vector | Geologic units, contacts, and surface material context | [USGS Publications](https://pubs.usgs.gov/sim/3292/downloads/sim3292_database.zip) |
 | `THEMIS_DAY_IR_GLOBAL` | `Mars_MO_THEMIS-IR-Day_mosaic_global_100m_v12.tif` | Mars Odyssey THEMIS (ASU / USGS) | GeoTIFF | 22.77 GB | 100 m / pixel | Thermal daytime temperature basemap and thermophysical context | [USGS Planetary Maps S3](https://asc-pds-services.s3.us-west-2.amazonaws.com/mosaic/Mars_MO_THEMIS-IR-Day_mosaic_global_100m_v12.tif) |
-| `MSL_RAD_SURFACE_RDR` | `MSL-M-RAD-3-RDR-V1.0` | MSL RAD (SwRI / PDS PPI Node) | PDS3 Bundle | Variable (by sol) | Point time-series | In-situ surface ionizing radiation dose rates along Curiosity traverse | [PDS PPI Node](https://pds-ppi.igpp.ucla.edu/collection/MSL-M-RAD-3-RDR-V1.0) |
 
 ---
 
-## 4. Unverified Candidates (`UNVERIFIED — candidate only`)
+## 4. Required In-Situ Context & Unverified Candidates
 
-The following candidate layers were evaluated but are **not** included in `data_sources.json` because specific file endpoints could not be fully verified against official repository indexes without downloading:
+Per the manifest summary, `backend/data/manifests/data_sources.json` contains **8 entries**:
+- **6 verified basemap datasets** with direct download URLs (table in §3 above).
+- **2 manifest entries with status `UNVERIFIED — candidate only`** (detailed in §4.1 below).
+
+In addition, 3 conceptual candidate data types evaluated during source selection are documented in §4.2 but are deliberately omitted from `data_sources.json` because no specific product IDs or file endpoints have been confirmed.
+
+### 4.1 Manifest Candidates (`status: "UNVERIFIED — candidate only"`)
+
+1. **MSL RAD Surface Radiation (`MSL_RAD_SURFACE_RDR`):**
+   - **Role & Priority:** Promoted to **Required third data kind (P1, must-have)** in response to Space Apps guidance recommending at least three data types (optical, elevation, radiation).
+   - **Nature of Data:** Measured point/time-series layer at Curiosity's in-situ traverse location in Gale Crater. It is **never a surface-wide radiation raster**; radiation data is presented strictly as localized, historical environmental context.
+   - **Verification Status:** The PDS PPI collection bundle URL resolves, but specific sol product IDs and tables remain **`UNVERIFIED` until WP-06**.
+   - **Cut-Line & Fallback Policy:** MSL RAD is cut-line-exempt (the time-based hour-32 cut line skips WP-17, WP-19, and the CRISM part of WP-18, but does not skip RAD). If RAD proves infeasible (data unobtainable or not joinable to the map), not because of the clock, the fallback is to use a cropped THEMIS thermal layer or CRISM mineralogy if either is verified. If no verified third data kind exists, MARSWALK will explicitly record the shortfall in reports and the UI rather than claiming three data kinds.
+2. **Mars Trek Web Portal (`MARS_TREK_PORTAL`):**
+   - **Role:** Reference and manual validation portal for cross-checking Gale Crater surface morphology, landmark names, and orbital basemaps.
+   - **Verification Status:** Web portal identified in challenge resources; specific layers, endpoints, and terms of service not reviewed. No download URL.
+
+### 4.2 Evaluated Conceptual Candidates (Not in `data_sources.json`)
+
+The following candidate layers were evaluated but are **not** in `data_sources.json` to prevent fabricated or unverified entries:
 
 1. **CRISM Targeted Hyperspectral Observations (Mineralogy):**
    - Candidate observation: `FRT0000B204` or Mount Sharp targeted cubes.
    - Status: `UNVERIFIED — candidate only`.
-   - Reason: Standard CRISM TRDR cubes require MTRDR spectral parameter pipelines (cat-pds). Needs review against challenge resource recommendations.
+   - Reason: Standard CRISM TRDR cubes require specialized MTRDR spectral parameter pipelines (cat-pds). Needs review against challenge resource recommendations.
 2. **Curiosity Navcam/Mastcam Surface Views (Field View):**
    - Candidate products: Sols 4200–4250 boxwork approach panoramas.
    - Status: `UNVERIFIED — candidate only`.
-   - Reason: Individual PDS EDR/RDR image frames from MSL Mastcam must be matched to verified rover traverse waypoints in WP-15.
+   - Role in Demo: Mastcam point-of-view imagery **stays a P2 candidate for the demo**. Individual PDS EDR/RDR frames must be matched to verified rover traverse waypoints in WP-15 if time permits.
 3. **Regional Tiled THEMIS Aeolis Quadrangle Daytime Mosaic:**
    - Candidate product: Controlled quadrangle tile for MC-23 / Gale.
    - Status: `UNVERIFIED — candidate only` (Night IR tile verified; 100 mpp daytime tile currently only verified in the 22.8 GB global mosaic).
@@ -91,13 +109,14 @@ The following candidate layers were evaluated but are **not** included in `data_
 1. **Space Apps Resources Review (O-1):** Review completed on 2026-11-13 (§7 below). Region confirmed as Gale Crater / Mount Sharp.
 2. **Download Approval (O-2 / `DOWNLOAD_APPROVED`):** Decide between the 1.33 GB minimal footprint vs 5.20 GB complete corridor before starting WP-06.
 3. **Format Compatibility (O-6):** Verify `rasterio` reads the HiRISE `.IMG` (PDS3 VICAR/ISIS detached/attached format) cleanly on Windows without native GDAL system packages.
+4. **Event-Start Resources Re-check:** Re-check the Resources tab when the hackathon begins, as NASA states additional resources may be added.
 
 ---
 
 ## 7. Space Apps Resources Review (2026-11-13)
 
 - **Review Date:** 2026-11-13
-- **Challenge Page & Resources URL:** [NASA Space Apps Challenge Resources](https://www.spaceappschallenge.org/2026/challenges/)
+- **Challenge Page & Resources URL:** [NASA Space Apps Challenge Resources](https://www.spaceappschallenge.org/2026/challenges/interplanetary-survival-guide-martian-map/?tab=resources)
 
 On November 13, 2026, the five NASA-listed resources for the human-EVA planning challenge were reviewed against MARSWALK's system design and data architecture.
 
@@ -113,4 +132,24 @@ On November 13, 2026, the five NASA-listed resources for the human-EVA planning 
 
 ### Summary Outcome
 The review confirms that the provisional region (**Gale Crater / Mount Sharp**, `gale_mount_sharp`) remains fully sound and well-supported by NASA's recommended USGS mapping resources. No substitution of region is warranted. Mars Trek is logged as an unverified validation candidate in the manifest.
+
+---
+
+### 7.1 Details Tab Review (2026-11-13)
+
+- **Review Date:** 2026-11-13
+- **Challenge Details URL:** [NASA Space Apps Challenge Details](https://www.spaceappschallenge.org/2026/challenges/interplanetary-survival-guide-martian-map/?tab=details)
+
+Key takeaways and architectural impacts from the official challenge details:
+
+1. **Three-Data-Kinds Requirement:** The challenge guidance suggests integrating **at least three kinds of data**. Examples listed by NASA include: *optical, thermal, spectral, topographic, geophysical, atmospheric, radiation, chemical*. (Note: *geology* is not explicitly named in the challenge's example list).
+   - *Impact:* To guarantee compliance with this guidance, **MSL RAD surface radiation is promoted to a required must-have P1 layer** (combining Topographic DTM + Optical Ortho + In-Situ Radiation context).
+2. **Radiation & Surface Hazards:** The challenge highlights radiation and space-weather information, alongside terrain hazards that account for suit mobility limits, carried gear, and large rock formations.
+   - *Impact:* Evaluated in `SCIENCE_AND_SAFETY_SPEC.md` (§4.7, §6.2, §13). Note that DTM roughness serves as a computational proxy for obstacles; rock abundance data is not in v1 and large rock formations are not guaranteed to be detected.
+3. **Surface Point-of-View Imagery:** The challenge explicitly suggests ground-level point-of-view perspective.
+   - *Impact:* Mastcam surface imagery stays a **P2 candidate for the demo** (WP-15 / WP-16).
+4. **Target Region Validation:** The challenge details explicitly cite the Mount Sharp boxwork structures investigated by Curiosity in 2025 as the canonical example.
+   - *Impact:* Fully confirms the MARSWALK primary demonstration focus on lower Mount Sharp / boxwork terrain.
+5. **Dynamic Challenge Resources:** NASA notes that additional resources may be added before the hackathon begins.
+   - *Impact:* The Resources tab must be re-checked when the event officially begins.
 

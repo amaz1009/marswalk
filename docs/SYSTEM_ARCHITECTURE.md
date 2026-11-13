@@ -523,7 +523,7 @@ files. Cross-area changes go through the Orchestrator role and are logged.
 
 #### O-5: Confirm an MSL RAD product suitable for site-level context display
 - **Current Wording:** Confirm an MSL RAD product suitable for site-level context display (Resolution point: WP-18).
-- **PROPOSED Resolution:** In WP-06, evaluate the MSL RAD collection URL recorded in `DATA_SOURCES.md` (`https://pds-ppi.igpp.ucla.edu/collection/MSL-M-RAD-3-RDR-V1.0`) to inspect available surface RDR tables at Curiosity's Gale Crater traverse stops; specific product IDs and measurement units remain `UNVERIFIED` until WP-06. If table ingestion or coordinate alignment proves infeasible, fall back to marking radiation context as `UNAVAILABLE` with an explicit reason per the WP-18 fallback policy.
+- **PROPOSED Resolution:** In WP-06, evaluate the MSL RAD collection URL recorded in `backend/data/manifests/data_sources.json` (`https://pds-ppi.igpp.ucla.edu/collection/MSL-M-RAD-3-RDR-V1.0`) to inspect available surface RDR tables at Curiosity's Gale Crater traverse stops; specific product IDs and measurement units remain `UNVERIFIED` until WP-06. If table ingestion or coordinate alignment proves infeasible, fall back to marking radiation context as `UNAVAILABLE` with an explicit reason per the WP-18 fallback policy.
 - **Reason:** Satisfies the challenge's third data kind guidance as measured point/time-series context without synthesizing data or fabricating an unphysical surface-wide radiation raster.
 
 #### O-6: Verify that the chosen PDS formats open with the GDAL bundled in rasterio wheels on Windows

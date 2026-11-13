@@ -168,7 +168,7 @@ To meet the condensed 39-hour window, work is parallelized into two concurrent s
 2. **Status File Ownership:** Only Stream A edits `docs/DEVELOPMENT_STATUS.md`. Stream B reports completion to the owner; Stream A records it after merge into `develop`.
 3. **Branch Isolation:** Each stream works strictly on its dedicated `wp/<ID>-<slug>` branch and never checks out `develop` in the other stream's folder.
 4. **Serialised Merges:** All branch merges into `develop` are serialised through owner review and approval.
-5. **Execution Policy:** Execution policy must remain **Default (Request Review)** for all merges and WP-06 data downloads. Turbo mode is strictly prohibited.
+5. **Execution Policy:** The working execution policy is Default; the owner switches the session to Request Review for merges and for the WP-06 data downloads; Turbo is prohibited.
 
 ---
 

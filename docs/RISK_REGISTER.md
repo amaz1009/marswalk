@@ -21,7 +21,7 @@ This register tracks operational, technical, and process risks for the MARSWALK 
 | R-03 | Antigravity quota or rate limits | High | Owner | Pre-configure fallback model / backup account credentials in settings | OPEN |
 | R-04 | AI positioning and judging expectations | Medium | Orchestrator | Core routing & safety is 100% deterministic; LLM is optional add-on; pitch and README state this prominently | OPEN |
 | R-05 | Test suites unexecuted or weakened | High | A6 QA | Every WP must execute automated tests and log real command output before merge approval | OPEN |
-| R-06 | Owner review bottleneck on merges | Medium | Owner | Follow strict per-WP checklist; keep diffs small and atomic | OPEN |
+| R-06 | Owner review bottleneck on merges | Medium | Owner | Follow strict per-WP checklist; working execution policy Default, switch to Request Review for merges/downloads; Turbo prohibited | OPEN |
 | R-07 | Local workstation failure or data loss | High | All | Push WP branches to remote after every atomic commit | OPEN |
 | R-08 | Fatigue and stamina management | Medium | Owner | Planned rest/sleep block scheduled during data downloads and heavy pipeline processing | OPEN |
 | R-09 | Demo recording tooling failure | High | Owner | Pre-select and test screen recording/audio tool on Windows before event start | OPEN |
@@ -73,7 +73,7 @@ This register tracks operational, technical, and process risks for the MARSWALK 
 - **Risk:** Delay in owner reviewing diffs and approving merges stalls agent development.
 - **Impact:** Medium. Delays milestone completion.
 - **Owner:** Owner.
-- **Mitigation:** Use a standardized 3-step checklist (diff inspection, test confirmation, status update check); keep WP branch diffs small, focused, and scoped only to that WP's area.
+- **Mitigation:** Use a standardized 3-step checklist (diff inspection, test confirmation, status update check); keep WP branch diffs small, focused, and scoped only to that WP's area. The working execution policy is Default; the owner switches the session to Request Review for merges and for the WP-06 data downloads; Turbo is prohibited.
 - **Status:** OPEN.
 
 ### R-07: Workstation Failure or Uncommitted Loss

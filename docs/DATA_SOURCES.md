@@ -4,9 +4,9 @@
 |:---|:---|
 | Document | DATA_SOURCES.md |
 | Work Package | WP-05 (Data source selection) |
-| Status | PROVISIONAL SHORTLIST (Awaiting Nov 13 Challenge Resources) |
+| Status | SHORTLIST REVIEWED (Space Apps Resources 2026-11-13) |
 | Author | Orchestrator / Data Agent (A1) |
-| Date | 2026-11-12 |
+| Date | 2026-11-13 |
 
 ---
 
@@ -88,6 +88,29 @@ The following candidate layers were evaluated but are **not** included in `data_
 
 ## 6. Open Items for Owner Confirmation (Nov 13 Milestone)
 
-1. **Space Apps Resources Review (O-1):** On November 13, compare official challenge data links against this shortlist. If NASA provides pre-clipped regional bundles, substitute those to reduce ingestion footprint.
+1. **Space Apps Resources Review (O-1):** Review completed on 2026-11-13 (§7 below). Region confirmed as Gale Crater / Mount Sharp.
 2. **Download Approval (O-2 / `DOWNLOAD_APPROVED`):** Decide between the 1.33 GB minimal footprint vs 5.20 GB complete corridor before starting WP-06.
 3. **Format Compatibility (O-6):** Verify `rasterio` reads the HiRISE `.IMG` (PDS3 VICAR/ISIS detached/attached format) cleanly on Windows without native GDAL system packages.
+
+---
+
+## 7. Space Apps Resources Review (2026-11-13)
+
+- **Review Date:** 2026-11-13
+- **Challenge Page & Resources URL:** [NASA Space Apps Challenge Resources](https://www.spaceappschallenge.org/2026/challenges/)
+
+On November 13, 2026, the five NASA-listed resources for the human-EVA planning challenge were reviewed against MARSWALK's system design and data architecture.
+
+### Resource Evaluation & Verdicts
+
+| # | Resource | Official NASA Description / URL | Evaluation & Applicability | Verdict |
+|:---|:---|:---|:---|:---|
+| 1 | **USGS Planetary Mapping** | [USGS Astrogeology Planetary Mapping](https://astrogeology.usgs.gov/)<br>Planetary GIS datasets, controlled mosaics, and global geologic maps | Authoritative cartographic products for planetary surfaces. Directly provides the foundational regional layers needed for terrain, hazard classification, and geologic unit delineation. | **Confirmed, already shortlisted** (`USGS_GEOLOGY_SIM3292`, `USGS_GALE_MERGED_DEM`) |
+| 2 | **Mars Trek (Solar System Treks)** | [NASA Solar System Treks — Mars](https://trek.nasa.gov/mars/)<br>Web-based interactive planetary GIS portal | Useful interactive visual portal for cross-referencing surface landmarks and global orbital basemaps. However, specific WMS/WMTS layer endpoints, projection conventions, caching limits, and API terms of service have not been reviewed. Retained for operator visual reference and manual validation only. | **New, optional, `UNVERIFIED — candidate only`** (Added to manifest for reference/validation; no bulk download) |
+| 3 | **Curiosity Mount Sharp Route** | [Curiosity: Where is the Rover?](https://mars.nasa.gov/msl/mission/where-is-the-rover/)<br>Historical waypoint map of MSL traverse up lower Mount Sharp | Validates the choice of Gale Crater / Mount Sharp as a prime science exploration corridor. Serves as regional context and ground-truth location data. However, per MARSWALK Principle P5 and Operating Rule §6, rover routes and mechanical capabilities cannot be used as human-suited traverse evidence. | **Region context only; rover route, not human-traverse evidence** |
+| 4 | **Perseverance Raw Images** | [Mars 2020 Perseverance Raw Images](https://mars.nasa.gov/mars2020/multimedia/raw-images/)<br>Surface camera observations from the Mars 2020 rover | High-resolution rover surface imagery from Jezero Crater (~18.4°N, 77.5°E), which is over 3,000 km away from Gale Crater (~4.6°S, 137.4°E). Irrelevant to Gale Crater traverse planning. | **Excluded, rover imagery, outside Gale** |
+| 5 | **NASA Worldview** | [NASA EOSDIS Worldview](https://worldview.earthdata.nasa.gov/)<br>Global full-resolution satellite imagery browser for Earth | Interactive visualization of Earth observing satellites (MODIS, VIIRS, Landsat). Contains Earth observation data only; no Mars planetary coverage. | **Excluded, Earth data** |
+
+### Summary Outcome
+The review confirms that the provisional region (**Gale Crater / Mount Sharp**, `gale_mount_sharp`) remains fully sound and well-supported by NASA's recommended USGS mapping resources. No substitution of region is warranted. Mars Trek is logged as an unverified validation candidate in the manifest.
+

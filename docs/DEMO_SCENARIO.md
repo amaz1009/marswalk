@@ -30,11 +30,11 @@ This exact disclosure statement must be included in the submission documentation
 
 ### Scene 2: Layer Exploration & Environmental Context (0:30 – 1:00)
 - **Visual:** Operator toggles layers in the Layer Control drawer:
-  1. **HiRISE 1 m DTM:** Displays localized digital elevation model (`[ELEV_MIN] m` to `[ELEV_MAX] m`).
+  1. **HiRISE 1 m DTM (`HIRISE_DTM_GALE_MOUND`):** Displays localized digital elevation model (`[ELEV_MIN] m` to `[ELEV_MAX] m`).
   2. **Slope Map:** Server-rendered colormap showing gradients (`[0° to MAX_SLOPE°]`).
   3. **Roughness / Hazard Layer:** Terrain roughness proxy indicating potential rover/suit obstacles.
-  4. **USGS Regional 50 m DEM:** Broader regional context across Gale Crater.
-  5. **MSL RAD Surface Radiation:** Point and time-series context indicator at Curiosity's traverse location (`[RAD_DOSE_RATE] µGy/day` or `[STATUS]`).
+  4. **USGS Regional DEM (`USGS_GALE_MERGED_DEM`):** Broader regional context across the Gale Crater corridor (`[PRODUCT_ID]`).
+  5. **MSL RAD Surface Radiation (`MSL_RAD_SURFACE_RDR`):** Point and time-series context indicator at Curiosity's traverse location (`[RAD_MEASUREMENT]` or `[STATUS: UNAVAILABLE]`; specific product IDs and measurement units remain UNVERIFIED until WP-06).
 - **Narrator Audio:**
   *"MARSWALK integrates multiple independent data kinds: 1-meter topography and roughness derived from MRO HiRISE stereo pairs, regional context from USGS elevation models, and environmental radiation measurements from Curiosity's MSL RAD instrument. Notice that radiation is reported strictly as localized measured history—we never fabricate an artificial surface-wide raster."*
 
@@ -50,13 +50,13 @@ This exact disclosure statement must be included in the submission documentation
   *"Every point on the canvas provides full data provenance and scientific traceability. Operators can inspect slope, elevation, and terrain roughness with documented sensor lineage."*
 
 ### Scene 4: Traverse Planning & Parameter Setup (1:25 – 1:55)
-- **Visual:** Operator sets EVA parameters in the Planning Panel:
+- **Visual:** Operator sets EVA parameters in the Planning Panel (defaults from `SCIENCE_AND_SAFETY_SPEC.md` §6.2):
   - Start Location: Landing Hab site at `[START_LAT]°, [START_LON]°`
   - Science Destination: Boxwork ridge target at `[DEST_LAT]°, [DEST_LON]°`
-  - Maximum EVA Budget: `[e.g. 6.0 h]`
-  - Crew Walking Speed: `[2.7 km/h]` (Apollo walkback benchmark)
-  - Hard Slope Threshold: `[20°]` (per NASA EVA standards)
-  - Warning Slope Threshold: `[15°]`
+  - Maximum EVA Budget (`max_eva_hours`): `[6.0 h]` (ASSUMPTION [ALSJ])
+  - Crew Walking Speed (`base_speed_kmh`): `[2.7 km/h]` (REFERENCE [JONES-GAITS])
+  - Hard Slope Threshold (`max_slope_deg`): `[15°]` (REFERENCE [PENA2023])
+  - Warning Slope Threshold (`warning_slope_deg`): `[10°]` (REFERENCE [JONES1989])
 - **Action:** Operator clicks **Calculate Traverses**.
 
 ### Scene 5: Route Calculation & Multi-Profile Comparison (1:55 – 2:30)
@@ -65,13 +65,13 @@ This exact disclosure statement must be included in the submission documentation
   2. **Safe EVA Route (Primary):** Terrain-following least-cost path contouring around steep slopes (`[DIST_SAFE] km`, elevation gain `[ELEV_GAIN] m`, estimated time `[EST_TIME] h:mm`).
 - **Visual:** Elevation profile graph below map updates, showing grade profiles and warning zones.
 - **Narrator Audio:**
-  *"MARSWALK calculates routes using deterministic cost functions that penalize steep terrain. Here, the direct path violates our 20-degree hard slope limit across ridge faces. The planned EVA route negotiates the topography, keeping all segments below the hard constraint."*
+  *"MARSWALK calculates routes using deterministic cost functions that penalize steep terrain. Here, the direct path violates our 15-degree hard slope limit across ridge faces. The planned EVA route negotiates the topography, keeping all segments below the hard constraint."*
 
 ### Scene 6: Safety Panel & Constraint Verification (2:30 – 3:00)
 - **Visual:** Safety Panel displays the constraint checklist:
-  - **Hard Slope Limit (≤ 20°):** `[PASS — Max slope on route: SLOPE_MAX°]`
-  - **Warning Slope (≤ 15°):** `[PASS or WARNING — WARN_PCT% in warning zone]`
-  - **Roughness Warning (≤ 0.3 m):** `[PASS or UNAVAILABLE]`
+  - **Hard Slope Limit (≤ 15°, `max_slope_deg`):** `[PASS — Max slope on route: SLOPE_MAX°]`
+  - **Warning Slope (≤ 10°, `warning_slope_deg`):** `[PASS or WARNING — WARN_PCT% in warning zone]`
+  - **Roughness Warning (≤ 0.30 m, `roughness_warning_m`):** `[PASS or UNAVAILABLE]`
   - **Timeline Budget:** `[EST_TIME] h` / `[MAX_TIME] h` (`[TIME_REMAINING] h margin`)
   - **Walk-Back Envelope:** Walk-back return margin verified at all waypoints (`[MARGIN_MIN] min`).
   - **Radiation Context:** In-situ Curiosity environmental level: `[LEVEL]`.
@@ -88,7 +88,7 @@ This exact disclosure statement must be included in the submission documentation
 ### Scene 8: Optional P1 Features / Closing (3:30 – 4:00)
 - *(If implemented)*:
   - **Field View (WP-16):** Switch to high-contrast astronaut HUD view showing next waypoint bearing, distance, and slope ahead.
-  - **Rover Imagery (WP-15):** Preview nearest Curiosity ground-level Mastcam frames at waypoint `[WP_INDEX]`.
+  - **Rover Imagery (WP-15):** Preview nearest Curiosity ground-level Mastcam frames at waypoint `[WP_INDEX]` (Mastcam frames remain `UNVERIFIED — candidate only` in `DATA_SOURCES.md` §4.2).
   - **Automated Briefing (WP-17):** Deterministic natural language crew briefing summary.
 - **Narrator Audio:**
   *"MARSWALK demonstrates how planetary data pipelines, deterministic routing, and human EVA physiology models come together to safeguard future Martian explorers. Thank you."*

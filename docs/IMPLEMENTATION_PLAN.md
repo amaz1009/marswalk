@@ -175,7 +175,7 @@ To meet the condensed 39-hour window, work is parallelized into two concurrent s
 If development time runs short prior to or at the Hour 28 cut line, the following thin slices define the minimal functional implementations derived strictly from the existing WP-17, WP-18 (CRISM part), and WP-19 cards. No new scope or dataset IDs are introduced:
 
 1. **WP-18 (CRISM Spectral Mineralogy portion):**
-   - **Smallest functional thin-slice:** If a verified CRISM product is confirmed, integrate it strictly as a single qualitative overlay layer or bounding-box context indicator in the frontend layer switcher without multi-band parameter math.
+   - **Smallest functional thin-slice:** If a verified CRISM product is confirmed, integrate it strictly as a single qualitative overlay layer or bounding-box context indicator in the frontend layer switcher without multi-band parameter math (CRISM products remain `UNVERIFIED — candidate only` in `DATA_SOURCES.md` §4.2 until verified).
    - **What it does NOT include:** Does not include specialized MTRDR spectral parameter pipelines (`cat-pds`), ratio processing, or automated mineral classification. If not verified or if time does not permit, CRISM is completely omitted and the UI shows `CRISM mineralogy: not integrated / candidate only`.
    - **MSL RAD Exemption:** MSL RAD is the **Required third data kind (P1, must-have, cut-line-exempt)** and is **NOT** a thin-slice item. It must be implemented in full as a measured point/time-series context layer at Curiosity's location, or trigger the explicit shortfall disclosure.
 

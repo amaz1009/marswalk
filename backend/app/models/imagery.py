@@ -24,6 +24,4 @@ class SurfaceImage(BaseModel):
     image_url: str = Field(..., description="Relative API URL to retrieve image file")
     caption: str = Field(..., description="Descriptive image caption")
     source_url: str = Field(..., description="Archive source URL")
-    data_class: DataClass = Field(
-        default=DataClass.MEASURED, description="Scientific classification"
-    )
+    data_class: DataClass = Field(..., description="Scientific classification")

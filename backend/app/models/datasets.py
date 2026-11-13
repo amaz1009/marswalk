@@ -22,7 +22,7 @@ class ProcessingStep(BaseModel):
 
     step: str = Field(..., description="Pipeline stage identifier")
     tool: str = Field(..., description="Library and exact version")
-    parameters: dict[str, Any] = Field(default_factory=dict, description="Execution parameters")
+    parameters: dict[str, Any] = Field(..., description="Execution parameters")
     completed_at: datetime = Field(..., description="Timestamp of completion")
 
 
@@ -55,9 +55,7 @@ class DatasetRecord(BaseModel):
     )
     status: DatasetStatus = Field(..., description="Availability status")
     status_reason: str | None = Field(default=None, description="Reason if not AVAILABLE")
-    processing_steps: list[ProcessingStep] = Field(
-        default_factory=list, description="Processing history"
-    )
+    processing_steps: list[ProcessingStep] = Field(..., description="Processing history")
     processed_path: str | None = Field(default=None, description="Path relative to data directory")
     limitations: list[str] = Field(..., min_length=1, description="Known operational limitations")
     usage_note: str | None = Field(default=None, description="Licensing or usage guidelines")
@@ -114,6 +112,4 @@ class LayerInfo(BaseModel):
     features_url: str | None = Field(
         default=None, description="Relative URL to GeoJSON vector features"
     )
-    limitations: list[str] = Field(
-        default_factory=list, description="Layer caveats and limitations"
-    )
+    limitations: list[str] = Field(..., description="Layer caveats and limitations")

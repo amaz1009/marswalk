@@ -42,10 +42,8 @@ class AgentResult(BaseModel):
     status: AgentRunStatus = Field(..., description="Execution status")
     mode: Literal["deterministic", "llm"] = Field(..., description="Execution engine mode")
     summary: str = Field(..., description="Executive summary of agent findings")
-    findings: list[Finding] = Field(default_factory=list, description="Structured agent findings")
-    warnings: list[str] = Field(
-        default_factory=list, description="Operational warnings or safety concerns"
-    )
+    findings: list[Finding] = Field(..., description="Structured agent findings")
+    warnings: list[str] = Field(..., description="Operational warnings or safety concerns")
     duration_ms: int = Field(..., description="Execution time in milliseconds", ge=0)
 
 
@@ -53,14 +51,10 @@ class AgentSynthesis(BaseModel):
     """Integrated multi-agent consensus synthesis and mission guidance."""
 
     summary: str = Field(..., description="Executive synthesis across all agent domains")
-    recommendations: list[str] = Field(
-        default_factory=list, description="Actionable mission recommendations"
-    )
-    unresolved_issues: list[str] = Field(
-        default_factory=list, description="Identified conflicts or open questions"
-    )
+    recommendations: list[str] = Field(..., description="Actionable mission recommendations")
+    unresolved_issues: list[str] = Field(..., description="Identified conflicts or open questions")
     data_class: DataClass = Field(
-        default=DataClass.AI_INTERPRETATION,
+        ...,
         description="Scientific classification of synthesis",
     )
 

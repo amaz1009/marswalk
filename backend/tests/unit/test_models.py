@@ -20,22 +20,43 @@ from app.models import (
     DatasetStatus,
     DataType,
     EvaConfig,
+    EvaConfigOverride,
     EvidenceRef,
     Finding,
     GeoBounds,
     GeoPoint,
+    GridInfo,
+    HealthResponse,
     LayerKind,
     LlmMode,
     MissionReport,
     MissionState,
     PlanStatus,
+    Route,
     RouteObjective,
+    RoutePlanResponse,
+    RouteTotals,
+    SafetyAssessment,
+    SafetyCheck,
     SafetyCheckId,
     SiteWeights,
+    StatSummary,
     TemporalCoverage,
     TimelineKind,
     ValueStatus,
 )
+
+VALID_EVA_CONFIG = {
+    "base_speed_kmh": 2.7,
+    "max_slope_deg": 20.0,
+    "warning_slope_deg": 15.0,
+    "max_eva_hours": 6.0,
+    "return_reserve_fraction": 0.25,
+    "traverse_time_margin": 1.2,
+    "default_work_time_min": 15.0,
+    "max_distance_from_base_m": 5000.0,
+    "roughness_warning_m": 0.30,
+}
 
 
 def test_t_model_01_enum_values() -> None:
@@ -124,20 +145,24 @@ def test_t_model_01_geobounds_validation() -> None:
 
 def test_t_model_01_evaconfig_validation() -> None:
     """T-MODEL-01: EvaConfig enforces slope relationships and valid ranges."""
-    cfg = EvaConfig(base_speed_kmh=2.7, max_slope_deg=20.0, warning_slope_deg=15.0)
+    cfg = EvaConfig(**VALID_EVA_CONFIG)
     assert cfg.base_speed_kmh == 2.7
 
     # warning_slope_deg >= max_slope_deg rejected
     with pytest.raises(ValidationError):
-        EvaConfig(max_slope_deg=15.0, warning_slope_deg=15.0)
+        bad = dict(VALID_EVA_CONFIG, max_slope_deg=15.0, warning_slope_deg=15.0)
+        EvaConfig(**bad)
     with pytest.raises(ValidationError):
-        EvaConfig(max_slope_deg=15.0, warning_slope_deg=20.0)
+        bad = dict(VALID_EVA_CONFIG, max_slope_deg=15.0, warning_slope_deg=20.0)
+        EvaConfig(**bad)
 
     # Out of range speed
     with pytest.raises(ValidationError):
-        EvaConfig(base_speed_kmh=0.0)
+        bad = dict(VALID_EVA_CONFIG, base_speed_kmh=0.0)
+        EvaConfig(**bad)
     with pytest.raises(ValidationError):
-        EvaConfig(base_speed_kmh=6.1)
+        bad = dict(VALID_EVA_CONFIG, base_speed_kmh=6.1)
+        EvaConfig(**bad)
 
 
 def test_t_model_01_dataset_record_validation() -> None:
@@ -158,6 +183,7 @@ def test_t_model_01_dataset_record_validation() -> None:
         source_conventions="planetocentric",
         temporal_coverage=TemporalCoverage(description="Static"),
         status=DatasetStatus.AVAILABLE,
+        processing_steps=[],
         limitations=["Resolution limited to 1m"],
     )
     assert ds.dataset_id == "TEST_DTM"
@@ -179,6 +205,7 @@ def test_t_model_01_dataset_record_validation() -> None:
             source_conventions="planetocentric",
             temporal_coverage=TemporalCoverage(description="Static"),
             status=DatasetStatus.AVAILABLE,
+            processing_steps=[],
             limitations=[],
         )
 
@@ -199,6 +226,7 @@ def test_t_model_01_dataset_record_validation() -> None:
             source_conventions="planetocentric",
             temporal_coverage=TemporalCoverage(description="Static"),
             status=DatasetStatus.UNAVAILABLE,
+            processing_steps=[],
             limitations=["None"],
         )
 
@@ -236,13 +264,15 @@ def test_t_model_01_finding_evidence_validation() -> None:
 def test_t_model_01_mission_state_and_report_prefixes() -> None:
     """T-MODEL-01: Identifiers enforce msn_ and rpt_ prefixes."""
     now = datetime.now(timezone.utc)
+    valid_cfg = EvaConfig(**VALID_EVA_CONFIG)
     msn = MissionState(
         mission_id="msn_12345678",
         created_at=now,
         name="Test EVA",
         region_id="gale_mount_sharp",
         objective_text="Test geology",
-        eva_config=EvaConfig(),
+        stops=[],
+        eva_config=valid_cfg,
     )
     assert msn.mission_id == "msn_12345678"
 
@@ -253,7 +283,8 @@ def test_t_model_01_mission_state_and_report_prefixes() -> None:
             name="Test EVA",
             region_id="gale_mount_sharp",
             objective_text="Test geology",
-            eva_config=EvaConfig(),
+            stops=[],
+            eva_config=valid_cfg,
         )
 
     rpt = MissionReport(
@@ -262,6 +293,10 @@ def test_t_model_01_mission_state_and_report_prefixes() -> None:
         mission_id="msn_12345678",
         disclaimer="Prototype",
         sections=[],
+        datasets=[],
+        assumptions=[],
+        limitations=[],
+        unresolved_issues=[],
         markdown="# Report",
         engine_version="0.1.0",
     )
@@ -274,6 +309,10 @@ def test_t_model_01_mission_state_and_report_prefixes() -> None:
             mission_id="msn_12345678",
             disclaimer="Prototype",
             sections=[],
+            datasets=[],
+            assumptions=[],
+            limitations=[],
+            unresolved_issues=[],
             markdown="# Report",
             engine_version="0.1.0",
         )
@@ -295,6 +334,7 @@ def test_stubs_return_not_implemented_envelope(client: TestClient) -> None:
                 "region_id": "gale",
                 "base": {"lat": 0, "lon": 0},
                 "destination": {"lat": 0, "lon": 0},
+                "stops": [],
             },
         ),
         (
@@ -307,7 +347,8 @@ def test_stubs_return_not_implemented_envelope(client: TestClient) -> None:
                     "name": "n",
                     "region_id": "gale",
                     "objective_text": "obj",
-                    "eva_config": {},
+                    "stops": [],
+                    "eva_config": VALID_EVA_CONFIG,
                 }
             },
         ),
@@ -321,7 +362,8 @@ def test_stubs_return_not_implemented_envelope(client: TestClient) -> None:
                     "name": "n",
                     "region_id": "gale",
                     "objective_text": "obj",
-                    "eva_config": {},
+                    "stops": [],
+                    "eva_config": VALID_EVA_CONFIG,
                 }
             },
         ),
@@ -343,6 +385,136 @@ def test_stubs_return_not_implemented_envelope(client: TestClient) -> None:
         assert data["message"] == "Endpoint belongs to an unmerged work package"
         assert "request_id" in data
         assert data["request_id"].startswith("req_")
+
+
+def test_required_response_fields_validation_error() -> None:
+    """Missing list fields in response models must raise ValidationError."""
+    # HealthResponse without required status/counts
+    with pytest.raises(ValidationError):
+        HealthResponse(version="0.1.0", llm_mode=LlmMode.DISABLED)  # type: ignore[call-arg]
+
+    # SafetyCheck without evidence
+    with pytest.raises(ValidationError):
+        SafetyCheck(  # type: ignore[call-arg]
+            check_id=SafetyCheckId.SLOPE_MAX,
+            critical=True,
+            status=AssessmentStatus.PASS,
+            message="Check passed",
+        )
+
+    # Route without evidence/limitations
+    valid_cfg = EvaConfig(**VALID_EVA_CONFIG)
+    valid_check = SafetyCheck(
+        check_id=SafetyCheckId.SLOPE_MAX,
+        critical=True,
+        status=AssessmentStatus.PASS,
+        message="Check passed",
+        evidence=[EvidenceRef(source_type="engine", source_id="routing")],
+    )
+    valid_assessment = SafetyAssessment(
+        overall_status=AssessmentStatus.PASS,
+        checks=[valid_check] * 7,
+        context=[],
+        disclaimer="Prototype",
+    )
+    with pytest.raises(ValidationError):
+        Route(  # type: ignore[call-arg]
+            route_id="rt_1",
+            objective=RouteObjective.BALANCED,
+            legs=[],
+            path=[],
+            elevation_profile=[],
+            slope_stats=StatSummary(units="deg"),
+            roughness_stats=StatSummary(units="m"),
+            fraction_above_warning_slope=0.0,
+            max_distance_from_base_m=100.0,
+            timeline=[],
+            totals=RouteTotals(
+                horizontal_distance_m=100.0,
+                surface_distance_m=100.0,
+                walk_time_s=100.0,
+                margin_time_s=20.0,
+                work_time_s=0.0,
+                total_time_s=120.0,
+                time_available_s=3600.0,
+                reserve_required_s=600.0,
+                reserve_remaining_s=2880.0,
+            ),
+            safety=valid_assessment,
+            primary_coverage_fraction=1.0,
+        )
+
+    # RoutePlanResponse without routes, omitted_objectives, assumptions
+    with pytest.raises(ValidationError):
+        RoutePlanResponse(  # type: ignore[call-arg]
+            plan_id="pln_1",
+            region_id="gale",
+            plan_status=PlanStatus.OK,
+            eva_config=valid_cfg,
+            grid=GridInfo(analysis_crs="Mars2000", cell_size_m=1.0, rows=10, cols=10),
+            computed_at=datetime.now(timezone.utc),
+            engine_version="0.1.0",
+        )
+
+
+def test_evaconfig_and_override_behavior() -> None:
+    """EvaConfig requires 9 fields; EvaConfigOverride accepts empty/partial; slope validation."""
+    # EvaConfig requires all 9 fields
+    with pytest.raises(ValidationError):
+        EvaConfig()  # type: ignore[call-arg]
+
+    with pytest.raises(ValidationError):
+        EvaConfig(base_speed_kmh=2.7, max_slope_deg=20.0, warning_slope_deg=15.0)  # type: ignore[call-arg]
+
+    cfg = EvaConfig(**VALID_EVA_CONFIG)
+    assert cfg.base_speed_kmh == 2.7
+
+    # EvaConfigOverride accepts {} and partial input
+    ovr_empty = EvaConfigOverride()
+    assert ovr_empty.base_speed_kmh is None
+
+    ovr_partial = EvaConfigOverride(base_speed_kmh=3.0)
+    assert ovr_partial.base_speed_kmh == 3.0
+
+    # Both reject warning_slope_deg >= max_slope_deg
+    with pytest.raises(ValidationError):
+        bad = dict(VALID_EVA_CONFIG, max_slope_deg=15.0, warning_slope_deg=15.0)
+        EvaConfig(**bad)
+
+    with pytest.raises(ValidationError):
+        EvaConfigOverride(max_slope_deg=15.0, warning_slope_deg=15.0)
+
+    with pytest.raises(ValidationError):
+        EvaConfigOverride(max_slope_deg=15.0, warning_slope_deg=20.0)
+
+
+def test_openapi_required_fields_check() -> None:
+    """Verify OpenAPI required fields for RoutePlanResponse, EvaConfig, EvaConfigOverride."""
+    schema = app.openapi()
+    schemas = schema["components"]["schemas"]
+
+    # RoutePlanResponse.required contains 'routes', 'omitted_objectives', 'assumptions'
+    rp_req = set(schemas["RoutePlanResponse"]["required"])
+    assert {"routes", "omitted_objectives", "assumptions"}.issubset(rp_req)
+
+    # EvaConfig.required contains all nine field names
+    ec_req = set(schemas["EvaConfig"]["required"])
+    expected_nine = {
+        "base_speed_kmh",
+        "max_slope_deg",
+        "warning_slope_deg",
+        "max_eva_hours",
+        "return_reserve_fraction",
+        "traverse_time_margin",
+        "default_work_time_min",
+        "max_distance_from_base_m",
+        "roughness_warning_m",
+    }
+    assert ec_req == expected_nine
+
+    # EvaConfigOverride has no required fields (or required is absent / empty)
+    eco_req = schemas["EvaConfigOverride"].get("required", [])
+    assert len(eco_req) == 0
 
 
 def test_t_api_09_openapi_schema_drift() -> None:

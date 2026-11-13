@@ -19,6 +19,70 @@ from app.models.terrain import ContextIndicator, ProfilePoint
 class EvaConfig(BaseModel):
     """Operational parameters and physiological constraints for an EVA traverse."""
 
+    base_speed_kmh: float = Field(
+        ...,
+        description="Nominal walking speed on flat terrain (km/h)",
+        gt=0.0,
+        le=6.0,
+    )
+    max_slope_deg: float = Field(
+        ...,
+        description="Hard traversal slope limit in degrees",
+        gt=0.0,
+        le=30.0,
+    )
+    warning_slope_deg: float = Field(
+        ...,
+        description="Caution slope threshold in degrees",
+        gt=0.0,
+    )
+    max_eva_hours: float = Field(
+        ...,
+        description="Maximum permissible total EVA duration in hours",
+        gt=0.0,
+        le=10.0,
+    )
+    return_reserve_fraction: float = Field(
+        ...,
+        description="Fraction of EVA time reserved for contingency return",
+        ge=0.0,
+        le=0.9,
+    )
+    traverse_time_margin: float = Field(
+        ...,
+        description="Multiplicative safety margin applied to walking time",
+        ge=1.0,
+        le=3.0,
+    )
+    default_work_time_min: float = Field(
+        ...,
+        description="Default scientific work duration per stop in minutes",
+        ge=0.0,
+    )
+    max_distance_from_base_m: float = Field(
+        ...,
+        description="Maximum allowable straight-line radius from habitat in metres",
+        gt=0.0,
+    )
+    roughness_warning_m: float = Field(
+        ...,
+        description="Residual surface roughness warning limit in metres",
+        gt=0.0,
+    )
+
+    @model_validator(mode="after")
+    def validate_slope_relationship(self) -> "EvaConfig":
+        if self.warning_slope_deg >= self.max_slope_deg:
+            raise ValueError(
+                f"warning_slope_deg ({self.warning_slope_deg}) must be strictly less than "
+                f"max_slope_deg ({self.max_slope_deg})"
+            )
+        return self
+
+
+class EvaConfigOverride(BaseModel):
+    """Partial override parameters for an EVA traverse (request payload)."""
+
     base_speed_kmh: float | None = Field(
         default=None,
         description="Nominal walking speed on flat terrain (km/h)",
@@ -34,6 +98,7 @@ class EvaConfig(BaseModel):
     warning_slope_deg: float | None = Field(
         default=None,
         description="Caution slope threshold in degrees",
+        gt=0.0,
     )
     max_eva_hours: float | None = Field(
         default=None,
@@ -70,7 +135,7 @@ class EvaConfig(BaseModel):
     )
 
     @model_validator(mode="after")
-    def validate_slope_relationship(self) -> "EvaConfig":
+    def validate_slope_relationship(self) -> "EvaConfigOverride":
         if self.warning_slope_deg is not None and self.max_slope_deg is not None:
             if self.warning_slope_deg >= self.max_slope_deg:
                 raise ValueError(
@@ -104,7 +169,7 @@ class SafetyCheck(BaseModel):
     threshold: float | None = Field(default=None, description="Safety limit compared against")
     units: str | None = Field(default=None, description="Physical units")
     message: str = Field(..., description="Human-readable explanation of result")
-    evidence: list[EvidenceRef] = Field(default_factory=list, description="Supporting evidence")
+    evidence: list[EvidenceRef] = Field(..., description="Supporting evidence")
 
 
 class SafetyAssessment(BaseModel):
@@ -114,9 +179,7 @@ class SafetyAssessment(BaseModel):
     checks: list[SafetyCheck] = Field(
         ..., min_length=7, max_length=7, description="All 7 safety checks"
     )
-    context: list[ContextIndicator] = Field(
-        default_factory=list, description="Environmental context indicators"
-    )
+    context: list[ContextIndicator] = Field(..., description="Environmental context indicators")
     disclaimer: str = Field(..., description="Mandatory safety disclaimer text")
 
 
@@ -206,8 +269,8 @@ class Route(BaseModel):
         ge=0.0,
         le=1.0,
     )
-    evidence: list[EvidenceRef] = Field(default_factory=list, description="Supporting evidence")
-    limitations: list[str] = Field(default_factory=list, description="Route caveats")
+    evidence: list[EvidenceRef] = Field(..., description="Supporting evidence")
+    limitations: list[str] = Field(..., description="Route caveats")
 
 
 class GridInfo(BaseModel):
@@ -240,12 +303,12 @@ class RoutePlanRequest(BaseModel):
     base: GeoPoint = Field(..., description="Traverse base or habitat start location")
     destination: GeoPoint = Field(..., description="Primary turnaround or destination point")
     stops: list[Stop] = Field(
-        default_factory=list, max_length=8, description="Ordered intermediate science stops (0-8)"
+        ..., max_length=8, description="Ordered intermediate science stops (0-8)"
     )
     objectives: list[RouteObjective] | None = Field(
         default=None, description="Requested profiles; defaults to all three"
     )
-    eva_config: EvaConfig | None = Field(
+    eva_config: EvaConfigOverride | None = Field(
         default=None, description="Traverse configuration overrides"
     )
     return_to_base: bool = Field(
@@ -262,14 +325,10 @@ class RoutePlanResponse(BaseModel):
     blocking_reason: str | None = Field(
         default=None, description="Explanation when no feasible route is found"
     )
-    routes: list[Route] = Field(default_factory=list, description="Computed feasible routes")
-    omitted_objectives: list[OmittedObjective] = Field(
-        default_factory=list, description="Omitted profiles"
-    )
+    routes: list[Route] = Field(..., description="Computed feasible routes")
+    omitted_objectives: list[OmittedObjective] = Field(..., description="Omitted profiles")
     eva_config: EvaConfig = Field(..., description="Effective configuration used")
-    assumptions: list[AssumptionRecord] = Field(
-        default_factory=list, description="Assumptions applied"
-    )
+    assumptions: list[AssumptionRecord] = Field(..., description="Assumptions applied")
     grid: GridInfo = Field(..., description="Analysis grid metrics")
     computed_at: datetime = Field(..., description="Computation timestamp in UTC")
     engine_version: str = Field(..., description="Routing engine version")
@@ -280,7 +339,7 @@ class EnvelopeRequest(BaseModel):
 
     region_id: str = Field(..., description="Region identifier")
     base: GeoPoint = Field(..., description="Habitat base coordinate")
-    eva_config: EvaConfig | None = Field(
+    eva_config: EvaConfigOverride | None = Field(
         default=None, description="Optional configuration overrides"
     )
 
@@ -298,10 +357,6 @@ class EnvelopeResponse(BaseModel):
         ..., description="Maximum radial distance reachable from base in metres", ge=0.0
     )
     eva_config: EvaConfig = Field(..., description="Effective parameters used")
-    assumptions: list[AssumptionRecord] = Field(
-        default_factory=list, description="Parameter assumptions"
-    )
-    limitations: list[str] = Field(
-        default_factory=list, description="Envelope computation limitations"
-    )
+    assumptions: list[AssumptionRecord] = Field(..., description="Parameter assumptions")
+    limitations: list[str] = Field(..., description="Envelope computation limitations")
     computed_at: datetime = Field(..., description="Computation timestamp in UTC")

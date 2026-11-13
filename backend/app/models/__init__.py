@@ -36,6 +36,7 @@ from app.models.eva import (
     EnvelopeRequest,
     EnvelopeResponse,
     EvaConfig,
+    EvaConfigOverride,
     EvaDefaultsResponse,
     GridInfo,
     OmittedObjective,
@@ -133,6 +134,7 @@ __all__ = [
     "ProfileResponse",
     # EVA
     "EvaConfig",
+    "EvaConfigOverride",
     "Stop",
     "SafetyCheck",
     "SafetyAssessment",

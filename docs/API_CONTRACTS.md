@@ -263,8 +263,7 @@ field name means the field is optional (it may be omitted or `null`).
 
 ### 3.6 EVA, Routes and Safety
 
-**`EvaConfig`** (all fields optional in requests; missing fields take defaults from
-`GET /eva/defaults`; defaults and their sources are defined in
+**`EvaConfig`** (effective configuration in responses; all nine fields required; defaults and their sources are defined in
 `SCIENCE_AND_SAFETY_SPEC.md` §6.2)
 
 | Field | Type | Units | Rules |
@@ -278,6 +277,9 @@ field name means the field is optional (it may be omitted or `null`).
 | `default_work_time_min` | float | minutes | ≥ 0 |
 | `max_distance_from_base_m` | float | metres | > 0 |
 | `roughness_warning_m` | float | metres | > 0 |
+
+**`EvaConfigOverride`** (all fields optional in requests; missing fields take defaults from
+`GET /eva/defaults`; same ranges and slope validation as `EvaConfig`)
 
 **`Stop`**
 
@@ -496,7 +498,7 @@ Request `RoutePlanRequest`:
 | `destination` | GeoPoint | |
 | `stops` | list[Stop] | Ordered, 0–8 |
 | `objectives?` | list[RouteObjective] | Default: all three |
-| `eva_config?` | EvaConfig | Partial overrides |
+| `eva_config?` | EvaConfigOverride | Partial overrides |
 | `return_to_base?` | bool | Default `true` |
 
 Response `RoutePlanResponse`:
@@ -545,7 +547,7 @@ Errors: `INVALID_MISSION_STATE` (for example `selected_route_id` not in the plan
 
 ### 4.14 `POST /api/v1/eva/envelope` — P1
 
-Request `EnvelopeRequest`: `{region_id, base: GeoPoint, eva_config?: EvaConfig}`.
+Request `EnvelopeRequest`: `{region_id, base: GeoPoint, eva_config?: EvaConfigOverride}`.
 
 Response `EnvelopeResponse`:
 
@@ -599,7 +601,7 @@ Request `SiteEvaluationRequest`:
 | `region_id` | str | |
 | `candidates` | list[`{site_id: str, point: GeoPoint, radius_m: float}`] | 1–20 |
 | `weights?` | `SiteWeights` | `{terrain, human_safety, science, resources, accessibility}`; must sum to 1.0 ± 0.001 |
-| `eva_config?` | EvaConfig | |
+| `eva_config?` | EvaConfigOverride | |
 
 Response: `list[SiteEvaluation]`, ranked, with excluded candidates listed last.
 
@@ -779,3 +781,4 @@ status, status_reason?}`.
 | Version | Date | Change |
 |---------|------|--------|
 | 1.0 | 2026-11-11 | Initial contract set |
+| 1.1 | 2026-11-14 | Split EvaConfig into required response model and optional EvaConfigOverride request model (reason: ensure TypeScript types distinguish required response fields from optional request overrides) |

@@ -15,7 +15,7 @@ class ScienceTarget(BaseModel):
     point: GeoPoint = Field(..., description="Target coordinate")
     rationale: str = Field(..., description="Scientific motivation and justification")
     data_class: DataClass = Field(
-        default=DataClass.REFERENCE,
+        ...,
         description="Scientific data classification",
     )
     evidence: list[EvidenceRef] = Field(
@@ -62,8 +62,6 @@ class RegionDetail(RegionSummary):
     default_base_basis: str | None = Field(
         default=None, description="Rationale for default base location"
     )
-    science_targets: list[ScienceTarget] = Field(
-        default_factory=list, description="Designated targets"
-    )
-    layer_ids: list[str] = Field(default_factory=list, description="Available layer IDs")
+    science_targets: list[ScienceTarget] = Field(..., description="Designated targets")
+    layer_ids: list[str] = Field(..., description="Available layer IDs")
     data_status: RegionDataStatus = Field(..., description="Availability counts")

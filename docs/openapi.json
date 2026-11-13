@@ -133,6 +133,8 @@
           "status",
           "mode",
           "summary",
+          "findings",
+          "warnings",
           "duration_ms"
         ],
         "title": "AgentResult",
@@ -153,7 +155,6 @@
         "properties": {
           "data_class": {
             "$ref": "#/components/schemas/DataClass",
-            "default": "AI_INTERPRETATION",
             "description": "Scientific classification of synthesis"
           },
           "recommendations": {
@@ -179,7 +180,10 @@
           }
         },
         "required": [
-          "summary"
+          "summary",
+          "recommendations",
+          "unresolved_issues",
+          "data_class"
         ],
         "title": "AgentSynthesis",
         "type": "object"
@@ -384,6 +388,7 @@
           "status",
           "summary",
           "data_class",
+          "evidence",
           "limitations"
         ],
         "title": "ContextIndicator",
@@ -713,6 +718,7 @@
           "source_conventions",
           "temporal_coverage",
           "status",
+          "processing_steps",
           "limitations"
         ],
         "title": "DatasetRecord",
@@ -737,7 +743,7 @@
           "eva_config": {
             "anyOf": [
               {
-                "$ref": "#/components/schemas/EvaConfig"
+                "$ref": "#/components/schemas/EvaConfigOverride"
               },
               {
                 "type": "null"
@@ -821,6 +827,8 @@
           "reachable_area_km2",
           "max_reach_m",
           "eva_config",
+          "assumptions",
+          "limitations",
           "computed_at"
         ],
         "title": "EnvelopeResponse",
@@ -828,6 +836,83 @@
       },
       "EvaConfig": {
         "description": "Operational parameters and physiological constraints for an EVA traverse.",
+        "properties": {
+          "base_speed_kmh": {
+            "description": "Nominal walking speed on flat terrain (km/h)",
+            "exclusiveMinimum": 0.0,
+            "maximum": 6.0,
+            "title": "Base Speed Kmh",
+            "type": "number"
+          },
+          "default_work_time_min": {
+            "description": "Default scientific work duration per stop in minutes",
+            "minimum": 0.0,
+            "title": "Default Work Time Min",
+            "type": "number"
+          },
+          "max_distance_from_base_m": {
+            "description": "Maximum allowable straight-line radius from habitat in metres",
+            "exclusiveMinimum": 0.0,
+            "title": "Max Distance From Base M",
+            "type": "number"
+          },
+          "max_eva_hours": {
+            "description": "Maximum permissible total EVA duration in hours",
+            "exclusiveMinimum": 0.0,
+            "maximum": 10.0,
+            "title": "Max Eva Hours",
+            "type": "number"
+          },
+          "max_slope_deg": {
+            "description": "Hard traversal slope limit in degrees",
+            "exclusiveMinimum": 0.0,
+            "maximum": 30.0,
+            "title": "Max Slope Deg",
+            "type": "number"
+          },
+          "return_reserve_fraction": {
+            "description": "Fraction of EVA time reserved for contingency return",
+            "maximum": 0.9,
+            "minimum": 0.0,
+            "title": "Return Reserve Fraction",
+            "type": "number"
+          },
+          "roughness_warning_m": {
+            "description": "Residual surface roughness warning limit in metres",
+            "exclusiveMinimum": 0.0,
+            "title": "Roughness Warning M",
+            "type": "number"
+          },
+          "traverse_time_margin": {
+            "description": "Multiplicative safety margin applied to walking time",
+            "maximum": 3.0,
+            "minimum": 1.0,
+            "title": "Traverse Time Margin",
+            "type": "number"
+          },
+          "warning_slope_deg": {
+            "description": "Caution slope threshold in degrees",
+            "exclusiveMinimum": 0.0,
+            "title": "Warning Slope Deg",
+            "type": "number"
+          }
+        },
+        "required": [
+          "base_speed_kmh",
+          "max_slope_deg",
+          "warning_slope_deg",
+          "max_eva_hours",
+          "return_reserve_fraction",
+          "traverse_time_margin",
+          "default_work_time_min",
+          "max_distance_from_base_m",
+          "roughness_warning_m"
+        ],
+        "title": "EvaConfig",
+        "type": "object"
+      },
+      "EvaConfigOverride": {
+        "description": "Partial override parameters for an EVA traverse (request payload).",
         "properties": {
           "base_speed_kmh": {
             "anyOf": [
@@ -941,6 +1026,7 @@
           "warning_slope_deg": {
             "anyOf": [
               {
+                "exclusiveMinimum": 0.0,
                 "type": "number"
               },
               {
@@ -951,7 +1037,7 @@
             "title": "Warning Slope Deg"
           }
         },
-        "title": "EvaConfig",
+        "title": "EvaConfigOverride",
         "type": "object"
       },
       "EvaDefaultsResponse": {
@@ -1164,14 +1250,12 @@
         "description": "Health check response schema.",
         "properties": {
           "datasets_available": {
-            "default": 0,
             "description": "Count of online datasets",
             "minimum": 0.0,
             "title": "Datasets Available",
             "type": "integer"
           },
           "datasets_unavailable": {
-            "default": 0,
             "description": "Count of offline or unretrieved datasets",
             "minimum": 0.0,
             "title": "Datasets Unavailable",
@@ -1194,14 +1278,12 @@
             "title": "Llm Provider"
           },
           "regions_loaded": {
-            "default": 0,
             "description": "Number of loaded regions",
             "minimum": 0.0,
             "title": "Regions Loaded",
             "type": "integer"
           },
           "status": {
-            "default": "ok",
             "description": "Service status indicator",
             "title": "Status",
             "type": "string"
@@ -1213,8 +1295,12 @@
           }
         },
         "required": [
+          "status",
           "version",
-          "llm_mode"
+          "llm_mode",
+          "regions_loaded",
+          "datasets_available",
+          "datasets_unavailable"
         ],
         "title": "HealthResponse",
         "type": "object"
@@ -1342,7 +1428,8 @@
           "data_type",
           "status",
           "dataset_ids",
-          "data_class"
+          "data_class",
+          "limitations"
         ],
         "title": "LayerInfo",
         "type": "object"
@@ -1422,7 +1509,8 @@
         "required": [
           "layer_id",
           "status",
-          "data_class"
+          "data_class",
+          "dataset_ids"
         ],
         "title": "LayerValue",
         "type": "object"
@@ -1619,6 +1707,10 @@
           "mission_id",
           "disclaimer",
           "sections",
+          "datasets",
+          "assumptions",
+          "limitations",
+          "unresolved_issues",
           "markdown",
           "engine_version"
         ],
@@ -1766,6 +1858,7 @@
           "name",
           "region_id",
           "objective_text",
+          "stops",
           "eva_config"
         ],
         "title": "MissionState",
@@ -1844,7 +1937,10 @@
         "required": [
           "region_id",
           "point",
-          "data_confidence"
+          "values",
+          "data_confidence",
+          "context",
+          "limitations"
         ],
         "title": "PointInspection",
         "type": "object"
@@ -1878,6 +1974,7 @@
         "required": [
           "step",
           "tool",
+          "parameters",
           "completed_at"
         ],
         "title": "ProcessingStep",
@@ -2003,7 +2100,9 @@
         },
         "required": [
           "samples",
-          "total_horizontal_distance_m"
+          "total_horizontal_distance_m",
+          "evidence",
+          "limitations"
         ],
         "title": "ProfileResponse",
         "type": "object"
@@ -2113,6 +2212,8 @@
           "science_objective",
           "bounds",
           "analysis",
+          "science_targets",
+          "layer_ids",
           "data_status"
         ],
         "title": "RegionDetail",
@@ -2310,7 +2411,9 @@
           "timeline",
           "totals",
           "safety",
-          "primary_coverage_fraction"
+          "primary_coverage_fraction",
+          "evidence",
+          "limitations"
         ],
         "title": "Route",
         "type": "object"
@@ -2403,7 +2506,7 @@
           "eva_config": {
             "anyOf": [
               {
-                "$ref": "#/components/schemas/EvaConfig"
+                "$ref": "#/components/schemas/EvaConfigOverride"
               },
               {
                 "type": "null"
@@ -2450,7 +2553,8 @@
         "required": [
           "region_id",
           "base",
-          "destination"
+          "destination",
+          "stops"
         ],
         "title": "RoutePlanRequest",
         "type": "object"
@@ -2532,7 +2636,10 @@
           "plan_id",
           "region_id",
           "plan_status",
+          "routes",
+          "omitted_objectives",
           "eva_config",
+          "assumptions",
           "grid",
           "computed_at",
           "engine_version"
@@ -2645,6 +2752,7 @@
         "required": [
           "overall_status",
           "checks",
+          "context",
           "disclaimer"
         ],
         "title": "SafetyAssessment",
@@ -2720,7 +2828,8 @@
           "check_id",
           "critical",
           "status",
-          "message"
+          "message",
+          "evidence"
         ],
         "title": "SafetyCheck",
         "type": "object"
@@ -2755,7 +2864,6 @@
           },
           "data_class": {
             "$ref": "#/components/schemas/DataClass",
-            "default": "REFERENCE",
             "description": "Scientific data classification"
           },
           "evidence": {
@@ -2792,6 +2900,7 @@
           "name",
           "point",
           "rationale",
+          "data_class",
           "evidence"
         ],
         "title": "ScienceTarget",
@@ -2907,7 +3016,11 @@
           "site_id",
           "point",
           "excluded",
-          "criterion_scores"
+          "hard_constraint_violations",
+          "criterion_scores",
+          "evidence",
+          "uncertainties",
+          "limitations"
         ],
         "title": "SiteEvaluation",
         "type": "object"
@@ -2928,7 +3041,7 @@
           "eva_config": {
             "anyOf": [
               {
-                "$ref": "#/components/schemas/EvaConfig"
+                "$ref": "#/components/schemas/EvaConfigOverride"
               },
               {
                 "type": "null"
@@ -3139,7 +3252,6 @@
           },
           "data_class": {
             "$ref": "#/components/schemas/DataClass",
-            "default": "MEASURED",
             "description": "Scientific classification"
           },
           "dataset_id": {
@@ -3212,7 +3324,8 @@
           "distance_m",
           "image_url",
           "caption",
-          "source_url"
+          "source_url",
+          "data_class"
         ],
         "title": "SurfaceImage",
         "type": "object"

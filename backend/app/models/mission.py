@@ -22,7 +22,7 @@ class MissionState(BaseModel):
     objective_text: str = Field(..., description="Science objective statement")
     base: GeoPoint | None = Field(default=None, description="Habitat or landing base coordinate")
     destination: GeoPoint | None = Field(default=None, description="Primary destination coordinate")
-    stops: list[Stop] = Field(default_factory=list, description="Ordered scientific waypoints")
+    stops: list[Stop] = Field(..., description="Ordered scientific waypoints")
     eva_config: EvaConfig = Field(..., description="Active EVA configuration")
     plan: RoutePlanResponse | None = Field(default=None, description="Latest calculated route plan")
     selected_route_id: str | None = Field(
@@ -67,16 +67,10 @@ class MissionReport(BaseModel):
     mission_id: str = Field(..., description="Originating mission identifier")
     disclaimer: str = Field(..., description="Prototype safety disclaimer")
     sections: list[ReportSection] = Field(..., description="Ordered report chapters")
-    datasets: list[DatasetRecord] = Field(
-        default_factory=list, description="All contributing datasets"
-    )
-    assumptions: list[AssumptionRecord] = Field(
-        default_factory=list, description="Applied assumptions"
-    )
-    limitations: list[str] = Field(default_factory=list, description="Mission limitations")
-    unresolved_issues: list[str] = Field(
-        default_factory=list, description="Open issues and safety warnings"
-    )
+    datasets: list[DatasetRecord] = Field(..., description="All contributing datasets")
+    assumptions: list[AssumptionRecord] = Field(..., description="Applied assumptions")
+    limitations: list[str] = Field(..., description="Mission limitations")
+    unresolved_issues: list[str] = Field(..., description="Open issues and safety warnings")
     markdown: str = Field(..., description="Full concatenated markdown document")
     engine_version: str = Field(..., description="Generating engine version")
 

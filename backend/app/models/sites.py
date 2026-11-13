@@ -2,7 +2,7 @@
 
 from pydantic import BaseModel, Field, model_validator
 
-from app.models.eva import EvaConfig
+from app.models.eva import EvaConfigOverride
 from app.models.evidence import EvidenceRef
 from app.models.geometry import GeoPoint
 
@@ -66,9 +66,7 @@ class SiteEvaluation(BaseModel):
     site_id: str = Field(..., description="Candidate site identifier")
     point: GeoPoint = Field(..., description="Site coordinate")
     excluded: bool = Field(..., description="True if any hard safety constraint is violated")
-    hard_constraint_violations: list[str] = Field(
-        default_factory=list, description="Violated hard constraints"
-    )
+    hard_constraint_violations: list[str] = Field(..., description="Violated hard constraints")
     criterion_scores: CriterionScores = Field(
         ..., description="Breakdown of individual criteria scores"
     )
@@ -76,13 +74,9 @@ class SiteEvaluation(BaseModel):
         default=None, description="Overall weighted composite score (0-100)"
     )
     rank: int | None = Field(default=None, description="Overall rank order (1 is highest)", ge=1)
-    evidence: list[EvidenceRef] = Field(
-        default_factory=list, description="Supporting evidence references"
-    )
-    uncertainties: list[str] = Field(
-        default_factory=list, description="Missing or unevaluable criteria notes"
-    )
-    limitations: list[str] = Field(default_factory=list, description="Evaluation caveats")
+    evidence: list[EvidenceRef] = Field(..., description="Supporting evidence references")
+    uncertainties: list[str] = Field(..., description="Missing or unevaluable criteria notes")
+    limitations: list[str] = Field(..., description="Evaluation caveats")
 
 
 class SiteEvaluationRequest(BaseModel):
@@ -98,6 +92,6 @@ class SiteEvaluationRequest(BaseModel):
     weights: SiteWeights | None = Field(
         default=None, description="Custom criteria weights; defaults to balanced"
     )
-    eva_config: EvaConfig | None = Field(
+    eva_config: EvaConfigOverride | None = Field(
         default=None, description="Traverse configuration for reachability analysis"
     )

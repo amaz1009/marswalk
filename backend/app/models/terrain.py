@@ -21,7 +21,7 @@ class LayerValue(BaseModel):
     units: str | None = Field(default=None, description="Physical units")
     status: ValueStatus = Field(..., description="Sampling outcome status")
     data_class: DataClass = Field(..., description="Scientific classification")
-    dataset_ids: list[str] = Field(default_factory=list, description="Source dataset IDs")
+    dataset_ids: list[str] = Field(..., description="Source dataset IDs")
     native_resolution_m: float | None = Field(default=None, description="Native spatial resolution")
 
 
@@ -37,7 +37,7 @@ class ContextIndicator(BaseModel):
         default=None, description="Observation timeframe or diurnal sol phase"
     )
     data_class: DataClass = Field(..., description="Scientific classification")
-    evidence: list[EvidenceRef] = Field(default_factory=list, description="Supporting evidence")
+    evidence: list[EvidenceRef] = Field(..., description="Supporting evidence")
     limitations: list[str] = Field(..., min_length=1, description="Caveats and limitations")
 
 
@@ -46,10 +46,10 @@ class PointInspection(BaseModel):
 
     region_id: str = Field(..., description="Region identifier")
     point: GeoPoint = Field(..., description="Sampled point coordinate")
-    values: list[LayerValue] = Field(default_factory=list, description="Layer values")
+    values: list[LayerValue] = Field(..., description="Layer values")
     data_confidence: ConfidenceLevel = Field(..., description="Overall confidence level")
-    context: list[ContextIndicator] = Field(default_factory=list, description="Context indicators")
-    limitations: list[str] = Field(default_factory=list, description="Inspection caveats")
+    context: list[ContextIndicator] = Field(..., description="Context indicators")
+    limitations: list[str] = Field(..., description="Inspection caveats")
 
 
 class ProfilePoint(BaseModel):
@@ -87,9 +87,5 @@ class ProfileResponse(BaseModel):
     total_horizontal_distance_m: float = Field(
         ..., description="Total polyline horizontal length in metres", ge=0.0
     )
-    evidence: list[EvidenceRef] = Field(
-        default_factory=list, description="Contributing elevation datasets"
-    )
-    limitations: list[str] = Field(
-        default_factory=list, description="Resolution and interpolation limitations"
-    )
+    evidence: list[EvidenceRef] = Field(..., description="Contributing elevation datasets")
+    limitations: list[str] = Field(..., description="Resolution and interpolation limitations")

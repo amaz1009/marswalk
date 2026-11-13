@@ -24,13 +24,13 @@ Update this block after every step. It is what an interrupted session resumes fr
 
 ```text
 ACTIVE_WP: WP-05
-BRANCH: wp/WP-05e-demo-and-thin-slices
+BRANCH: develop
 STEP: demo-and-thin-slices
-LAST_COMPLETED: Refined O-2 to O-6 proposals to verified datasets/parameters only; cleaned DEMO_SCENARIO.md and thin slices
+LAST_COMPLETED: WP-05e merged into develop
 NEXT_ACTION: Awaiting owner code start authorisation for WP-01 (CODE_START_AUTHORISED is NO)
 BLOCKERS: none
 WAITING_FOR_OWNER: yes — WP-01 is a code WP while CODE_START_AUTHORISED is NO
-UPDATED: 2026-11-13T20:16+05:30
+UPDATED: 2026-11-13T21:56+05:30
 ```
 
 ---
@@ -55,7 +55,7 @@ UPDATED: 2026-11-13T20:16+05:30
 | ID | Title | Tier | Status | Branch | Tests (passed/failed/skipped) | Notes |
 |----|-------|------|--------|--------|-------------------------------|-------|
 | WP-00 | Repository bootstrap | — | MERGED | wp/WP-00-bootstrap | — | Owner task completed; rulesets owner-confirmed |
-| WP-05 | Data source selection | P0 | MERGED | wp/WP-05-data-sources | — | Shortlist, resources (WP-05b), details (WP-05c), event re-baseline (WP-05d), and demo scenario / thin slices (WP-05e) |
+| WP-05 | Data source selection | P0 | MERGED | wp/WP-05-data-sources | — | Shortlist, resources (WP-05b), details (WP-05c), event re-baseline (WP-05d), and demo/thin-slices (WP-05e) merged |
 | WP-01 | Backend skeleton | P0 | PENDING | wp/WP-01-backend-skeleton | — | Needs CODE_START_AUTHORISED |
 | WP-02 | Shared models and OpenAPI export | P0 | PENDING | wp/WP-02-shared-models | — | |
 | WP-03 | Coordinates and geodesy | P0 | PENDING | wp/WP-03-coordinates | — | |
@@ -151,5 +151,6 @@ Format: `timestamp | WP | step | action | tests (command → passed/failed/skipp
 2026-11-13T19:45+05:30 | WP-05 | rebaseline | Clarified execution policy (Default working policy; switch to Request Review for merges/downloads; Turbo prohibited) in docs | git/manual inspection → 0 issues; no code tests | a686def
 2026-11-13T19:50+05:30 | WP-05 | rebaseline | Merged wp/WP-05d-event-rebaseline into develop (status MERGED) | merge --no-ff verified; no code tests | ab44268
 2026-11-13T20:10+05:30 | WP-05 | demo-and-thin-slices | Risk register updated (R-01/03); thin-slice fallbacks defined; DEMO_SCENARIO.md created; O-2–O-6 proposals drafted | git/manual inspection → 0 issues; no code tests | 2131dc9
-2026-11-13T20:16+05:30 | WP-05 | demo-and-thin-slices | Refined O-2–O-6 proposals (verified datasets/parameters only) and cleaned DEMO_SCENARIO.md | git/manual inspection → 0 issues; no code tests | [WP-05]
+2026-11-13T20:16:30+05:30 | WP-05 | demo-and-thin-slices | Refined O-2–O-6 proposals (verified datasets/parameters only) and cleaned DEMO_SCENARIO.md | git/manual inspection → 0 issues; no code tests | 424c3aa
+2026-11-13T21:56:30+05:30 | WP-05 | demo-and-thin-slices | Merged wp/WP-05e-demo-and-thin-slices into develop (status MERGED) | merge --no-ff verified; no code tests | [WP-05]
 ```

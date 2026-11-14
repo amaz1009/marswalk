@@ -39,6 +39,7 @@ from app.engines.safety.context import (
 from app.models.enums import (
     AssessmentStatus,
     ContextStatus,
+    DataClass,
     SafetyCheckId,
 )
 from app.models.eva import SafetyCheck
@@ -115,16 +116,16 @@ def test_t_safe_03_return_reserve_warning_and_blocked() -> None:
     config = get_default_eva_config()
 
     # Pass: total_time 14000 s <= 14580 s
-    c_pass = evaluate_return_reserve(14000.0, config)
+    c_pass = evaluate_return_reserve(14000.0, config, return_to_base=True)
     assert c_pass.status == AssessmentStatus.PASS
     assert c_pass.critical is True
 
     # Warning: total_time 15000 s > 14580 s and <= 16200 s
-    c_warn = evaluate_return_reserve(15000.0, config)
+    c_warn = evaluate_return_reserve(15000.0, config, return_to_base=True)
     assert c_warn.status == AssessmentStatus.WARNING
 
     # Blocked: total_time 17000 s > 16200 s
-    c_block = evaluate_return_reserve(17000.0, config)
+    c_block = evaluate_return_reserve(17000.0, config, return_to_base=True)
     assert c_block.status == AssessmentStatus.BLOCKED
 
 
@@ -177,13 +178,13 @@ def test_boundary_return_reserve_strict_inequalities() -> None:
     """
     config = get_default_eva_config()
 
-    c_exact_warn = evaluate_return_reserve(14580.0, config)
+    c_exact_warn = evaluate_return_reserve(14580.0, config, return_to_base=True)
     assert c_exact_warn.status == AssessmentStatus.PASS
 
-    c_exact_thresh = evaluate_return_reserve(16200.0, config)
+    c_exact_thresh = evaluate_return_reserve(16200.0, config, return_to_base=True)
     assert c_exact_thresh.status == AssessmentStatus.WARNING
 
-    c_exceed_thresh = evaluate_return_reserve(16200.01, config)
+    c_exceed_thresh = evaluate_return_reserve(16200.01, config, return_to_base=True)
     assert c_exceed_thresh.status == AssessmentStatus.BLOCKED
 
 
@@ -197,10 +198,10 @@ def test_boundary_at_exact_time_available() -> None:
     """
     config = get_default_eva_config()
 
-    c_dur = evaluate_eva_duration(21600.0, config)
+    c_dur = evaluate_eva_duration(21600.0, config, return_to_base=True)
     assert c_dur.status == AssessmentStatus.PASS
 
-    c_res = evaluate_return_reserve(21600.0, config)
+    c_res = evaluate_return_reserve(21600.0, config, return_to_base=True)
     assert c_res.status == AssessmentStatus.BLOCKED
 
 
@@ -231,15 +232,35 @@ def test_unknown_terrain_data_coverage_when_nan_or_none() -> None:
 def test_unknown_eva_duration_when_nan_or_none() -> None:
     """Ruling 2: Missing or NaN total_time strictly returns UNKNOWN, never PASS."""
     config = get_default_eva_config()
-    assert evaluate_eva_duration(None, config).status == AssessmentStatus.UNKNOWN
-    assert evaluate_eva_duration(float("nan"), config).status == AssessmentStatus.UNKNOWN
+    assert (
+        evaluate_eva_duration(None, config, return_to_base=True).status == AssessmentStatus.UNKNOWN
+    )
+    assert (
+        evaluate_eva_duration(float("nan"), config, return_to_base=True).status
+        == AssessmentStatus.UNKNOWN
+    )
 
 
 def test_unknown_return_reserve_when_nan_or_none() -> None:
     """Ruling 2: Missing or NaN return reserve duration strictly returns UNKNOWN, never PASS."""
     config = get_default_eva_config()
-    assert evaluate_return_reserve(None, config).status == AssessmentStatus.UNKNOWN
-    assert evaluate_return_reserve(float("nan"), config).status == AssessmentStatus.UNKNOWN
+    assert (
+        evaluate_return_reserve(None, config, return_to_base=True).status
+        == AssessmentStatus.UNKNOWN
+    )
+    assert (
+        evaluate_return_reserve(float("nan"), config, return_to_base=True).status
+        == AssessmentStatus.UNKNOWN
+    )
+
+
+def test_omitting_return_to_base_raises_type_error() -> None:
+    """Omitting required return_to_base parameter must raise TypeError."""
+    config = get_default_eva_config()
+    with pytest.raises(TypeError):
+        evaluate_eva_duration(10000.0, config)  # type: ignore[call-arg]
+    with pytest.raises(TypeError):
+        evaluate_return_reserve(10000.0, config)  # type: ignore[call-arg]
 
 
 def test_return_to_base_false_hand_derived_three_cases() -> None:
@@ -510,11 +531,16 @@ def test_context_indicators_unavailability_reasons() -> None:
     assert rad_indicator.status == ContextStatus.UNAVAILABLE
     assert rad_indicator.value is None
     assert "UNAVAILABLE in local region catalog" in rad_indicator.summary
+    assert rad_indicator.data_class == DataClass.MEASURED
+    assert rad_indicator.evidence[0].source_id == "MSL_RAD_SURFACE_RDR"
 
     therm_indicator = build_thermal_context_indicator()
     assert therm_indicator.status == ContextStatus.UNAVAILABLE
     assert therm_indicator.value is None
     assert "UNAVAILABLE in Scope A" in therm_indicator.summary
+    assert "no local thermal dataset is catalogued" in therm_indicator.summary
+    assert therm_indicator.data_class == DataClass.MEASURED
+    assert therm_indicator.evidence[0].source_id == "THEMIS_DAY_IR_GLOBAL"
 
 
 def test_safety_disclaimer_verbatim_match() -> None:
@@ -603,12 +629,12 @@ def test_safety_disclaimer_verbatim_match() -> None:
         ),
         (
             lambda st, cfg: (
-                evaluate_eva_duration(None, cfg)
+                evaluate_eva_duration(None, cfg, return_to_base=True)
                 if st == AssessmentStatus.UNKNOWN
                 else (
-                    evaluate_eva_duration(10000.0, cfg)
+                    evaluate_eva_duration(10000.0, cfg, return_to_base=True)
                     if st == AssessmentStatus.PASS
-                    else evaluate_eva_duration(25000.0, cfg)
+                    else evaluate_eva_duration(25000.0, cfg, return_to_base=True)
                 )
             ),
             [
@@ -619,15 +645,15 @@ def test_safety_disclaimer_verbatim_match() -> None:
         ),
         (
             lambda st, cfg: (
-                evaluate_return_reserve(None, cfg)
+                evaluate_return_reserve(None, cfg, return_to_base=True)
                 if st == AssessmentStatus.UNKNOWN
                 else (
-                    evaluate_return_reserve(10000.0, cfg)
+                    evaluate_return_reserve(10000.0, cfg, return_to_base=True)
                     if st == AssessmentStatus.PASS
                     else (
-                        evaluate_return_reserve(15000.0, cfg)
+                        evaluate_return_reserve(15000.0, cfg, return_to_base=True)
                         if st == AssessmentStatus.WARNING
-                        else evaluate_return_reserve(18000.0, cfg)
+                        else evaluate_return_reserve(18000.0, cfg, return_to_base=True)
                     )
                 )
             ),

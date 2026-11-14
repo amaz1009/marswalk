@@ -73,7 +73,7 @@ def build_radiation_context_indicator(
         value=None,
         units=None,
         period=None,
-        data_class=DataClass.DERIVED,
+        data_class=DataClass.MEASURED,
         evidence=evidence,
         limitations=limitations,
     )
@@ -83,33 +83,43 @@ def build_thermal_context_indicator() -> ContextIndicator:
     """Build THERMAL_CONTEXT indicator from THEMIS IR surface temperature (Spec section 9.3).
 
     Note:
-        In Scope A, THEMIS thermal IR data is UNAVAILABLE in the local catalog.
-        The indicator honestly reports UNAVAILABLE per spec section 9.3.
+        In Scope A, THEMIS Daytime Infrared Global Mosaic (THEMIS_DAY_IR_GLOBAL) is
+        UNAVAILABLE (not selected for download in scope A core), and no local thermal
+        dataset is catalogued for this region. The indicator honestly reports UNAVAILABLE
+        per spec section 9.3 and dataset_catalog.json.
     """
     evidence = [
         EvidenceRef(
             source_type="dataset",
-            source_id="THEMIS_IR_GALE",
-            detail="THEMIS infrared thermal observations (spec section 9.3)",
+            source_id="THEMIS_DAY_IR_GLOBAL",
+            detail=(
+                "THEMIS Daytime Infrared Global Mosaic v12 "
+                "(spec section 9.3, dataset_catalog.json line 361)"
+            ),
         )
     ]
 
     limitations = [
         "Brightness temperature is not air temperature or astronaut suit boundary temperature.",
         "Single local-time observation does not represent diurnal thermal extrema.",
+        (
+            "Global mosaic not downloaded in Scope A core; "
+            "no local thermal dataset catalogued for region."
+        ),
     ]
 
     return ContextIndicator(
         indicator_id=ContextIndicatorId.THERMAL_CONTEXT,
         status=ContextStatus.UNAVAILABLE,
         summary=(
-            "THEMIS IR surface temperature data is UNAVAILABLE in Scope A. "
+            "THEMIS daytime infrared mosaic (THEMIS_DAY_IR_GLOBAL) is UNAVAILABLE in Scope A "
+            "and no local thermal dataset is catalogued for this region. "
             "Diurnal surface temperature context is not evaluated for this traverse."
         ),
         value=None,
         units=None,
         period=None,
-        data_class=DataClass.DERIVED,
+        data_class=DataClass.MEASURED,
         evidence=evidence,
         limitations=limitations,
     )

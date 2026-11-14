@@ -290,7 +290,7 @@ def evaluate_terrain_data_coverage(
 def evaluate_eva_duration(
     total_time_s: float | None,
     config: EvaConfig,
-    return_to_base: bool = True,
+    return_to_base: bool,
 ) -> SafetyCheck:
     """Evaluate EVA_DURATION check against total permissible hours (Spec section 9.1).
 
@@ -374,7 +374,7 @@ def evaluate_eva_duration(
 def evaluate_return_reserve(
     total_time_s: float | None,
     config: EvaConfig,
-    return_to_base: bool = True,
+    return_to_base: bool,
 ) -> SafetyCheck:
     """Evaluate RETURN_RESERVE contingency margin check (Spec section 9.1).
 

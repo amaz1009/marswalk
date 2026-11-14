@@ -58,23 +58,105 @@
         "colormap": "terrain",
         "units": "m"
       }
+    },
+    {
+      "layer_id": "slope",
+      "name": "Terrain Slope",
+      "kind": "RASTER",
+      "data_type": "DERIVED",
+      "dataset_ids": [
+        "HIRISE_DTM_GALE_MOUND"
+      ],
+      "render": {
+        "colormap": "magma",
+        "units": "deg"
+      }
+    },
+    {
+      "layer_id": "roughness",
+      "name": "Residual RMS Roughness",
+      "kind": "RASTER",
+      "data_type": "DERIVED",
+      "dataset_ids": [
+        "HIRISE_DTM_GALE_MOUND"
+      ],
+      "render": {
+        "colormap": "plasma",
+        "units": "m"
+      }
+    },
+    {
+      "layer_id": "hazard_grid",
+      "name": "Hazard Classification Grid",
+      "kind": "RASTER",
+      "data_type": "DERIVED",
+      "dataset_ids": [
+        "HIRISE_DTM_GALE_MOUND"
+      ],
+      "render": {
+        "colormap": "categorical"
+      }
+    },
+    {
+      "layer_id": "hazard_near",
+      "name": "NEAR_HAZARD Buffer Flag",
+      "kind": "RASTER",
+      "data_type": "DERIVED",
+      "dataset_ids": [
+        "HIRISE_DTM_GALE_MOUND"
+      ],
+      "render": {
+        "colormap": "categorical"
+      }
+    },
+    {
+      "layer_id": "hillshade",
+      "name": "Shaded Relief",
+      "kind": "RASTER",
+      "data_type": "DERIVED",
+      "dataset_ids": [
+        "HIRISE_DTM_GALE_MOUND"
+      ],
+      "render": {
+        "colormap": "gray"
+      }
+    },
+    {
+      "layer_id": "confidence",
+      "name": "Data Confidence Level",
+      "kind": "RASTER",
+      "data_type": "DERIVED",
+      "dataset_ids": [
+        "HIRISE_DTM_GALE_MOUND",
+        "HIRISE_ORTHO_GALE_MOUND"
+      ],
+      "render": {
+        "colormap": "categorical"
+      }
+    },
+    {
+      "layer_id": "science_targets",
+      "name": "Designated Science Targets",
+      "kind": "VECTOR",
+      "data_type": "GEOLOGY",
+      "dataset_ids": []
     }
   ],
   "science_targets": [
     {
-      "target_id": "BOXWORK_RIDGE_01",
-      "name": "Mount Sharp Boxwork Ridge",
+      "target_id": "TARGET_01",
+      "name": "Candidate Exploration Target 1",
       "point": {
         "lat": -4.780,
         "lon": 137.300
       },
-      "rationale": "Prominent boxwork fracture network ridge indicating paleohydrological mineral precipitation.",
-      "data_class": "MEASURED",
+      "rationale": "Demonstration exploration target within DTM coverage area; location and geological unit are unverified assumptions.",
+      "data_class": "ASSUMPTION",
       "evidence": [
         {
-          "dataset_id": "HIRISE_DTM_GALE_MOUND",
-          "data_class": "MEASURED",
-          "citation": "McEwen et al. (2007) / PDS HiRISE"
+          "source_type": "assumption",
+          "source_id": "DEMO_WAYPOINT",
+          "detail": "Demonstration waypoint placeholder; coordinates and geological unit are not verified by any cited source"
         }
       ]
     }

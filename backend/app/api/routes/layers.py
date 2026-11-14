@@ -1,11 +1,11 @@
-"""Layer visualization endpoints stub implementing docs/API_CONTRACTS.md §4.6-§4.8 (P0, WP-08)."""
+"""Layer visualization endpoints implementing docs/API_CONTRACTS.md section 4.6-4.8 (P0, WP-08)."""
 
 from typing import Any
 
 from fastapi import APIRouter, Query, Response
 
-from app.core.errors import AppException
 from app.models import LayerInfo
+from app.services import layer_service
 
 router = APIRouter(prefix="/layers", tags=["Layers"])
 
@@ -19,11 +19,7 @@ router = APIRouter(prefix="/layers", tags=["Layers"])
 async def list_layers(
     region_id: str | None = Query(default=None, description="Region identifier"),
 ) -> list[LayerInfo]:
-    raise AppException(
-        error_code="NOT_IMPLEMENTED",
-        message="Endpoint belongs to an unmerged work package",
-        status_code=501,
-    )
+    return layer_service.list_layers(region_id=region_id)
 
 
 @router.get(
@@ -41,11 +37,8 @@ async def get_layer_image(
     layer_id: str,
     region_id: str | None = Query(default=None, description="Region identifier"),
 ) -> Response:
-    raise AppException(
-        error_code="NOT_IMPLEMENTED",
-        message="Endpoint belongs to an unmerged work package",
-        status_code=501,
-    )
+    png_bytes = layer_service.render_layer_png(layer_id=layer_id, region_id=region_id)
+    return Response(content=png_bytes, media_type="image/png")
 
 
 @router.get(
@@ -63,8 +56,4 @@ async def get_layer_features(
     layer_id: str,
     region_id: str | None = Query(default=None, description="Region identifier"),
 ) -> dict[str, Any]:
-    raise AppException(
-        error_code="NOT_IMPLEMENTED",
-        message="Endpoint belongs to an unmerged work package",
-        status_code=501,
-    )
+    return layer_service.get_layer_features(layer_id=layer_id, region_id=region_id)

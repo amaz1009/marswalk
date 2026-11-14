@@ -1,9 +1,9 @@
-"""Terrain sampling endpoints stub implementing docs/API_CONTRACTS.md §4.9-§4.10 (P0, WP-08)."""
+"""Terrain sampling endpoints implementing docs/API_CONTRACTS.md section 4.9-4.10 (P0, WP-08)."""
 
 from fastapi import APIRouter, Query
 
-from app.core.errors import AppException
 from app.models import PointInspection, ProfileRequest, ProfileResponse
+from app.services import terrain_service
 
 router = APIRouter(prefix="/terrain", tags=["Terrain"])
 
@@ -21,11 +21,7 @@ async def inspect_point(
     ),
     lon: float = Query(..., description="Longitude in east-positive degrees [0, 360)"),
 ) -> PointInspection:
-    raise AppException(
-        error_code="NOT_IMPLEMENTED",
-        message="Endpoint belongs to an unmerged work package",
-        status_code=501,
-    )
+    return terrain_service.inspect_point(region_id=region_id, lat=lat, lon=lon)
 
 
 @router.post(
@@ -35,8 +31,4 @@ async def inspect_point(
     description="Samples elevation and slope along an ordered polyline path.",
 )
 async def compute_profile(request: ProfileRequest) -> ProfileResponse:
-    raise AppException(
-        error_code="NOT_IMPLEMENTED",
-        message="Endpoint belongs to an unmerged work package",
-        status_code=501,
-    )
+    return terrain_service.compute_profile(request)

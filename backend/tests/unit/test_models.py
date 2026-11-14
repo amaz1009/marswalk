@@ -60,7 +60,7 @@ VALID_EVA_CONFIG = {
 
 
 def test_t_model_01_enum_values() -> None:
-    """T-MODEL-01: Enum values match docs/API_CONTRACTS.md §2 exactly."""
+    """T-MODEL-01: Enum values match docs/API_CONTRACTS.md section 2 exactly."""
     assert [e.value for e in AssessmentStatus] == ["PASS", "WARNING", "BLOCKED", "UNKNOWN"]
     assert [e.value for e in DataClass] == [
         "MEASURED",
@@ -320,12 +320,8 @@ def test_t_model_01_mission_state_and_report_prefixes() -> None:
 
 def test_stubs_return_not_implemented_envelope(client: TestClient) -> None:
     """Verify stub endpoints return 501 NOT_IMPLEMENTED with standard error envelope."""
-    # Test a representative set of stub endpoints
+    # Test remaining stub endpoints (regions, datasets, layers, terrain implemented in WP-08)
     stub_calls = [
-        ("GET", "/api/v1/regions"),
-        ("GET", "/api/v1/regions/gale_mount_sharp"),
-        ("GET", "/api/v1/datasets"),
-        ("GET", "/api/v1/layers"),
         ("GET", "/api/v1/eva/defaults"),
         (
             "POST",

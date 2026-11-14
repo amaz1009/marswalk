@@ -1,0 +1,85 @@
+{
+  "region_id": "gale_mount_sharp",
+  "name": "Gale Crater / Mount Sharp",
+  "description": "Gale Crater exploration corridor focusing on Aeolis Mons (Mount Sharp) lower layered mound and boxwork structures.",
+  "science_objective": "Investigate ancient groundwater networks and boxwork mineral ridges formed in fractured bedrock.",
+  "bounds": {
+    "lat_min": -5.099,
+    "lat_max": -4.130,
+    "lon_min": 137.124,
+    "lon_max": 137.681
+  },
+  "analysis": {
+    "primary_dtm_dataset_id": "HIRISE_DTM_GALE_MOUND",
+    "analysis_crs": "+proj=eqc +lat_ts=-4.8 +lon_0=137.3 +x_0=0 +y_0=0 +R=3396190 +units=m +no_defs",
+    "cell_size_m": 1.0,
+    "max_grid_cells": 4000000
+  },
+  "default_base": {
+    "lat": -4.750,
+    "lon": 137.280
+  },
+  "default_base_basis": "Smooth local terrain with verified HiRISE DTM and ortho coverage",
+  "layers": [
+    {
+      "layer_id": "elevation",
+      "name": "Surface Elevation",
+      "kind": "RASTER",
+      "data_type": "ELEVATION",
+      "dataset_ids": [
+        "HIRISE_DTM_GALE_MOUND"
+      ],
+      "render": {
+        "colormap": "terrain",
+        "units": "m"
+      }
+    },
+    {
+      "layer_id": "ortho",
+      "name": "HiRISE Optical Basemap",
+      "kind": "RASTER",
+      "data_type": "OPTICAL",
+      "dataset_ids": [
+        "HIRISE_ORTHO_GALE_MOUND"
+      ],
+      "render": {
+        "colormap": "gray"
+      }
+    },
+    {
+      "layer_id": "mola_elevation",
+      "name": "Regional MOLA Elevation",
+      "kind": "RASTER",
+      "data_type": "ELEVATION",
+      "dataset_ids": [
+        "MOLA_MEGDR_GALE"
+      ],
+      "render": {
+        "colormap": "terrain",
+        "units": "m"
+      }
+    }
+  ],
+  "science_targets": [
+    {
+      "target_id": "BOXWORK_RIDGE_01",
+      "name": "Mount Sharp Boxwork Ridge",
+      "point": {
+        "lat": -4.780,
+        "lon": 137.300
+      },
+      "rationale": "Prominent boxwork fracture network ridge indicating paleohydrological mineral precipitation.",
+      "data_class": "MEASURED",
+      "evidence": [
+        {
+          "dataset_id": "HIRISE_DTM_GALE_MOUND",
+          "data_class": "MEASURED",
+          "citation": "McEwen et al. (2007) / PDS HiRISE"
+        }
+      ]
+    }
+  ],
+  "context_sources": {
+    "radiation": "MSL_RAD_SURFACE_RDR"
+  }
+}

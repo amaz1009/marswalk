@@ -13,7 +13,7 @@ Only the owner changes these values.
 CODE_START_AUTHORISED: YES        # YES once the owner confirms the event allows code before/at this time
 REVIEW_MODE: milestone           # milestone = agent merges WPs into develop; owner approves develop → main
                                  # per-wp    = agent opens a PR for every WP into develop and waits
-DOWNLOAD_APPROVED: NO            # YES once the owner approves the data download size (WP-06 step 2)
+DOWNLOAD_APPROVED: YES            # YES once the owner approves the data download size (WP-06 step 2)
 ```
 
 ---
@@ -23,14 +23,14 @@ DOWNLOAD_APPROVED: NO            # YES once the owner approves the data download
 Update this block after every step. It is what an interrupted session resumes from.
 
 ```text
-ACTIVE_WP: none
-BRANCH: develop
-STEP: —
-LAST_COMPLETED: Merged wp/WP-04-frontend-skeleton into develop (status MERGED)
-NEXT_ACTION: Awaiting owner direction for next work package
+ACTIVE_WP: WP-06
+BRANCH: wp/WP-06-data-pipeline
+STEP: 5 of 5
+LAST_COMPLETED: WP-06 Fix Round 6 (fixed KeyError 'bounds', caller error handling, result shapes, synthetic regression tests)
+NEXT_ACTION: Awaiting owner review and merge of WP-06
 BLOCKERS: none
-WAITING_FOR_OWNER: yes — WP-04 merged; awaiting owner direction
-UPDATED: 2026-11-14T03:30+05:30
+WAITING_FOR_OWNER: yes - WP-06 in review; awaiting owner review and merge
+UPDATED: 2026-11-14T08:55+05:30
 ```
 
 ---
@@ -60,7 +60,7 @@ UPDATED: 2026-11-14T03:30+05:30
 | WP-02 | Shared models and OpenAPI export | P0 | MERGED | wp/WP-02-shared-models | 18 passed, 0 failed, 0 skipped | All contracts and stubs implemented; openapi.json generated |
 | WP-03 | Coordinates and geodesy | P0 | MERGED | wp/WP-03-coordinates | 28 passed, 0 failed in the full backend suite (owner-run, not agent-run) | Mars coordinate conversions, IAU 2000 geodesy, and projection transformer |
 | WP-04 | Frontend skeleton and dev scripts | P0 | MERGED | wp/WP-04-frontend-skeleton | owner-run: typecheck exit 0, build exit 0, vitest 14 passed (3 files), scripts/test.ps1 exit 0 (backend pytest 28 passed) | (1) owner exception: backend/pyproject.toml package discovery fix; (2) package.json versions from memory, npm audit 6 dev vulnerabilities accepted; (3) owner-committed due to sandbox .git lock |
-| WP-06 | Data download and processing pipeline | P0 | PENDING | wp/WP-06-data-pipeline | — | Needs DOWNLOAD_APPROVED |
+| WP-06 | Data download and processing pipeline | P0 | IN REVIEW | wp/WP-06-data-pipeline | pending owner-run after Fix Round 6 | Core datasets downloaded and processed; limitations audited; awaiting merge |
 | WP-07 | Terrain and hazard engines | P0 | PENDING | wp/WP-07-terrain-engine | — | |
 | WP-08 | Region, dataset, layer and terrain APIs | P0 | PENDING | wp/WP-08-layer-api | — | |
 | WP-09 | Frontend map, layers and inspector | P0 | PENDING | wp/WP-09-frontend-map | — | Milestone M1 |
@@ -100,8 +100,8 @@ UPDATED: 2026-11-14T03:30+05:30
 | O-2 | Select HiRISE and CTX DTM products for the boxwork area | OPEN | |
 | O-3 | Review `roughness_warning_m` and other EVA defaults against region data | OPEN | |
 | O-4 | Confirm the event rule on writing code before 2026-11-14 | OPEN | Owner |
-| O-5 | Confirm an MSL RAD product for site-level context | OPEN | |
-| O-6 | Verify chosen PDS formats open with rasterio's bundled GDAL on Windows | OPEN | |
+| O-5 | Confirm an MSL RAD product for site-level context | OPEN | PDS PPI Node collection URL verified in data_sources.json; sol tables unverified, deferred to WP-18 |
+| O-6 | Verify chosen PDS formats open with rasterio's bundled GDAL on Windows | RESOLVED | HiRISE DTM (driver PDS), HiRISE ortho (driver JP2OpenJPEG), and MOLA (driver PDS on label) verified in WP-06 |
 
 ---
 
@@ -165,4 +165,6 @@ Format: `timestamp | WP | step | action | tests (command → passed/failed/skipp
 2026-11-14T02:35+05:30 | WP-03 | 4 of 4 | At commit e81eef2 owner-run pytest gave 27 passed, 1 failed (T-COORD-08, non-existent pyproj attribute); fixed in this commit; pyproj pinned to 3.8.0; pytest for this commit owner-run pending | cd backend; ruff check . ..\scripts → passed; ruff format --check → 2 files passed | [WP-03]
 2026-11-14T02:40+05:30 | WP-03 | 4 of 4 | Merged wp/WP-03-coordinates into develop (status MERGED) | merge --no-ff verified; owner-run full backend suite on c195f4c: 28 passed, 0 failed | 4113489
 2026-11-14T03:30+05:30 | WP-04 | 6 of 6 | Merged wp/WP-04-frontend-skeleton into develop (status MERGED); frontend skeleton, apiClient, store, Mars map shell, dev scripts, and unit tests | owner-run: typecheck exit 0, build exit 0, vitest 14 passed (3 files), scripts\test.ps1 exit 0 (backend pytest 28 passed); dev proxy /api/v1/health returned ok / DISABLED via port 5173 | c49b3ff
+2026-11-14T08:30+05:30 | WP-06 | 5 of 5 | WP-06 Fix Round 5 completed: limitations text audit and unverified claim cleanup; owner-run facts recorded: exact download sizes 360402944 / 33256997 / 129761280 bytes, MOLA label 4820 bytes; SHA-256 in source_ledger.json; GDAL PDS driver for DTM, sphere radius 3396190, nodata -3.4028226550889045e+38, 24.6% NaN (75.4% valid), elevation range -4485.57..-2977.08 m; DTM footprint lat [-4.948820, -4.720525], lon [137.238928, 137.353903], boxwork containment UNKNOWN; MOLA opened via label (driver PDS), radius 3396000 via named-sphere registry (Amendment A-1), georeference caveat, MOLA vs DTM median cross-check (-3887 m vs -3974 m); UNAVAILABLE reasons documented in catalog and data_sources; R-02 satisfied; O-5 pointer fixed; sha256 extension; openapi.json cosmetic status verified (byte-identical blob); T-DATA-15 synthetic test added | owner-run backend suite: 42 passed, 0 failed, ruff clean | [WP-06]
+2026-11-14T08:55+05:30 | WP-06 | 5 of 5 | Correction: previous WP-06 Round 5 log line overstated the state (pipeline crashed on real data after Round 5; the 42 passed figure predates T-DATA-15; corrected owner-run results will be recorded at merge); fixed process_single_raster bounds return and caller error handling with explicit result shapes; added synthetic regression tests T-DATA-16 and T-DATA-17 | cd backend; pytest tests/unit/data/test_pipeline.py -> 17 passed, 0 failed; ruff clean; full backend suite pending owner-run after Fix Round 6 | [WP-06]
 ```

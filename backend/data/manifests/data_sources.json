@@ -6,7 +6,7 @@
     "expected_format": "PDS3_IMG",
     "expected_size_bytes": 360402944,
     "purpose": "Primary terrain model (1 m post spacing) for local obstacle avoidance, slope, roughness, and path planning.",
-    "selected_because": "Official stereo-derived HiRISE DTM covering lower Mount Sharp layered mound and boxwork-bearing formations in Gale Crater. Resolves metric obstacles required by the EVA planning challenge.",
+    "selected_because": "Official stereo-derived HiRISE DTM product DTEEC_001488_1750_001752_1750_U02 in Gale Crater. Resolves metric obstacles required by the EVA planning challenge.",
     "verified_url_at": "2026-11-12T12:16:12Z"
   },
   {
@@ -16,7 +16,7 @@
     "expected_format": "JP2",
     "expected_size_bytes": 33256997,
     "purpose": "Primary high-resolution optical basemap co-registered to the primary DTM for surface visual inspection.",
-    "selected_because": "Official orthorectified image corresponding to DTM stereo observation pair PSP_001488_1750 / PSP_001752_1750. Reduced C-version provides full optical coverage at manageable size.",
+    "selected_because": "Official orthorectified image corresponding to DTM stereo observation pair PSP_001488_1750 / PSP_001752_1750 (product PSP_001752_1750_RED_C_01_ORTHO).",
     "verified_url_at": "2026-11-12T12:16:34Z"
   },
   {
@@ -35,6 +35,12 @@
     "url": "https://pds-geosciences.wustl.edu/mgs/mgs-m-mola-5-megdr-l3-v1/mgsl_300x/meg128/megt00n090hb.img",
     "expected_format": "PDS3_IMG",
     "expected_size_bytes": 129761280,
+    "companion_file": {
+      "product_id": "megt00n090hb.lbl",
+      "url": "https://pds-geosciences.wustl.edu/mgs/mgs-m-mola-5-megdr-l3-v1/mgsl_300x/meg128/megt00n090hb.lbl",
+      "expected_format": "PDS3_LBL",
+      "expected_size_bytes": null
+    },
     "purpose": "Regional topographic context (128 pixels/degree, ~463 m/pixel) and planetary geodetic datum reference.",
     "selected_because": "Official PDS Geosciences Node MGS MOLA Precision Experiment Data Record covering latitude 0 to 44 S, longitude 90 to 180 E.",
     "verified_url_at": "2026-11-12T12:14:25Z"
@@ -56,14 +62,14 @@
     "expected_format": "GEOTIFF",
     "expected_size_bytes": 22769567365,
     "purpose": "Thermal infrared context and thermophysical surface variation layer (100 m/pixel).",
-    "selected_because": "USGS/ASU 2001 Mars Odyssey THEMIS Daytime Infrared Global Mosaic v12. Notice: due to 22.8 GB size, sub-window / COG range extraction is recommended in WP-06.",
+    "selected_because": "USGS/ASU 2001 Mars Odyssey THEMIS Daytime Infrared Global Mosaic v12. Notice: 22.8 GB global mosaic; deferred per owner decision scope A.",
     "verified_url_at": "2026-11-12T12:21:24Z"
   },
   {
     "dataset_id": "MSL_RAD_SURFACE_RDR",
     "product_id": "MSL-M-RAD-3-RDR-V1.0",
     "url": "https://pds-ppi.igpp.ucla.edu/collection/MSL-M-RAD-3-RDR-V1.0",
-    "status": "UNVERIFIED — candidate only",
+    "status": "UNVERIFIED -- candidate only",
     "expected_format": "PDS3_BUNDLE",
     "expected_size_bytes": null,
     "purpose": "Required third data kind (P1, must-have): in-situ surface radiation environment measurements (point time-series at Curiosity location in Gale Crater; not a surface-wide raster).",
@@ -74,7 +80,7 @@
     "dataset_id": "MARS_TREK_PORTAL",
     "product_id": "NASA_SOLAR_SYSTEM_TREKS_MARS",
     "url": null,
-    "status": "UNVERIFIED — candidate only",
+    "status": "UNVERIFIED -- candidate only",
     "expected_format": "WEB_PORTAL",
     "expected_size_bytes": null,
     "purpose": "Reference and validation portal for cross-checking Gale Crater surface morphology, landmark names, and orbital basemaps.",

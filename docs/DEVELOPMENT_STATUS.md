@@ -23,14 +23,14 @@ DOWNLOAD_APPROVED: YES            # YES once the owner approves the data downloa
 Update this block after every step. It is what an interrupted session resumes from.
 
 ```text
-ACTIVE_WP: WP-06
-BRANCH: wp/WP-06-data-pipeline
-STEP: 5 of 5
-LAST_COMPLETED: WP-06 Fix Round 6 (fixed KeyError 'bounds', caller error handling, result shapes, synthetic regression tests)
-NEXT_ACTION: Awaiting owner review and merge of WP-06
+ACTIVE_WP: none
+BRANCH: develop
+STEP: -
+LAST_COMPLETED: Merged wp/WP-06-data-pipeline into develop (status MERGED)
+NEXT_ACTION: Awaiting owner direction for next work package
 BLOCKERS: none
-WAITING_FOR_OWNER: yes - WP-06 in review; awaiting owner review and merge
-UPDATED: 2026-11-14T08:55+05:30
+WAITING_FOR_OWNER: yes -- WP-06 merged; awaiting owner direction
+UPDATED: 2026-11-14T10:15+05:30
 ```
 
 ---
@@ -60,7 +60,7 @@ UPDATED: 2026-11-14T08:55+05:30
 | WP-02 | Shared models and OpenAPI export | P0 | MERGED | wp/WP-02-shared-models | 18 passed, 0 failed, 0 skipped | All contracts and stubs implemented; openapi.json generated |
 | WP-03 | Coordinates and geodesy | P0 | MERGED | wp/WP-03-coordinates | 28 passed, 0 failed in the full backend suite (owner-run, not agent-run) | Mars coordinate conversions, IAU 2000 geodesy, and projection transformer |
 | WP-04 | Frontend skeleton and dev scripts | P0 | MERGED | wp/WP-04-frontend-skeleton | owner-run: typecheck exit 0, build exit 0, vitest 14 passed (3 files), scripts/test.ps1 exit 0 (backend pytest 28 passed) | (1) owner exception: backend/pyproject.toml package discovery fix; (2) package.json versions from memory, npm audit 6 dev vulnerabilities accepted; (3) owner-committed due to sandbox .git lock |
-| WP-06 | Data download and processing pipeline | P0 | IN REVIEW | wp/WP-06-data-pipeline | pending owner-run after Fix Round 6 | Core datasets downloaded and processed; limitations audited; awaiting merge |
+| WP-06 | Data download and processing pipeline | P0 | MERGED | wp/WP-06-data-pipeline | owner-run on branch tip fe1a125: full backend suite 45 passed, 0 failed; ruff check clean; ruff format --check clean | (1) Amendment A-1 added to SCIENCE_AND_SAFETY_SPEC section 2.1 (named accepted spheres: Mars 2000 sphere 3396190 m and MOLA product sphere 3396000 m; owner-approved); (2) DTM footprint computed lat -4.948820..-4.720525, lon 137.238928..137.353903; boxwork containment UNKNOWN by design (no cited feature coordinates); (3) 24.6 percent of DTM cells are nodata (NaN) - later routing and safety must treat them as UNKNOWN; (4) DTM vertical datum is UNVERIFIED; MOLA and DTM heights agree roughly (median -3887 m vs -3974 m) but must not be mixed until verified; (5) MOLA grid georeference may be displaced by up to about one 463 m pixel (driver uses 0.463 km MAP_SCALE); (6) sha256 is a catalog-file extension not in the frozen DatasetRecord; (7) docs/openapi.json shows a cosmetic line-ending status in owner working copy only (byte-identical blob to HEAD), nothing committed; (8) MSL RAD sol product IDs and units remain UNVERIFIED (WP-18); (9) teamwork invoked in Fix Round 6 to resolve KeyError regression on real data |
 | WP-07 | Terrain and hazard engines | P0 | PENDING | wp/WP-07-terrain-engine | — | |
 | WP-08 | Region, dataset, layer and terrain APIs | P0 | PENDING | wp/WP-08-layer-api | — | |
 | WP-09 | Frontend map, layers and inspector | P0 | PENDING | wp/WP-09-frontend-map | — | Milestone M1 |
@@ -167,4 +167,5 @@ Format: `timestamp | WP | step | action | tests (command → passed/failed/skipp
 2026-11-14T03:30+05:30 | WP-04 | 6 of 6 | Merged wp/WP-04-frontend-skeleton into develop (status MERGED); frontend skeleton, apiClient, store, Mars map shell, dev scripts, and unit tests | owner-run: typecheck exit 0, build exit 0, vitest 14 passed (3 files), scripts\test.ps1 exit 0 (backend pytest 28 passed); dev proxy /api/v1/health returned ok / DISABLED via port 5173 | c49b3ff
 2026-11-14T08:30+05:30 | WP-06 | 5 of 5 | WP-06 Fix Round 5 completed: limitations text audit and unverified claim cleanup; owner-run facts recorded: exact download sizes 360402944 / 33256997 / 129761280 bytes, MOLA label 4820 bytes; SHA-256 in source_ledger.json; GDAL PDS driver for DTM, sphere radius 3396190, nodata -3.4028226550889045e+38, 24.6% NaN (75.4% valid), elevation range -4485.57..-2977.08 m; DTM footprint lat [-4.948820, -4.720525], lon [137.238928, 137.353903], boxwork containment UNKNOWN; MOLA opened via label (driver PDS), radius 3396000 via named-sphere registry (Amendment A-1), georeference caveat, MOLA vs DTM median cross-check (-3887 m vs -3974 m); UNAVAILABLE reasons documented in catalog and data_sources; R-02 satisfied; O-5 pointer fixed; sha256 extension; openapi.json cosmetic status verified (byte-identical blob); T-DATA-15 synthetic test added | owner-run backend suite: 42 passed, 0 failed, ruff clean | [WP-06]
 2026-11-14T08:55+05:30 | WP-06 | 5 of 5 | Correction: previous WP-06 Round 5 log line overstated the state (pipeline crashed on real data after Round 5; the 42 passed figure predates T-DATA-15; corrected owner-run results will be recorded at merge); fixed process_single_raster bounds return and caller error handling with explicit result shapes; added synthetic regression tests T-DATA-16 and T-DATA-17 | cd backend; pytest tests/unit/data/test_pipeline.py -> 17 passed, 0 failed; ruff clean; full backend suite pending owner-run after Fix Round 6 | [WP-06]
+2026-11-14T10:15+05:30 | WP-06 | 5 of 5 | Merged wp/WP-06-data-pipeline into develop (status MERGED); data download and processing pipeline complete; owner-run results on branch tip fe1a125: full backend suite 45 passed, 0 failed; ruff check from backend\ clean; ruff format --check clean; scripts\process_region.py exit 0 with HIRISE_DTM_GALE_MOUND, HIRISE_ORTHO_GALE_MOUND, and MOLA_MEGDR_GALE AVAILABLE and the other five datasets UNAVAILABLE with reasons (supersedes earlier 42 passed figure); download of the three scope-A core files verified by size (360402944 / 33256997 / 129761280 bytes) plus the MOLA label (4820 bytes); SHA-256 values in backend/data/manifests/source_ledger.json; notes (1)-(9) recorded | merge --no-ff verified; owner-run full backend suite on fe1a125: 45 passed, 0 failed | e6c097c
 ```

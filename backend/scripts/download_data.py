@@ -89,35 +89,34 @@ def load_source_ledger(ledger_path: Path) -> list[dict[str, Any]]:
 def update_source_ledger(ledger_path: Path, record: dict[str, Any]) -> None:
     """Add or update an entry in source_ledger.json."""
     entries = load_source_ledger(ledger_path)
-    # Replace existing entry for the same dataset_id if present
-    entries = [e for e in entries if e.get("dataset_id") != record.get("dataset_id")]
+    # Deduplicate by file_path so companion files for the same dataset are not clobbered
+    rec_path = record.get("file_path")
+    entries = [e for e in entries if e.get("file_path") != rec_path]
     entries.append(record)
     ledger_path.parent.mkdir(parents=True, exist_ok=True)
     ledger_path.write_text(json.dumps(entries, indent=2) + "\n", encoding="utf-8")
 
 
-def probe_dataset(client: httpx.Client, entry: dict[str, Any]) -> dict[str, Any]:
-    """Perform read-only HEAD probe for --dry-run without downloading body."""
-    dataset_id = entry.get("dataset_id", "UNKNOWN")
-    url = entry.get("url")
-    expected_size = entry.get("expected_size_bytes")
-
+def probe_file_url(
+    client: httpx.Client,
+    url: str | None,
+    expected_size: int | None = None,
+) -> dict[str, Any]:
+    """Perform read-only HEAD probe for a single URL."""
     if not url:
         return {
-            "dataset_id": dataset_id,
             "status": "UNREACHABLE",
             "url": None,
             "http_status": None,
             "content_length": None,
+            "expected_size": expected_size,
             "message": "No download URL configured",
         }
-
     try:
         resp = client.head(url, follow_redirects=True, timeout=15.0)
         content_len_header = resp.headers.get("Content-Length")
         content_len = int(content_len_header) if content_len_header is not None else None
         return {
-            "dataset_id": dataset_id,
             "status": "OK" if resp.is_success else "ERROR",
             "url": url,
             "http_status": resp.status_code,
@@ -127,7 +126,6 @@ def probe_dataset(client: httpx.Client, entry: dict[str, Any]) -> dict[str, Any]
         }
     except Exception as exc:
         return {
-            "dataset_id": dataset_id,
             "status": "UNREACHABLE",
             "url": url,
             "http_status": None,
@@ -137,25 +135,49 @@ def probe_dataset(client: httpx.Client, entry: dict[str, Any]) -> dict[str, Any]
         }
 
 
-def download_single_dataset(
+def probe_dataset(client: httpx.Client, entry: dict[str, Any]) -> dict[str, Any]:
+    """Perform read-only HEAD probe for --dry-run without downloading body."""
+    dataset_id = entry.get("dataset_id", "UNKNOWN")
+    primary_probe = probe_file_url(client, entry.get("url"), entry.get("expected_size_bytes"))
+    result = {
+        "dataset_id": dataset_id,
+        "status": primary_probe["status"],
+        "url": primary_probe["url"],
+        "http_status": primary_probe["http_status"],
+        "content_length": primary_probe["content_length"],
+        "expected_size": primary_probe["expected_size"],
+        "message": primary_probe["message"],
+    }
+    companion_file = entry.get("companion_file")
+    if companion_file and isinstance(companion_file, dict):
+        comp_url = companion_file.get("url")
+        comp_expected_size = companion_file.get("expected_size_bytes")
+        comp_probe = probe_file_url(client, comp_url, comp_expected_size)
+        comp_prod_id = companion_file.get("product_id") or (
+            Path(comp_url).name if comp_url else "companion"
+        )
+        result["companion"] = {
+            "product_id": comp_prod_id,
+            "url": comp_probe["url"],
+            "status": comp_probe["status"],
+            "http_status": comp_probe["http_status"],
+            "content_length": comp_probe["content_length"],
+            "expected_size": comp_probe["expected_size"],
+            "message": comp_probe["message"],
+        }
+    return result
+
+
+def download_file(
     client: httpx.Client,
-    entry: dict[str, Any],
-    raw_dir: Path,
+    url: str,
+    target_file: Path,
+    expected_size: int | None,
+    dataset_id: str,
     ledger_path: Path,
+    relative_ledger_path: str,
 ) -> dict[str, Any]:
-    """Download a single dataset with resume support and SHA-256 verification."""
-    dataset_id = entry["dataset_id"]
-    product_id = entry.get("product_id") or Path(entry["url"]).name
-    url = entry.get("url")
-    expected_size = entry.get("expected_size_bytes")
-
-    if not url:
-        return {"dataset_id": dataset_id, "success": False, "error": "No URL provided"}
-
-    target_file = raw_dir / product_id
-    part_file = raw_dir / f"{product_id}.part"
-
-    # Check if complete verified file already exists in ledger and on disk
+    """Download a single file with resume support, verify size, and record in ledger."""
     if target_file.exists():
         existing_size = target_file.stat().st_size
         if expected_size is None or existing_size == expected_size:
@@ -165,16 +187,18 @@ def download_single_dataset(
                 (
                     e
                     for e in ledger_entries
-                    if e.get("dataset_id") == dataset_id and e.get("sha256") == existing_sha256
+                    if e.get("file_path") == relative_ledger_path
+                    and e.get("sha256") == existing_sha256
                 ),
                 None,
             )
             if matching_entry is not None:
                 logger.info(
-                    "Dataset %s already downloaded and verified at %s", dataset_id, target_file
+                    "File %s already downloaded and verified at %s",
+                    relative_ledger_path,
+                    target_file,
                 )
                 return {
-                    "dataset_id": dataset_id,
                     "success": True,
                     "skipped": True,
                     "file_path": str(target_file),
@@ -182,78 +206,127 @@ def download_single_dataset(
                     "sha256": existing_sha256,
                 }
 
-    raw_dir.mkdir(parents=True, exist_ok=True)
+    target_file.parent.mkdir(parents=True, exist_ok=True)
+    part_file = target_file.with_name(f"{target_file.name}.part")
     initial_bytes = part_file.stat().st_size if part_file.exists() else 0
     headers = {}
     if initial_bytes > 0:
         headers["Range"] = f"bytes={initial_bytes}-"
-        logger.info("Resuming %s from byte %d", dataset_id, initial_bytes)
+        logger.info("Resuming %s from byte %d", target_file.name, initial_bytes)
+
+    with client.stream("GET", url, headers=headers, follow_redirects=True, timeout=60.0) as resp:
+        if resp.status_code == 416:  # Range Not Satisfiable
+            logger.warning("Range invalid for %s; restarting from zero", target_file.name)
+            if part_file.exists():
+                part_file.unlink()
+            with client.stream("GET", url, follow_redirects=True, timeout=60.0) as retry_resp:
+                retry_resp.raise_for_status()
+                with open(part_file, "wb") as f:
+                    for chunk in retry_resp.iter_bytes(chunk_size=1024 * 1024):
+                        f.write(chunk)
+        elif resp.status_code == 206:
+            with open(part_file, "ab") as f:
+                for chunk in resp.iter_bytes(chunk_size=1024 * 1024):
+                    f.write(chunk)
+        else:
+            resp.raise_for_status()
+            with open(part_file, "wb") as f:
+                for chunk in resp.iter_bytes(chunk_size=1024 * 1024):
+                    f.write(chunk)
+
+    if target_file.exists():
+        target_file.unlink()
+    part_file.rename(target_file)
+
+    final_size = target_file.stat().st_size
+    sha256_hash = compute_file_sha256(target_file)
+
+    if expected_size is not None and final_size != expected_size:
+        logger.warning(
+            "Size mismatch for %s: expected %d, got %d",
+            target_file.name,
+            expected_size,
+            final_size,
+        )
+
+    ledger_record = {
+        "file_path": relative_ledger_path,
+        "dataset_id": dataset_id,
+        "url": url,
+        "retrieved_at": datetime.now(timezone.utc).isoformat(),
+        "size_bytes": final_size,
+        "sha256": sha256_hash,
+    }
+    update_source_ledger(ledger_path, ledger_record)
+
+    return {
+        "success": True,
+        "skipped": False,
+        "file_path": str(target_file),
+        "size_bytes": final_size,
+        "sha256": sha256_hash,
+    }
+
+
+def download_single_dataset(
+    client: httpx.Client,
+    entry: dict[str, Any],
+    raw_dir: Path,
+    ledger_path: Path,
+) -> dict[str, Any]:
+    """Download a single dataset (and companion file if declared) with resume support."""
+    dataset_id = entry["dataset_id"]
+    product_id = entry.get("product_id") or Path(entry["url"]).name
+    url = entry.get("url")
+    expected_size = entry.get("expected_size_bytes")
+
+    if not url:
+        return {"dataset_id": dataset_id, "success": False, "error": "No URL provided"}
+
+    target_file = raw_dir / product_id
+    rel_ledger_path = f"data/raw/{product_id}"
 
     try:
-        with client.stream(
-            "GET", url, headers=headers, follow_redirects=True, timeout=60.0
-        ) as resp:
-            if resp.status_code == 416:  # Range Not Satisfiable
-                logger.warning("Range invalid for %s; restarting from zero", dataset_id)
-                initial_bytes = 0
-                if part_file.exists():
-                    part_file.unlink()
-                with client.stream("GET", url, follow_redirects=True, timeout=60.0) as retry_resp:
-                    retry_resp.raise_for_status()
-                    mode = "wb"
-                    with open(part_file, mode) as f:
-                        for chunk in retry_resp.iter_bytes(chunk_size=1024 * 1024):
-                            f.write(chunk)
-            elif resp.status_code == 206:
-                # Partial content: append
-                mode = "ab"
-                with open(part_file, mode) as f:
-                    for chunk in resp.iter_bytes(chunk_size=1024 * 1024):
-                        f.write(chunk)
-            else:
-                resp.raise_for_status()
-                # Server sent 200 OK: write from start
-                mode = "wb"
-                with open(part_file, mode) as f:
-                    for chunk in resp.iter_bytes(chunk_size=1024 * 1024):
-                        f.write(chunk)
+        primary_res = download_file(
+            client=client,
+            url=url,
+            target_file=target_file,
+            expected_size=expected_size,
+            dataset_id=dataset_id,
+            ledger_path=ledger_path,
+            relative_ledger_path=rel_ledger_path,
+        )
 
-        # File download complete: atomic rename
-        if target_file.exists():
-            target_file.unlink()
-        part_file.rename(target_file)
-
-        final_size = target_file.stat().st_size
-        sha256_hash = compute_file_sha256(target_file)
-
-        # Size check
-        if expected_size is not None and final_size != expected_size:
-            logger.warning(
-                "Size mismatch for %s: expected %d, got %d",
-                dataset_id,
-                expected_size,
-                final_size,
+        comp_res = None
+        companion_file = entry.get("companion_file")
+        if companion_file and isinstance(companion_file, dict):
+            comp_url = companion_file.get("url")
+            comp_product_id = companion_file.get("product_id") or (
+                Path(comp_url).name if comp_url else None
             )
-
-        # Record in ledger
-        relative_path = target_file.relative_to(target_file.parents[2]).as_posix()
-        ledger_record = {
-            "file_path": relative_path,
-            "dataset_id": dataset_id,
-            "url": url,
-            "retrieved_at": datetime.now(timezone.utc).isoformat(),
-            "size_bytes": final_size,
-            "sha256": sha256_hash,
-        }
-        update_source_ledger(ledger_path, ledger_record)
+            comp_expected_size = companion_file.get("expected_size_bytes")
+            if comp_url and comp_product_id:
+                comp_target = raw_dir / comp_product_id
+                comp_rel_path = f"data/raw/{comp_product_id}"
+                logger.info("Downloading companion file for %s: %s", dataset_id, comp_product_id)
+                comp_res = download_file(
+                    client=client,
+                    url=comp_url,
+                    target_file=comp_target,
+                    expected_size=comp_expected_size,
+                    dataset_id=dataset_id,
+                    ledger_path=ledger_path,
+                    relative_ledger_path=comp_rel_path,
+                )
 
         return {
             "dataset_id": dataset_id,
             "success": True,
-            "skipped": False,
-            "file_path": str(target_file),
-            "size_bytes": final_size,
-            "sha256": sha256_hash,
+            "skipped": primary_res["skipped"],
+            "file_path": primary_res["file_path"],
+            "size_bytes": primary_res["size_bytes"],
+            "sha256": primary_res["sha256"],
+            "companion": comp_res,
         }
 
     except Exception as exc:
@@ -381,6 +454,17 @@ def main() -> int:
                     f"  Content-Length: {content_len} bytes\n"
                     f"  URL: {result['url']}\n"
                 )
+                if "companion" in result:
+                    comp = result["companion"]
+                    comp_len = comp.get("content_length") or comp.get("expected_size")
+                    if comp_len:
+                        total_size += comp_len
+                    print(
+                        f"  Companion: {comp.get('product_id')}\n"
+                        f"    Status: {comp['status']} (HTTP {comp['http_status']})\n"
+                        f"    Content-Length: {comp_len} bytes\n"
+                        f"    URL: {comp['url']}\n"
+                    )
         print(
             f"Total planned download size (core 3 entries): {total_size} bytes "
             f"({total_size / (1024 * 1024):.1f} MB)"

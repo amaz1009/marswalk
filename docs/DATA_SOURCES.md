@@ -153,3 +153,11 @@ Key takeaways and architectural impacts from the official challenge details:
 5. **Dynamic Challenge Resources:** NASA notes that additional resources may be added before the hackathon begins.
    - *Impact:* The Resources tab must be re-checked when the event officially begins.
 
+---
+
+## 8. Provenance & Manifest Extensions
+
+- **`sha256` Extension in `manifests/dataset_catalog.json`:**
+  The `sha256` field present in `manifests/dataset_catalog.json` is a catalog-file provenance extension recorded during ingestion from `source_ledger.json`. It captures the SHA-256 cryptographic digest of the primary source raw file. It is ignored by the frozen `DatasetRecord` model and is not served by the API endpoints.
+
+

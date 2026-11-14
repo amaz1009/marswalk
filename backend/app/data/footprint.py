@@ -76,8 +76,9 @@ def evaluate_named_area_in_footprint(
             "area_name": area_name,
             "status": "UNKNOWN",
             "reason": (
-                f"Coordinates for '{area_name}' are not verified from ingested data. "
-                "Per Scientific Integrity rules, boxwork coordinates are never hard-coded."
+                "Boxwork feature coordinates are not verified from a cited data source; "
+                "containment cannot be evaluated without verified feature coordinates. "
+                "Per Scientific Integrity rules, feature coordinates are never hard-coded."
             ),
             "is_inside": None,
         }

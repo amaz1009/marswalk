@@ -41,6 +41,12 @@ listed in §15 and cited by key, for example [HORN1981].
 On a sphere, planetocentric and planetographic latitude are identical. They differ
 on the IAU 2000 Mars ellipsoid (a = 3,396,190 m, b = 3,376,200 m) [IAU2000].
 
+**Amendment A-1 (Accepted Source Spheres, owner-approved):**
+An accepted sphere's radius (e.g. MOLA MEGDR R = 3,396,000 m) is used solely to
+convert projected metres to lon/lat degrees in the source CRS. Angular coordinates
+(lon/lat) are radius-independent on a sphere. No metre values from a non-2000
+sphere are mixed with analysis-CRS metres.
+
 ### 2.2 Longitude Normalisation
 
 ```text

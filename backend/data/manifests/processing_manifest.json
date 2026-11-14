@@ -1,1 +1,183 @@
-[]
+[
+  {
+    "output_path": "data/processed/HIRISE_DTM_GALE_MOUND.tif",
+    "dataset_id": "HIRISE_DTM_GALE_MOUND",
+    "inputs": [
+      "data/raw/DTEEC_001488_1750_001752_1750_U02.IMG"
+    ],
+    "steps": [
+      {
+        "step": "detect_format",
+        "tool": "rasterio 1.5.2",
+        "parameters": {
+          "source_file": "DTEEC_001488_1750_001752_1750_U02.IMG",
+          "opened_path": "data/raw/DTEEC_001488_1750_001752_1750_U02.IMG"
+        },
+        "completed_at": "2026-11-14T04:33:42.586409+00:00"
+      },
+      {
+        "step": "validate_crs",
+        "tool": "rasterio 1.5.2",
+        "parameters": {
+          "datum_type": "SPHERE",
+          "latitude_type": "PLANETOCENTRIC",
+          "is_projected": true
+        },
+        "completed_at": "2026-11-14T04:33:42.656432+00:00"
+      },
+      {
+        "step": "nodata_normalization",
+        "tool": "numpy",
+        "parameters": {
+          "source_nodata": -3.4028226550889045e+38,
+          "target_nodata": "NaN"
+        },
+        "completed_at": "2026-11-14T04:33:44.136150+00:00"
+      },
+      {
+        "step": "coverage_statistics",
+        "tool": "numpy",
+        "parameters": {
+          "total_cells": 90094000,
+          "valid_cells": 67903999,
+          "nodata_cells": 22190001,
+          "valid_fraction": 0.753701678247164
+        },
+        "completed_at": "2026-11-14T04:33:44.175272+00:00"
+      },
+      {
+        "step": "write_cog",
+        "tool": "rasterio 1.5.2",
+        "parameters": {
+          "output_file": "HIRISE_DTM_GALE_MOUND.tif",
+          "compress": "deflate",
+          "tiled": true
+        },
+        "completed_at": "2026-11-14T04:34:28.080983+00:00"
+      }
+    ],
+    "status": "COMPLETED",
+    "status_reason": null
+  },
+  {
+    "output_path": "data/processed/HIRISE_ORTHO_GALE_MOUND.tif",
+    "dataset_id": "HIRISE_ORTHO_GALE_MOUND",
+    "inputs": [
+      "data/raw/PSP_001752_1750_RED_C_01_ORTHO.JP2"
+    ],
+    "steps": [
+      {
+        "step": "detect_format",
+        "tool": "rasterio 1.5.2",
+        "parameters": {
+          "source_file": "PSP_001752_1750_RED_C_01_ORTHO.JP2",
+          "opened_path": "data/raw/PSP_001752_1750_RED_C_01_ORTHO.JP2"
+        },
+        "completed_at": "2026-11-14T04:34:28.212625+00:00"
+      },
+      {
+        "step": "validate_crs",
+        "tool": "rasterio 1.5.2",
+        "parameters": {
+          "datum_type": "SPHERE",
+          "latitude_type": "PLANETOCENTRIC",
+          "is_projected": true
+        },
+        "completed_at": "2026-11-14T04:34:28.271256+00:00"
+      },
+      {
+        "step": "nodata_normalization",
+        "tool": "numpy",
+        "parameters": {
+          "source_nodata": null,
+          "target_nodata": "NaN"
+        },
+        "completed_at": "2026-11-14T04:34:35.210784+00:00"
+      },
+      {
+        "step": "coverage_statistics",
+        "tool": "numpy",
+        "parameters": {
+          "total_cells": 90094000,
+          "valid_cells": 90094000,
+          "nodata_cells": 0,
+          "valid_fraction": 1.0
+        },
+        "completed_at": "2026-11-14T04:34:35.249392+00:00"
+      },
+      {
+        "step": "write_cog",
+        "tool": "rasterio 1.5.2",
+        "parameters": {
+          "output_file": "HIRISE_ORTHO_GALE_MOUND.tif",
+          "compress": "deflate",
+          "tiled": true
+        },
+        "completed_at": "2026-11-14T04:35:04.027189+00:00"
+      }
+    ],
+    "status": "COMPLETED",
+    "status_reason": null
+  },
+  {
+    "output_path": "data/processed/MOLA_MEGDR_GALE.tif",
+    "dataset_id": "MOLA_MEGDR_GALE",
+    "inputs": [
+      "data/raw/MEGT00N090HB.IMG",
+      "data/raw/megt00n090hb.lbl"
+    ],
+    "steps": [
+      {
+        "step": "detect_format",
+        "tool": "rasterio 1.5.2",
+        "parameters": {
+          "source_file": "megt00n090hb.lbl",
+          "opened_path": "data/raw/megt00n090hb.lbl"
+        },
+        "completed_at": "2026-11-14T04:35:04.100854+00:00"
+      },
+      {
+        "step": "validate_crs",
+        "tool": "rasterio 1.5.2",
+        "parameters": {
+          "datum_type": "SPHERE",
+          "latitude_type": "PLANETOCENTRIC",
+          "is_projected": true
+        },
+        "completed_at": "2026-11-14T04:35:04.135891+00:00"
+      },
+      {
+        "step": "nodata_normalization",
+        "tool": "numpy",
+        "parameters": {
+          "source_nodata": -32768.0,
+          "target_nodata": "NaN"
+        },
+        "completed_at": "2026-11-14T04:35:05.119496+00:00"
+      },
+      {
+        "step": "coverage_statistics",
+        "tool": "numpy",
+        "parameters": {
+          "total_cells": 64880640,
+          "valid_cells": 64880640,
+          "nodata_cells": 0,
+          "valid_fraction": 1.0
+        },
+        "completed_at": "2026-11-14T04:35:05.146037+00:00"
+      },
+      {
+        "step": "write_cog",
+        "tool": "rasterio 1.5.2",
+        "parameters": {
+          "output_file": "MOLA_MEGDR_GALE.tif",
+          "compress": "deflate",
+          "tiled": true
+        },
+        "completed_at": "2026-11-14T04:35:47.566282+00:00"
+      }
+    ],
+    "status": "COMPLETED",
+    "status_reason": null
+  }
+]

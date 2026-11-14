@@ -48,7 +48,12 @@ def load_processing_manifest(manifest_path: Path | None = None) -> list[dict[str
 
 
 def load_catalog(catalog_path: Path | None = None) -> list[DatasetRecord]:
-    """Load dataset catalog and validate every record against DatasetRecord schema."""
+    """Load dataset catalog and validate every record against DatasetRecord schema.
+
+    Note on sha256: The 'sha256' field in dataset_catalog.json is a catalog-file
+    metadata extension (sourced from source_ledger.json upon download/ingestion).
+    It is ignored by the frozen DatasetRecord schema and is not served by the API.
+    """
     path = catalog_path or (get_default_data_dir() / "manifests" / "dataset_catalog.json")
     if not path.exists():
         return []

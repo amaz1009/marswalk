@@ -26,9 +26,16 @@ from app.utils.coordinates import (
     planetographic_to_planetocentric,
 )
 
-# Accepted Mars IAU 2000 datum parameters (metres, tolerance 0.5 m)
-MARS_SEMI_MAJOR_M = 3396190.0
-MARS_SPHERE_SEMI_MINOR_M = 3396190.0
+# Accepted Mars reference bodies (metres, strict tolerance 0.5 m):
+# 1. Registered spheres:
+#    - MARS_2000_SPHERE: 3396190.0 m (Mars IAU 2000 standard sphere)
+#    - MOLA_MEGDR_SPHERE: 3396000.0 m (MGS MOLA MEGDR gridded data product sphere)
+# 2. Mars IAU 2000 ellipsoid: a = 3396190.0 m, b = 3376200.0 m
+ACCEPTED_SPHERES: dict[str, float] = {
+    "MARS_2000_SPHERE": 3396190.0,
+    "MOLA_MEGDR_SPHERE": 3396000.0,
+}
+MARS_ELLIPSOID_SEMI_MAJOR_M = 3396190.0
 MARS_ELLIPSOID_SEMI_MINOR_M = 3376200.0
 TOLERANCE_M = 0.5
 
@@ -94,24 +101,30 @@ def inspect_raster_crs(
 
     crs_name = getattr(crs, "name", None) or str(crs_input)
 
-    # Validate that semi-major matches Mars equatorial radius (3396190 m)
-    if abs(semi_major - MARS_SEMI_MAJOR_M) > TOLERANCE_M:
+    # Check if the body matches an accepted Mars sphere
+    matched_sphere: str | None = None
+    for s_name, s_radius in ACCEPTED_SPHERES.items():
+        if abs(semi_major - s_radius) <= TOLERANCE_M and abs(semi_minor - s_radius) <= TOLERANCE_M:
+            matched_sphere = s_name
+            break
+
+    # Check if the body matches the Mars IAU 2000 ellipsoid
+    is_ellipsoid = (
+        matched_sphere is None
+        and abs(semi_major - MARS_ELLIPSOID_SEMI_MAJOR_M) <= TOLERANCE_M
+        and abs(semi_minor - MARS_ELLIPSOID_SEMI_MINOR_M) <= TOLERANCE_M
+    )
+
+    if matched_sphere is None and not is_ellipsoid:
+        accepted_sphere_names = list(ACCEPTED_SPHERES.keys())
         raise CRSValidationError(
             f"CRS '{crs_name}' has semi-major={semi_major} m, semi-minor={semi_minor} m; "
-            f"does not match Mars radius {MARS_SEMI_MAJOR_M} m."
+            f"is neither an accepted Mars sphere ({accepted_sphere_names}) nor the "
+            f"IAU 2000 ellipsoid ({MARS_ELLIPSOID_SEMI_MAJOR_M} m, "
+            f"{MARS_ELLIPSOID_SEMI_MINOR_M} m)."
         )
 
-    # Classify Sphere vs Ellipsoid
-    is_sphere = abs(semi_minor - MARS_SPHERE_SEMI_MINOR_M) <= TOLERANCE_M
-    is_ellipsoid = abs(semi_minor - MARS_ELLIPSOID_SEMI_MINOR_M) <= TOLERANCE_M
-
-    if not is_sphere and not is_ellipsoid:
-        raise CRSValidationError(
-            f"CRS '{crs_name}' has semi-major={semi_major} m, semi-minor={semi_minor} m; "
-            f"is neither Mars IAU 2000 sphere ({MARS_SEMI_MAJOR_M} m) nor ellipsoid "
-            f"({MARS_SEMI_MAJOR_M} m, {MARS_ELLIPSOID_SEMI_MINOR_M} m)."
-        )
-
+    is_sphere = matched_sphere is not None
     is_projected = crs.is_projected
     is_geographic = crs.is_geographic
 
@@ -127,9 +140,16 @@ def inspect_raster_crs(
         datum_type = "SPHERE"
         # On a sphere, planetocentric and planetographic latitudes are identical by construction
         latitude_type = "PLANETOCENTRIC"
-        convention_desc = (
-            "Mars IAU 2000 sphere (R=3396190 m), planetocentric latitude, East-positive longitude"
-        )
+        if matched_sphere == "MOLA_MEGDR_SPHERE":
+            convention_desc = (
+                "Mars MOLA MEGDR sphere (R=3396000 m), planetocentric latitude, "
+                "East-positive longitude"
+            )
+        else:
+            convention_desc = (
+                "Mars IAU 2000 sphere (R=3396190 m), planetocentric latitude, "
+                "East-positive longitude"
+            )
     else:
         datum_type = "ELLIPSOID"
         if declared_latitude_type is None:
@@ -152,6 +172,7 @@ def inspect_raster_crs(
         "is_projected": is_projected,
         "is_geographic": is_geographic,
         "datum_type": datum_type,
+        "matched_sphere": matched_sphere,
         "latitude_type": latitude_type,
         "source_conventions": convention_desc,
         "raw_crs": crs.to_wkt(),

@@ -1,6 +1,6 @@
 {
   "catalog_version": "1.0",
-  "generated_at": "2026-11-14T03:55:00Z",
+  "generated_at": "2026-11-14T04:35:47.668343+00:00",
   "datasets": [
     {
       "dataset_id": "HIRISE_DTM_GALE_MOUND",
@@ -17,29 +17,82 @@
       "data_class": "MEASURED",
       "units": "m",
       "source_crs": "+proj=eqc +lat_ts=0 +lat_0=0 +lon_0=180 +x_0=0 +y_0=0 +R=3396190 +units=m +no_defs",
-      "source_conventions": "Planetocentric latitude, East-positive longitude, Mars IAU 2000 sphere R=3396190m",
-      "native_resolution_m": 1.0,
+      "source_conventions": "Mars IAU 2000 sphere (R=3396190 m), planetocentric latitude, East-positive longitude",
+      "native_resolution_m": 1.01,
       "temporal_coverage": {
         "start": null,
         "end": null,
         "description": "MRO Primary Science Phase observations PSP_001488_1750 and PSP_001752_1750"
       },
       "coverage_bounds": {
-        "lat_min": -4.949,
-        "lat_max": -4.721,
-        "lon_min": 137.239,
-        "lon_max": 137.354
+        "lat_min": -4.94882,
+        "lat_max": -4.720525,
+        "lon_min": 137.238928,
+        "lon_max": 137.353903
       },
-      "region_coverage_fraction": null,
-      "status": "UNAVAILABLE",
-      "status_reason": "Raw product not yet ingested / downloaded",
-      "processing_steps": [],
-      "processed_path": null,
+      "region_coverage_fraction": 0.753701678247164,
+      "status": "AVAILABLE",
+      "status_reason": null,
+      "processing_steps": [
+        {
+          "step": "detect_format",
+          "tool": "rasterio 1.5.2",
+          "parameters": {
+            "source_file": "DTEEC_001488_1750_001752_1750_U02.IMG",
+            "opened_path": "data/raw/DTEEC_001488_1750_001752_1750_U02.IMG"
+          },
+          "completed_at": "2026-11-14T04:33:42.586409+00:00"
+        },
+        {
+          "step": "validate_crs",
+          "tool": "rasterio 1.5.2",
+          "parameters": {
+            "datum_type": "SPHERE",
+            "latitude_type": "PLANETOCENTRIC",
+            "is_projected": true
+          },
+          "completed_at": "2026-11-14T04:33:42.656432+00:00"
+        },
+        {
+          "step": "nodata_normalization",
+          "tool": "numpy",
+          "parameters": {
+            "source_nodata": -3.4028226550889045e+38,
+            "target_nodata": "NaN"
+          },
+          "completed_at": "2026-11-14T04:33:44.136150+00:00"
+        },
+        {
+          "step": "coverage_statistics",
+          "tool": "numpy",
+          "parameters": {
+            "total_cells": 90094000,
+            "valid_cells": 67903999,
+            "nodata_cells": 22190001,
+            "valid_fraction": 0.753701678247164
+          },
+          "completed_at": "2026-11-14T04:33:44.175272+00:00"
+        },
+        {
+          "step": "write_cog",
+          "tool": "rasterio 1.5.2",
+          "parameters": {
+            "output_file": "HIRISE_DTM_GALE_MOUND.tif",
+            "compress": "deflate",
+            "tiled": true
+          },
+          "completed_at": "2026-11-14T04:34:28.080983+00:00"
+        }
+      ],
+      "processed_path": "data/processed/HIRISE_DTM_GALE_MOUND.tif",
       "limitations": [
-        "Footprint covers lower Mount Sharp layered mound and boxwork structures; does not cover entire Gale Crater corridor."
+        "Footprint covers latitude [-4.948820, -4.720525] degrees, longitude [137.238928, 137.353903] degrees East (computed coverage bounds). Containment of the Mount Sharp boxwork areas in this footprint is UNKNOWN (no cited feature coordinates).",
+        "Vertical datum of the DTM has not been verified by this pipeline (UNKNOWN).",
+        "Valid data cell coverage: 75.4% (22,190,001 nodata cells out of 90,094,000 total in bounding box)."
       ],
       "usage_note": "NASA PDS Open Data",
-      "retrieved_at": null
+      "retrieved_at": "2026-11-14T04:34:28.211628+00:00",
+      "sha256": "9359ca71b31e2689d9e2f38dd56fa83b051a09e360f8566730092a0f4cbe80bb"
     },
     {
       "dataset_id": "HIRISE_ORTHO_GALE_MOUND",
@@ -56,29 +109,81 @@
       "data_class": "MEASURED",
       "units": "DN",
       "source_crs": "+proj=eqc +lat_ts=0 +lat_0=0 +lon_0=180 +x_0=0 +y_0=0 +R=3396190 +units=m +no_defs",
-      "source_conventions": "Planetocentric latitude, East-positive longitude, Mars IAU 2000 sphere R=3396190m",
-      "native_resolution_m": 1.0,
+      "source_conventions": "Mars IAU 2000 sphere (R=3396190 m), planetocentric latitude, East-positive longitude",
+      "native_resolution_m": 1.01,
       "temporal_coverage": {
         "start": null,
         "end": null,
         "description": "MRO observation PSP_001752_1750"
       },
       "coverage_bounds": {
-        "lat_min": -4.949,
-        "lat_max": -4.721,
-        "lon_min": 137.239,
-        "lon_max": 137.354
+        "lat_min": -4.948845,
+        "lat_max": -4.72055,
+        "lon_min": 137.238954,
+        "lon_max": 137.353929
       },
-      "region_coverage_fraction": null,
-      "status": "UNAVAILABLE",
-      "status_reason": "Raw product not yet ingested / downloaded",
-      "processing_steps": [],
-      "processed_path": null,
+      "region_coverage_fraction": 1.0,
+      "status": "AVAILABLE",
+      "status_reason": null,
+      "processing_steps": [
+        {
+          "step": "detect_format",
+          "tool": "rasterio 1.5.2",
+          "parameters": {
+            "source_file": "PSP_001752_1750_RED_C_01_ORTHO.JP2",
+            "opened_path": "data/raw/PSP_001752_1750_RED_C_01_ORTHO.JP2"
+          },
+          "completed_at": "2026-11-14T04:34:28.212625+00:00"
+        },
+        {
+          "step": "validate_crs",
+          "tool": "rasterio 1.5.2",
+          "parameters": {
+            "datum_type": "SPHERE",
+            "latitude_type": "PLANETOCENTRIC",
+            "is_projected": true
+          },
+          "completed_at": "2026-11-14T04:34:28.271256+00:00"
+        },
+        {
+          "step": "nodata_normalization",
+          "tool": "numpy",
+          "parameters": {
+            "source_nodata": null,
+            "target_nodata": "NaN"
+          },
+          "completed_at": "2026-11-14T04:34:35.210784+00:00"
+        },
+        {
+          "step": "coverage_statistics",
+          "tool": "numpy",
+          "parameters": {
+            "total_cells": 90094000,
+            "valid_cells": 90094000,
+            "nodata_cells": 0,
+            "valid_fraction": 1.0
+          },
+          "completed_at": "2026-11-14T04:34:35.249392+00:00"
+        },
+        {
+          "step": "write_cog",
+          "tool": "rasterio 1.5.2",
+          "parameters": {
+            "output_file": "HIRISE_ORTHO_GALE_MOUND.tif",
+            "compress": "deflate",
+            "tiled": true
+          },
+          "completed_at": "2026-11-14T04:35:04.027189+00:00"
+        }
+      ],
+      "processed_path": "data/processed/HIRISE_ORTHO_GALE_MOUND.tif",
       "limitations": [
-        "Reduced C-version single-band RED channel; no multispectral infrared or true color."
+        "Single 8-bit band (product name indicates the RED channel); no colour or multispectral information.",
+        "Valid data cell coverage: 100.0% (0 nodata cells out of 90,094,000 total in bounding box)."
       ],
       "usage_note": "NASA PDS Open Data",
-      "retrieved_at": null
+      "retrieved_at": "2026-11-14T04:35:04.097859+00:00",
+      "sha256": "0ce302f9e68f41330f5bd79f8ac64c775ce38f8a306614c18e9a365b516b3858"
     },
     {
       "dataset_id": "MOLA_MEGDR_GALE",
@@ -95,7 +200,7 @@
       "data_class": "MEASURED",
       "units": "m",
       "source_crs": "+proj=eqc +lat_ts=0 +lat_0=0 +lon_0=0 +x_0=0 +y_0=0 +R=3396190 +units=m +no_defs",
-      "source_conventions": "Planetocentric latitude, East-positive longitude, Mars IAU 2000 sphere R=3396190m",
+      "source_conventions": "Mars MOLA MEGDR sphere (R=3396000 m), planetocentric latitude, East-positive longitude",
       "native_resolution_m": 463.0,
       "temporal_coverage": {
         "start": null,
@@ -103,21 +208,76 @@
         "description": "MGS mapping mission 1999-2001"
       },
       "coverage_bounds": {
-        "lat_min": -44.0,
-        "lat_max": 0.0,
-        "lon_min": 90.0,
-        "lon_max": 180.0
+        "lat_min": -43.986709,
+        "lat_max": 0.007812,
+        "lon_min": 90.003397,
+        "lon_max": 179.992188
       },
-      "region_coverage_fraction": null,
-      "status": "UNAVAILABLE",
-      "status_reason": "Raw product not yet ingested / downloaded",
-      "processing_steps": [],
-      "processed_path": null,
+      "region_coverage_fraction": 1.0,
+      "status": "AVAILABLE",
+      "status_reason": null,
+      "processing_steps": [
+        {
+          "step": "detect_format",
+          "tool": "rasterio 1.5.2",
+          "parameters": {
+            "source_file": "megt00n090hb.lbl",
+            "opened_path": "data/raw/megt00n090hb.lbl"
+          },
+          "completed_at": "2026-11-14T04:35:04.100854+00:00"
+        },
+        {
+          "step": "validate_crs",
+          "tool": "rasterio 1.5.2",
+          "parameters": {
+            "datum_type": "SPHERE",
+            "latitude_type": "PLANETOCENTRIC",
+            "is_projected": true
+          },
+          "completed_at": "2026-11-14T04:35:04.135891+00:00"
+        },
+        {
+          "step": "nodata_normalization",
+          "tool": "numpy",
+          "parameters": {
+            "source_nodata": -32768.0,
+            "target_nodata": "NaN"
+          },
+          "completed_at": "2026-11-14T04:35:05.119496+00:00"
+        },
+        {
+          "step": "coverage_statistics",
+          "tool": "numpy",
+          "parameters": {
+            "total_cells": 64880640,
+            "valid_cells": 64880640,
+            "nodata_cells": 0,
+            "valid_fraction": 1.0
+          },
+          "completed_at": "2026-11-14T04:35:05.146037+00:00"
+        },
+        {
+          "step": "write_cog",
+          "tool": "rasterio 1.5.2",
+          "parameters": {
+            "output_file": "MOLA_MEGDR_GALE.tif",
+            "compress": "deflate",
+            "tiled": true
+          },
+          "completed_at": "2026-11-14T04:35:47.566282+00:00"
+        }
+      ],
+      "processed_path": "data/processed/MOLA_MEGDR_GALE.tif",
       "limitations": [
-        "Coarse regional resolution (~463 m/cell); cannot detect micro-obstacles, metric steps, or local slopes."
+        "Planetary radius minus areoid (GMM3) vertical reference.",
+        "Interpolated values where no observation lies in a bin; about 55 percent of bins contain at least one shot near the equator, with profile gaps up to 12 km.",
+        "Grid edges derived by the GDAL PDS driver from the label differ from the label's stated extents by up to about one 463 m pixel (driver uses MAP_SCALE 0.463 km, label states 128 pixels per degree); positions at the footprint may be displaced by up to about one pixel.",
+        "Heights must not be combined with HiRISE DTM heights unless the HiRISE vertical reference is verified.",
+        "Valid data cell coverage: 100.0% (0 nodata cells out of 64,880,640 total in bounding box)."
       ],
       "usage_note": "NASA PDS Open Data",
-      "retrieved_at": null
+      "retrieved_at": "2026-11-14T04:35:47.665346+00:00",
+      "sha256": "764946162d4c650abfb22aa284595a15374a7185f302a639c19e6602c67a1d6e"
     },
     {
       "dataset_id": "USGS_GALE_MERGED_DEM",
@@ -143,7 +303,7 @@
       },
       "coverage_bounds": {
         "lat_min": -5.099,
-        "lat_max": -4.130,
+        "lat_max": -4.13,
         "lon_min": 137.124,
         "lon_max": 137.681
       },
@@ -277,7 +437,7 @@
     },
     {
       "dataset_id": "MARS_TREK_PORTAL",
-      "name": "NASA Solar System Treks — Mars",
+      "name": "NASA Solar System Treks \u2014 Mars",
       "mission": "NASA Solar System Exploration",
       "instrument": "Multi-instrument GIS Portal",
       "source_archive": "NASA / JPL Solar System Treks",

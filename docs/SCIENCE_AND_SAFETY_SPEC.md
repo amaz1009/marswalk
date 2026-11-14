@@ -336,11 +336,16 @@ on every route.
 - Search window: the bounding box of all route points plus padding of 25 % of the box
   size (at least 500 m), clipped to the region. If no path is found, the search is
   repeated once on the full region grid if it is within `ARESNAV_MAX_GRID_CELLS`.
-  Otherwise the response is `GRID_TOO_LARGE`.
-- Route points (base, stops, destination) are placed in the cell that contains them.
-  They are not moved. If that cell is `IMPASSABLE_NODATA`, the plan returns
-  `INSUFFICIENT_DATA`. If it is `IMPASSABLE_SLOPE` or `IMPASSABLE_EXCLUSION`, the plan
-  returns `NO_FEASIBLE_ROUTE`. In both cases the blocking point is named.
+  Otherwise the response is `GRID_TOO_LARGE`. Limitation: the analysis window can cut
+  off detours around obstacles, so `NO_FEASIBLE_ROUTE` means no route within the
+  analysis window, not that no route exists.
+- Endpoint snapping (ruling C-03): if an endpoint falls on an impassable analysis cell,
+  it is snapped up to 3 analysis cells only if the native cell at the requested point is
+  passable (code 0).
+- Execution timeout: `ARESNAV_ROUTE_TIMEOUT_S` defaults to 30.0 s (measured on the
+  owner machine on the Gale Mount Sharp sample at factor 5: LOWEST_RISK 12.3 s,
+  BALANCED 9.1 s, 3-profile call 21.3 s). If exceeded, partial routes are returned with
+  unfinished profiles in `omitted_objectives` starting with "Computation limit:".
 
 ### 7.2 Step Cost
 

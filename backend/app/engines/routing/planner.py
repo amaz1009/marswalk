@@ -13,6 +13,7 @@ AresNav SCIENCE_AND_SAFETY_SPEC.md section 7:
 """
 
 import math
+import time
 from dataclasses import dataclass, field
 from typing import Any, Sequence, Union
 
@@ -174,7 +175,7 @@ def cell_to_geopoint(
         )
 
     if has_transform and has_crs:
-        proj_x, proj_y = transform * (col + 0.5, row + 0.5)
+        proj_x, proj_y = transform @ (col + 0.5, row + 0.5)
         lon, lat = crs_transformer.inverse_transform(proj_x, proj_y)
         return GeoPoint(lat=lat, lon=lon)
 
@@ -284,6 +285,7 @@ def plan_routes(
     science_interest: np.ndarray | None = None,
     max_grid_cells: int = 4_000_000,
     grid: Any = None,
+    deadline: float | None = None,
 ) -> PlanOutcome:
     """Plan multi-objective traverse routes across an analysis grid.
 
@@ -502,6 +504,24 @@ def plan_routes(
     computed_routes: list[PlannedRoute] = []
 
     for profile in active_objs:
+        if deadline is not None and time.perf_counter() > deadline:
+            timeout_msg = (
+                "Computation limit: route planning exceeded ARESNAV_ROUTE_TIMEOUT_S "
+                "(not a terrain finding)"
+            )
+            prof_idx = active_objs.index(profile)
+            for rem_prof in active_objs[prof_idx:]:
+                omitted_objectives.append(OmittedObjective(objective=rem_prof, reason=timeout_msg))
+            if computed_routes:
+                break
+            else:
+                return PlanOutcome(
+                    status=PlanStatus.NO_FEASIBLE_ROUTE,
+                    blocking_reason=timeout_msg,
+                    omitted_objectives=omitted_objectives,
+                    geo_referenced=geo_referenced,
+                )
+
         # Determine profile weights (section 7.3)
         base_weights = PROFILE_WEIGHTS[profile]
         if science_interest is None and profile == RouteObjective.BALANCED:
@@ -559,6 +579,7 @@ def plan_routes(
                 cell_size_m=cell_size_m,
                 base_speed_kmh=base_speed_kmh,
                 w_sci=weights.w_sci,
+                deadline=deadline,
             )
 
             # If no path found, repeat once on full grid if allowed (section 7.1)
@@ -605,6 +626,7 @@ def plan_routes(
                     cell_size_m=cell_size_m,
                     base_speed_kmh=base_speed_kmh,
                     w_sci=weights.w_sci,
+                    deadline=deadline,
                 )
                 offset_r, offset_c = 0, 0
             else:
@@ -641,6 +663,27 @@ def plan_routes(
             )
 
         if profile_failed:
+            if deadline is not None and time.perf_counter() > deadline:
+                timeout_msg = (
+                    "Computation limit: route planning exceeded ARESNAV_ROUTE_TIMEOUT_S "
+                    "(not a terrain finding)"
+                )
+                if computed_routes:
+                    prof_idx = active_objs.index(profile)
+                    for rem_prof in active_objs[prof_idx:]:
+                        omitted_objectives.append(
+                            OmittedObjective(objective=rem_prof, reason=timeout_msg)
+                        )
+                    break
+                else:
+                    return PlanOutcome(
+                        status=PlanStatus.NO_FEASIBLE_ROUTE,
+                        blocking_reason=timeout_msg,
+                        omitted_objectives=[
+                            OmittedObjective(objective=p, reason=timeout_msg) for p in active_objs
+                        ],
+                        geo_referenced=geo_referenced,
+                    )
             return PlanOutcome(
                 status=PlanStatus.NO_FEASIBLE_ROUTE,
                 blocking_reason=f"No feasible route for leg: {failing_leg_name}",

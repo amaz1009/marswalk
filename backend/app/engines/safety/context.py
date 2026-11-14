@@ -93,8 +93,7 @@ def build_thermal_context_indicator() -> ContextIndicator:
             source_type="dataset",
             source_id="THEMIS_DAY_IR_GLOBAL",
             detail=(
-                "THEMIS Daytime Infrared Global Mosaic v12 "
-                "(spec section 9.3, dataset_catalog.json line 361)"
+                "THEMIS Daytime Infrared Global Mosaic v12 (spec section 9.3, dataset_catalog.json)"
             ),
         )
     ]

@@ -218,6 +218,27 @@ def test_unknown_slope_max_when_nan_or_none() -> None:
     assert evaluate_slope_max([5.0, float("nan"), 8.0], config).status == AssessmentStatus.UNKNOWN
 
 
+def test_nan_slope_yields_overall_unknown_assessment() -> None:
+    """STEP 0a test: SLOPE_MAX is critical=True; NaN slope produces overall UNKNOWN assessment."""
+    config = get_default_eva_config()
+    c_slope = evaluate_slope_max([5.0, float("nan")], config)
+    assert c_slope.critical is True
+    assert c_slope.status == AssessmentStatus.UNKNOWN
+
+    # Evaluate full safety check suite with c_slope UNKNOWN
+    checks = [
+        c_slope,
+        evaluate_hazard_intersection(0),
+        evaluate_terrain_data_coverage(1.0, 1.0),
+        evaluate_eva_duration(100.0, config, return_to_base=True),
+        evaluate_return_reserve(100.0, config, return_to_base=True),
+        evaluate_roughness([0.1], config),
+        evaluate_distance_from_base(500.0, config),
+    ]
+    assessment = build_safety_assessment(checks, build_context_indicators())
+    assert assessment.overall_status == AssessmentStatus.UNKNOWN
+
+
 def test_unknown_hazard_intersection_when_none() -> None:
     """Ruling 2: Missing hazard count strictly returns UNKNOWN, never PASS."""
     assert evaluate_hazard_intersection(None).status == AssessmentStatus.UNKNOWN

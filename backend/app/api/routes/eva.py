@@ -1,9 +1,12 @@
-"""EVA endpoints stub implementing docs/API_CONTRACTS.md §4.11 and §4.14 (P0/P1)."""
+"""EVA endpoints implementing docs/API_CONTRACTS.md §4.11 (defaults, P0)
+and §4.14 stub (envelope, P1).
+"""
 
 from fastapi import APIRouter
 
 from app.core.errors import AppException
 from app.models import EnvelopeRequest, EnvelopeResponse, EvaDefaultsResponse
+from app.services.eva_service import get_eva_service
 
 router = APIRouter(prefix="/eva", tags=["EVA"])
 
@@ -14,12 +17,9 @@ router = APIRouter(prefix="/eva", tags=["EVA"])
     summary="Get default EVA configuration",
     description="Returns baseline EVA physiological parameters and explicit reference assumptions.",
 )
-async def get_eva_defaults() -> EvaDefaultsResponse:
-    raise AppException(
-        error_code="NOT_IMPLEMENTED",
-        message="Endpoint belongs to an unmerged work package",
-        status_code=501,
-    )
+def get_eva_defaults() -> EvaDefaultsResponse:
+    """Return default EVA operational parameters and assumption records."""
+    return get_eva_service().get_defaults()
 
 
 @router.post(

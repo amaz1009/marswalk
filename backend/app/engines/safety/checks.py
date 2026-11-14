@@ -20,16 +20,16 @@ from app.models.evidence import EvidenceRef
 # Named Threshold Constants and Spec Rules (Spec section 9.1)
 # ---------------------------------------------------------------------------
 
-# Factor applied to (time_available - reserve_required) for reserve warning (Spec 9.1 line 448)
-# Source: spec section 9.1 (line 448: "WARNING if value > 0.9 * threshold")
+# Factor applied to (time_available - reserve_required) for reserve warning (Spec section 9.1)
+# Source: spec section 9.1 rule: "WARNING if value > 0.9 * threshold"
 RETURN_RESERVE_WARNING_FACTOR: float = 0.9
 
-# Percentile of path roughness evaluated against roughness_warning_m (Spec 9.1 line 449)
-# Source: spec section 9.1 (line 449: "95th percentile roughness on path (m)")
+# Percentile of path roughness evaluated against roughness_warning_m (Spec section 9.1)
+# Source: spec section 9.1 rule: "95th percentile roughness on path (m)"
 ROUGHNESS_PERCENTILE: float = 95.0
 
-# Max primary DTM post spacing permissible before raising data coverage warning (Spec 9.1 line 446)
-# Source: spec section 9.1 (line 446: "WARNING if the primary DTM post spacing is > 2 m")
+# Max primary DTM post spacing permissible before raising data coverage warning (Spec section 9.1)
+# Source: spec section 9.1 rule: "WARNING if the primary DTM post spacing is > 2 m"
 DTM_POST_SPACING_WARNING_THRESHOLD_M: float = 2.0
 
 # Standardized limitation statements for each safety check (Spec section 9.1)
@@ -71,6 +71,7 @@ SAFETY_DISCLAIMER_TEXT: str = (
 def evaluate_slope_max(
     path_slopes: Sequence[float] | np.ndarray | None,
     config: EvaConfig,
+    analysis_cell_size_m: float | None = None,
 ) -> SafetyCheck:
     """Evaluate SLOPE_MAX check against caution and hard limits (Spec section 9.1).
 
@@ -80,16 +81,25 @@ def evaluate_slope_max(
         - WARNING if max slope > config.warning_slope_deg (strictly greater).
         - PASS otherwise.
     """
+    if analysis_cell_size_m is not None:
+        slope_limitation = (
+            "Limitation: Obstacles smaller than approximately 3x DTM post spacing may not be "
+            f"resolved. Evaluated using conservative block-max slope on "
+            f"{analysis_cell_size_m:.2f} m analysis grid."
+        )
+    else:
+        slope_limitation = SLOPE_LIMITATION_TEXT
+
     evidence = [
         EvidenceRef(
             source_type="reference",
             source_id="config.max_slope_deg",
-            detail=f"Limit: {config.max_slope_deg} deg (REFERENCE PENA2023, spec line 261)",
+            detail=f"Limit: {config.max_slope_deg} deg (REFERENCE PENA2023, spec section 6.2)",
         ),
         EvidenceRef(
             source_type="reference",
             source_id="config.warning_slope_deg",
-            detail=f"Limit: {config.warning_slope_deg} deg (REFERENCE JONES1989, spec line 262)",
+            detail=f"Limit: {config.warning_slope_deg} deg (REFERENCE JONES1989, spec section 6.2)",
         ),
     ]
 
@@ -101,7 +111,7 @@ def evaluate_slope_max(
             value=None,
             threshold=float(config.max_slope_deg),
             units="degrees",
-            message=f"Slope data unavailable along traverse. {SLOPE_LIMITATION_TEXT}",
+            message=f"Slope data unavailable along traverse. {slope_limitation}",
             evidence=evidence,
         )
 
@@ -115,7 +125,7 @@ def evaluate_slope_max(
             threshold=float(config.max_slope_deg),
             units="degrees",
             message=(
-                f"Slope values along path contain NaN or unmeasured cells. {SLOPE_LIMITATION_TEXT}"
+                f"Slope values along path contain NaN or unmeasured cells. {slope_limitation}"
             ),
             evidence=evidence,
         )
@@ -128,19 +138,19 @@ def evaluate_slope_max(
         status = AssessmentStatus.BLOCKED
         msg = (
             f"Maximum slope {val:.2f} deg exceeds hard traversal limit of "
-            f"{max_thresh:.1f} deg. {SLOPE_LIMITATION_TEXT}"
+            f"{max_thresh:.1f} deg. {slope_limitation}"
         )
     elif val > warn_thresh:
         status = AssessmentStatus.WARNING
         msg = (
             f"Maximum slope {val:.2f} deg exceeds caution threshold of "
-            f"{warn_thresh:.1f} deg. {SLOPE_LIMITATION_TEXT}"
+            f"{warn_thresh:.1f} deg. {slope_limitation}"
         )
     else:
         status = AssessmentStatus.PASS
         msg = (
             f"Maximum slope {val:.2f} deg is within caution threshold of "
-            f"{warn_thresh:.1f} deg. {SLOPE_LIMITATION_TEXT}"
+            f"{warn_thresh:.1f} deg. {slope_limitation}"
         )
 
     return SafetyCheck(
@@ -223,14 +233,14 @@ def evaluate_terrain_data_coverage(
     Rule:
         - UNKNOWN if coverage fraction is None or NaN.
         - WARNING if value < 1.0.
-        - WARNING if primary DTM post spacing > 2.0 m (spec 9.1 line 446).
+        - WARNING if primary DTM post spacing > 2.0 m (spec section 9.1 rule).
         - PASS otherwise.
     """
     evidence = [
         EvidenceRef(
             source_type="reference",
             source_id="spec.post_spacing_threshold",
-            detail="Threshold: 2.0 m post-spacing limit (spec 9.1 line 446)",
+            detail="Threshold: 2.0 m post-spacing limit (spec section 9.1)",
         )
     ]
 
@@ -309,7 +319,7 @@ def evaluate_eva_duration(
         EvidenceRef(
             source_type="assumption",
             source_id="config.max_eva_hours",
-            detail=f"Budget: {config.max_eva_hours} h (ASSUMPTION ALSJ, spec line 263)",
+            detail=f"Budget: {config.max_eva_hours} h (ASSUMPTION ALSJ, spec section 6.2)",
         )
     ]
 
@@ -386,7 +396,7 @@ def evaluate_return_reserve(
         - UNKNOWN if total_time_s is None or NaN.
         - Threshold: time_available - reserve_required =
           max_eva_hours * 3600 * (1 - return_reserve_fraction).
-        - Warning Threshold: 0.9 * Threshold (spec 9.1 line 448).
+        - Warning Threshold: 0.9 * Threshold (spec section 9.1 rule).
         - BLOCKED if total_time_s > threshold (strictly greater).
         - WARNING if total_time_s > warning_threshold (strictly greater).
         - PASS otherwise.
@@ -401,8 +411,8 @@ def evaluate_return_reserve(
             source_type="assumption",
             source_id="config.return_reserve_fraction",
             detail=(
-                f"Fraction: {config.return_reserve_fraction} (ASSUMPTION, spec line 264); "
-                f"Warning factor: {RETURN_RESERVE_WARNING_FACTOR} (spec 9.1 line 448)"
+                f"Fraction: {config.return_reserve_fraction} (ASSUMPTION, spec section 6.2); "
+                f"Warning factor: {RETURN_RESERVE_WARNING_FACTOR} (spec section 9.1)"
             ),
         )
     ]
@@ -500,7 +510,7 @@ def evaluate_roughness(
 
     Rule:
         - UNKNOWN if path_roughness is missing, empty, or all NaN.
-        - Evaluates 95th percentile roughness along path (spec 9.1 line 449).
+        - Evaluates 95th percentile roughness along path (spec section 9.1 rule).
         - WARNING if p95 > config.roughness_warning_m (strictly greater).
         - PASS otherwise.
     """
@@ -510,7 +520,7 @@ def evaluate_roughness(
             source_id="config.roughness_warning_m",
             detail=(
                 f"Limit: {config.roughness_warning_m} m (ASSUMPTION Open Item O-3, "
-                f"spec line 268; percentile: {ROUGHNESS_PERCENTILE}th per spec 9.1 line 449)"
+                f"spec section 6.2; percentile: {ROUGHNESS_PERCENTILE}th per spec section 9.1)"
             ),
         )
     ]
@@ -588,7 +598,7 @@ def evaluate_distance_from_base(
             source_type="reference",
             source_id="config.max_distance_from_base_m",
             detail=(
-                f"Limit: {config.max_distance_from_base_m} m (REFERENCE PENA2023, spec line 267)"
+                f"Limit: {config.max_distance_from_base_m} m (REFERENCE PENA2023, spec section 6.2)"
             ),
         )
     ]

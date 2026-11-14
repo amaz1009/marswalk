@@ -6,6 +6,7 @@ Implements business logic for:
 - GET /api/v1/layers/{layer_id}/features
 """
 
+from functools import lru_cache
 from pathlib import Path
 from typing import Any
 
@@ -194,9 +195,23 @@ LAYER_DEFINITIONS: dict[str, dict[str, Any]] = {
 
 
 def _get_raster_bounds(raster_path: Path) -> GeoBounds | None:
-    """Extract geographical bounding box from a raster file."""
-    if not raster_path.exists():
+    """Extract the bounding box of a raster, cached per file version.
+
+    Opening the raster and building a pyproj Transformer on every request cost about
+    0.7 s for the nine layers. The footprint only changes when the file changes, so the
+    cache key includes the file size and modification time.
+    """
+    try:
+        stat = raster_path.stat()
+    except OSError:
         return None
+    return _compute_raster_bounds(str(raster_path), stat.st_mtime_ns, stat.st_size)
+
+
+@lru_cache(maxsize=64)
+def _compute_raster_bounds(path_str: str, mtime_ns: int, size: int) -> GeoBounds | None:
+    """Uncached footprint computation; mtime_ns and size only key the cache."""
+    raster_path = Path(path_str)
     try:
         import pyproj
 

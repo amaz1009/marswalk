@@ -521,3 +521,45 @@ def test_affine_col_row_mapping_regression() -> None:
                 src, to_proj, corner_lon, corner_lat
             )
             assert val_bilinear == pytest.approx(expected_val)
+
+
+def test_synthetic_raster_bounds_are_cached(tmp_path: Path) -> None:
+    """Raster footprints are computed once per file version, not once per request.
+
+    The synthetic raster is a tiny geographic GeoTIFF built in a tmp path; it only
+    exercises the cache, not any real Mars data.
+    """
+    import numpy as np
+    import pytest
+    import rasterio
+    from rasterio.transform import from_origin
+
+    from app.services import layer_service as ls
+
+    path = tmp_path / "synthetic_bounds.tif"
+    with rasterio.open(
+        path,
+        "w",
+        driver="GTiff",
+        height=4,
+        width=4,
+        count=1,
+        dtype="float32",
+        crs="EPSG:4326",
+        transform=from_origin(137.0, -4.0, 0.01, 0.01),
+    ) as dst:
+        dst.write(np.zeros((4, 4), dtype="float32"), 1)
+
+    ls._compute_raster_bounds.cache_clear()
+    first = ls._get_raster_bounds(path)
+    second = ls._get_raster_bounds(path)
+    info = ls._compute_raster_bounds.cache_info()
+
+    assert info.misses == 1
+    assert info.hits == 1
+    assert first == second
+    assert first is not None
+    assert first.lon_min == pytest.approx(137.0)
+    assert first.lon_max == pytest.approx(137.04)
+    assert first.lat_max == pytest.approx(-4.0)
+    assert first.lat_min == pytest.approx(-4.04)

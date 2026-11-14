@@ -23,14 +23,14 @@ DOWNLOAD_APPROVED: YES            # YES once the owner approves the data downloa
 Update this block after every step. It is what an interrupted session resumes from.
 
 ```text
-ACTIVE_WP: none
-BRANCH: develop
-STEP: none
-LAST_COMPLETED: WP-11 merged
-NEXT_ACTION: awaiting owner direction (next planned WP: WP-13 mission report)
+ACTIVE_WP: WP-13
+BRANCH: wp/WP-13-mission-report
+STEP: small fix round complete (awaits owner commit and gate)
+LAST_COMPLETED: WP-13 WARNING wording update and real catalog test assertion
+NEXT_ACTION: owner commit of WP-13 backend
 BLOCKERS: none
 WAITING_FOR_OWNER: no
-UPDATED: 2026-11-14T20:20+05:30
+UPDATED: 2026-11-14T22:30+05:30
 ```
 
 ---
@@ -67,7 +67,7 @@ UPDATED: 2026-11-14T20:20+05:30
 | WP-10 | Routing engine | P0 | MERGED | wp/WP-10-routing-engine | full backend suite 103 passed, 0 failed (21 routing + 11 terrain + 26 API); ruff clean; benchmarks: 500x500 3.17s/58MB, 1000x1000 13.53s/77MB, 2000x2000 58.40s/151MB | Human walking speed model (Tobler shape [TOBLER1993] scaled to base speed), multi-objective step cost, deterministic A* (octile heuristic, corner cutting prohibition, tie-breaking), search window (25% padding / 500 m min, fallback to full grid, GRID_TOO_LARGE cap), duplicate route detection (identical_to), route statistics, strict CRS transformer and transform validation (both or neither), grid-only synthetic mode; pure ASCII |
 | WP-11 | EVA model, safety checks and route API | P0 | MERGED | wp/WP-11-route-service | owner-run on branch tip b27e414: pytest 172 passed, 0 failed, 14 warnings (pyproj PROJ UserWarning only), 121 s; ruff clean; ruff format clean (99 files); frozen contract diff empty; sweeps clean | (1) Grid: fixed 5x aggregation factor (ASSUMPTION, C-01), any-blocked hazard reduction, block-max slope/roughness, block-mean elevation, padding 25% / 500 m min (ASSUMPTION); (2) Snapping (C-03): native-passable only, up to 3 analysis cells, reported in route.limitations, base distance from requested base; (3) Timeout (C-04): ARESNAV_ROUTE_TIMEOUT_S default 30.0 s enforced, partial results with omitted_objectives 'Computation limit:'; sample ~21 s; (4) MAX_SCIENCE omitted in scope A ('no science-interest layer available'); (5) Return leg (C-06): reversed path with directional speed, never 2x outbound; (6) Sample destination (-4.78/137.30) ~2138 m from base yields WARNING; (7) Limitations: absent lon_0 indistinguishable from 0 in pyproj; parallel profiles deferred; (8) Backlog: Affine * in profile.py / test_terrain.py, WP-08 test skips, boxwork wording |
 | WP-12 | Frontend traverse planner and safety panel | P0 | PENDING | wp/WP-12-frontend-traverse | — | Milestone M2 |
-| WP-13 | Mission report | P0 | PENDING | wp/WP-13-mission-report | — | Milestone M3 |
+| WP-13 | Mission report | P0 | IMPLEMENTED | wp/WP-13-mission-report | 31 passed, 0 failed (report unit tests); 125 passed, 0 failed, 12 warnings (full engines suite); owner-run gate pending | Pure deterministic report builder; 12 sections in spec 14.2 order; Section 11 present only with agent_analysis; 9 assumptions synchronized with EVA defaults + override tracking + exact literal assertions; disclaimer verbatim; prohibited-wording parameterized audit; datasets routing layers text; 404/422 errors; full markdown export; genuine synthetic and real Gale e2e tests |
 | WP-14 | Walk-back envelope | P1 | PENDING | wp/WP-14-walkback-envelope | — | |
 | WP-15 | Rover-eye surface images | P1 | PENDING | wp/WP-15-surface-images | — | |
 | WP-16 | Field View | P1 | PENDING | wp/WP-16-field-view | — | |
@@ -189,4 +189,7 @@ Format: `timestamp | WP | step | action | tests (command → passed/failed/skipp
 2026-11-14T19:55+05:30 | WP-11 | B2-fix | WP-11 Part B2 Fix Round: test_route_api asserts all 9 spec 6.2 assumptions and structural invariants without hand-typed real-data numbers; test_models removes implemented stubs (defaults, plan_routes) and keeps envelope stub; API/service docstrings synchronized with API_CONTRACTS §4.11; checks.py line-number citations replaced with section 9.1 rule text; astar_search alias removed; Affine * replaced with @; test_timeout_with_no_science_layer added | & "backend\.venv\Scripts\python.exe" -m pytest backend\tests\unit\engines\ -> 94 passed, 0 failed; ruff check and format clean | uncommitted
 2026-11-14T17:49+05:30 | — | github | PR #2 merged into main (64036ad); develop back-merged; main = develop = 0f6c52e | GitHub remote merge verified | 64036ad
 2026-11-14T20:20+05:30 | WP-11 | merge | Merged wp/WP-11-route-service into develop (status MERGED); owner-run on tip b27e414: pytest 172 passed, 0 failed, 14 warnings (pyproj UserWarning only), 121 s; ruff check clean; ruff format --check clean (99 files); frozen contract diff empty; sweeps clean; commits 1dc7333, 5dd9b30, 4f1578b, b27e414; notes (1)-(8) recorded | merge --no-ff verified; owner-run full suite: 172 passed, 0 failed | 2c14d6b
+2026-11-14T21:05+05:30 | WP-13 | 4 of 4 | Mission report backend implementation and unit tests completed; builder.py, report_service.py, mission.py implemented; 18 in-process tests pass; frozen contract diff empty; sweeps clean | & backend\.venv\Scripts\pytest.exe backend\tests\unit\engines\test_report_builder.py -> 18 passed, 0 failed, 1 warning (0.23s); full engines suite 112 passed, 0 failed (68.3s); ruff check and format clean | uncommitted
+2026-11-14T21:40+05:30 | WP-13 | fix-round | WP-13 Fix Round completed: spec 14.1 wording updated; builder overall-status sentences for PASS/WARNING/BLOCKED/UNKNOWN synchronized; datasets routing layer text updated; test_nine_assumptions_labels asserts 9 literal values; test_prohibited_wording_audit_r6 parameterized over 10 states; genuine synthetic e2e journey test with temporary EQC rasters; genuine real Gale e2e test with REAL_DATA_EXISTS check; 125 full engine tests pass | cd backend; pytest tests/unit/engines/test_report_builder.py -> 31 passed, 0 failed (21.1s); pytest tests/unit/engines/ -> 125 passed, 0 failed, 12 warnings (88.9s); ruff check and format clean | uncommitted
+2026-11-14T22:30+05:30 | WP-13 | small-fix | WP-13 Small Fix Round: WARNING prose in builder.py updated ('No hard safety constraint is violated; advisory conditions were detected... Review is recommended before execution'); test_status_sentence_warning verifies new sentence and absence of 'meets the configured prototype criteria'; test_e2e_real_gale_when_available compares against real region catalog (list_datasets) with UNAVAILABLE reasons; skip-guard proof executed (skipped on fake path, passes on real path); sweeps and contract diff clean | cd backend; pytest tests/unit/engines/test_report_builder.py -> 31 passed, 0 failed (21.9s); ruff check and format clean | uncommitted
 ```

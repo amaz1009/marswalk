@@ -265,7 +265,7 @@ operator can change every value.
 | `traverse_time_margin` | 1.25 | factor | ASSUMPTION | A field evaluation of an EVA traverse planner found actual traverse times significantly longer than predicted. The factor value itself is an assumption. | [GILKEY2011] |
 | `default_work_time_min` | 20 | minutes | ASSUMPTION | Placeholder science time per stop. Set per stop by the operator. | — |
 | `max_distance_from_base_m` | 2000 | metres | REFERENCE | The same lunar study restricts walking traverses to within 2 km of the lander. Lunar data. | [PENA2023] |
-| `roughness_warning_m` | 0.30 | metres | ASSUMPTION | Uncalibrated. To be reviewed against the region's roughness distribution in WP-11. | — |
+| `roughness_warning_m` | 0.30 | metres | ASSUMPTION | Uncalibrated. To be reviewed against the region's roughness distribution in WP-11. Reviewed in WP-11 against the Gale Mount Sharp HiRISE DTM roughness layer (native cells): 0.06% of valid cells exceed 0.30 m and the 99th percentile is 0.114 m, so this check rarely triggers; the value remains an uncalibrated assumption. | — |
 
 ### 6.3 Walking Speed vs Slope
 

@@ -23,14 +23,14 @@ DOWNLOAD_APPROVED: YES            # YES once the owner approves the data downloa
 Update this block after every step. It is what an interrupted session resumes from.
 
 ```text
-ACTIVE_WP: WP-RENAME
-BRANCH: wp/rename-aresnav
-STEP: 1 of 1
-LAST_COMPLETED: Product renamed to AresNav across tracked files
-NEXT_ACTION: owner review and commit
+ACTIVE_WP: none
+BRANCH: develop
+STEP: complete
+LAST_COMPLETED: Merged wp/rename-aresnav into develop (product renamed MARSWALK to AresNav)
+NEXT_ACTION: awaiting owner direction
 BLOCKERS: none
-WAITING_FOR_OWNER: yes
-UPDATED: 2026-11-14T17:00+05:30
+WAITING_FOR_OWNER: no
+UPDATED: 2026-11-14T17:28+05:30
 ```
 
 ---
@@ -182,4 +182,5 @@ Format: `timestamp | WP | step | action | tests (command → passed/failed/skipp
 2026-11-14T15:46+05:30 | WP-10 | 5 of 5 | Merged wp/WP-10-routing-engine into develop (status MERGED); terrain-aware A* routing engine and human walking-speed model complete; full backend suite 102 passed, 0 failed; ruff clean; frozen contract diff empty | merge --no-ff verified; full backend suite: 102 passed, 0 failed | 72fa583
 2026-11-14T15:47+05:30 | WP-08b | 1 of 1 | Merged wp/WP-08b-layer-perf into develop; cached raster footprints per file version (mtime/size check) in layer_service.py; added regression test test_synthetic_raster_bounds_are_cached; full backend suite 103 passed, 0 failed; ruff clean; frozen contract diff empty | merge --no-ff verified; full backend suite: 103 passed, 0 failed | ec0e287
 2026-11-14T17:00+05:30 | WP-RENAME | 1 of 1 | product renamed from MARSWALK to AresNav | checks clean | [WP-RENAME]
+2026-11-14T17:28+05:30 | WP-RENAME | merge | Merged wp/rename-aresnav into develop (status MERGED); product renamed MARSWALK to AresNav; owner-run results at 4bd7c47: pytest 130 passed (103 from committed code plus 27 uncommitted WP-11 Part A tests present in local tree), ruff check clean, ruff format --check 87 files already formatted, git diff of backend/app/models empty, git diff of docs/openapi.json title-only; notes (1)-(5) recorded: (1) env vars MARSWALK_* are now ARESNAV_*; (2) openapi title only contract change, schemas/models unchanged; (3) earlier "checks clean" written before owner-run gate; (4) frontend gate runs after merge in frontend worktree; (5) GitHub repo and local folder renames done by owner after merge | merge --no-ff verified; owner-run suite at 4bd7c47: 130 passed, 0 failed | 314fd62
 ```

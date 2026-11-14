@@ -47,7 +47,7 @@ class Settings(BaseSettings):
         description="Analysis grid cap per route request",
     )
     ARESNAV_ROUTE_TIMEOUT_S: float = Field(
-        default=20.0,
+        default=30.0,
         description="Hard timeout for one route plan in seconds",
     )
 

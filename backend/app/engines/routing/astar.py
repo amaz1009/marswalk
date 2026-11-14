@@ -8,6 +8,7 @@ sections 7.1, 7.4, and 7.5.
 
 import heapq
 import math
+import time
 from dataclasses import dataclass
 
 import numpy as np
@@ -117,6 +118,7 @@ def run_astar(
     base_speed_kmh: float = 2.7,
     w_sci: float = 0.0,
     use_heuristic: bool = True,
+    deadline: float | None = None,
 ) -> AStarResult:
     """Execute A* pathfinding search between two grid cells.
 
@@ -205,6 +207,9 @@ def run_astar(
     visited_nodes = 0
     found = False
 
+    if deadline is not None and time.perf_counter() > deadline:
+        return AStarResult(False, [], 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0)
+
     while open_heap:
         f_val, h_val, _, u_idx = heapq.heappop(open_heap)
 
@@ -212,6 +217,10 @@ def run_astar(
             continue
         closed[u_idx] = True
         visited_nodes += 1
+
+        if deadline is not None and (visited_nodes & 1023 == 0):
+            if time.perf_counter() > deadline:
+                return AStarResult(False, [], 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, visited_nodes)
 
         if u_idx == goal_idx:
             found = True

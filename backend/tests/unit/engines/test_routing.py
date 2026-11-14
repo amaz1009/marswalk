@@ -858,7 +858,7 @@ def test_grid_only_and_georeferenced_modes() -> None:
     assert math.isclose(route_g.max_distance_from_base_m, expected_max_dist, rel_tol=1e-6)
 
     # 2. Spatially referenced mode (both transform and crs_transformer provided)
-    transform = Affine.translation(0.0, -280000.0) * Affine.scale(1.0, -1.0)
+    transform = Affine.translation(0.0, -280000.0) @ Affine.scale(1.0, -1.0)
     crs_transformer = MarsCoordinateTransformer(center_lat=0.0, center_lon=137.3)
 
     outcome_geo = plan_routes(

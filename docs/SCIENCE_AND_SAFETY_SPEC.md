@@ -265,7 +265,7 @@ operator can change every value.
 | `traverse_time_margin` | 1.25 | factor | ASSUMPTION | A field evaluation of an EVA traverse planner found actual traverse times significantly longer than predicted. The factor value itself is an assumption. | [GILKEY2011] |
 | `default_work_time_min` | 20 | minutes | ASSUMPTION | Placeholder science time per stop. Set per stop by the operator. | — |
 | `max_distance_from_base_m` | 2000 | metres | REFERENCE | The same lunar study restricts walking traverses to within 2 km of the lander. Lunar data. | [PENA2023] |
-| `roughness_warning_m` | 0.30 | metres | ASSUMPTION | Uncalibrated. To be reviewed against the region's roughness distribution in WP-11. | — |
+| `roughness_warning_m` | 0.30 | metres | ASSUMPTION | Uncalibrated. To be reviewed against the region's roughness distribution in WP-11. Reviewed in WP-11 against the Gale Mount Sharp HiRISE DTM roughness layer (native cells): 0.06% of valid cells exceed 0.30 m and the 99th percentile is 0.114 m, so this check rarely triggers; the value remains an uncalibrated assumption. | — |
 
 ### 6.3 Walking Speed vs Slope
 
@@ -336,11 +336,16 @@ on every route.
 - Search window: the bounding box of all route points plus padding of 25 % of the box
   size (at least 500 m), clipped to the region. If no path is found, the search is
   repeated once on the full region grid if it is within `ARESNAV_MAX_GRID_CELLS`.
-  Otherwise the response is `GRID_TOO_LARGE`.
-- Route points (base, stops, destination) are placed in the cell that contains them.
-  They are not moved. If that cell is `IMPASSABLE_NODATA`, the plan returns
-  `INSUFFICIENT_DATA`. If it is `IMPASSABLE_SLOPE` or `IMPASSABLE_EXCLUSION`, the plan
-  returns `NO_FEASIBLE_ROUTE`. In both cases the blocking point is named.
+  Otherwise the response is `GRID_TOO_LARGE`. Limitation: the analysis window can cut
+  off detours around obstacles, so `NO_FEASIBLE_ROUTE` means no route within the
+  analysis window, not that no route exists.
+- Endpoint snapping (ruling C-03): if an endpoint falls on an impassable analysis cell,
+  it is snapped up to 3 analysis cells only if the native cell at the requested point is
+  passable (code 0).
+- Execution timeout: `ARESNAV_ROUTE_TIMEOUT_S` defaults to 30.0 s (measured on the
+  owner machine on the Gale Mount Sharp sample at factor 5: LOWEST_RISK 12.3 s,
+  BALANCED 9.1 s, 3-profile call 21.3 s). If exceeded, partial routes are returned with
+  unfinished profiles in `omitted_objectives` starting with "Computation limit:".
 
 ### 7.2 Step Cost
 

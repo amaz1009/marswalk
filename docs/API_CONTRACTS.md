@@ -724,7 +724,7 @@ variable.
 | `ARESNAV_DATA_DIR` | `backend/data` | Data directory, relative to the repository root |
 | `ARESNAV_DEFAULT_REGION` | `gale_mount_sharp` | Region shown at start-up |
 | `ARESNAV_MAX_GRID_CELLS` | `4000000` | Analysis grid cap per route request |
-| `ARESNAV_ROUTE_TIMEOUT_S` | `20` | Hard timeout for one route plan |
+| `ARESNAV_ROUTE_TIMEOUT_S` | `30` | Hard timeout for one route plan in seconds (ASSUMPTION: measured 3-profile call on Gale sample is ~21.3 s at factor 5 on owner machine: LOWEST_RISK 12.3 s, BALANCED 9.1 s) |
 | `ARESNAV_LLM_PROVIDER` | `none` | `none`, `anthropic` or `openai` |
 | `ARESNAV_LLM_MODEL` | empty | Required when the provider is not `none` |
 | `ANTHROPIC_API_KEY` | empty | Used only when the provider is `anthropic` |

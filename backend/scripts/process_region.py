@@ -1,4 +1,4 @@
-"""Region data processing pipeline script for MARSWALK.
+"""Region data processing pipeline script for AresNav.
 
 Implements WP-06 pipeline execution per docs/SYSTEM_ARCHITECTURE.md section 7.2:
 - Detects format and extracts CRS metadata from raw raster files
@@ -703,7 +703,7 @@ def resolve_data_dir(data_dir: Path) -> Path:
 
 def main() -> int:
     """CLI entrypoint for process_region."""
-    parser = argparse.ArgumentParser(description="MARSWALK region raster processor")
+    parser = argparse.ArgumentParser(description="AresNav region raster processor")
     parser.add_argument(
         "--region",
         type=str,

@@ -1,4 +1,4 @@
-"""Data download script for MARSWALK raw datasets.
+"""Data download script for AresNav raw datasets.
 
 Implements WP-06 data download requirements:
 - Reads backend/data/manifests/data_sources.json
@@ -358,7 +358,7 @@ def verify_rad_entry_readonly(manifest_entry: dict[str, Any]) -> dict[str, Any]:
 
 def main() -> int:
     """CLI entrypoint for download_data."""
-    parser = argparse.ArgumentParser(description="MARSWALK data downloader")
+    parser = argparse.ArgumentParser(description="AresNav data downloader")
     parser.add_argument(
         "--data-sources",
         type=Path,

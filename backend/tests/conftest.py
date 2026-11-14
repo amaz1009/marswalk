@@ -1,4 +1,4 @@
-"""Pytest fixtures for MARSWALK backend tests."""
+"""Pytest fixtures for AresNav backend tests."""
 
 import pytest
 from fastapi.testclient import TestClient

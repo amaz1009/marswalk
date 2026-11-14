@@ -1,8 +1,8 @@
-# MARSWALK
+# AresNav
 
 **Human EVA planning for the Martian surface, built on NASA mission data.**
 
-MARSWALK is an interactive planning tool for a future astronaut's Marswalk. It
+AresNav is an interactive planning tool for a future astronaut's Martian EVA traverse. It
 layers NASA datasets (terrain, imagery, thermal and geology) for one region, plans
 walking routes for a suited astronaut, checks each route against configurable safety
 limits, and explains every result with its data sources and limitations.
@@ -11,7 +11,7 @@ Built for the **NASA Space Apps Challenge 2026: "Interplanetary Survival Guide:
 Martian Map"**
 (https://www.spaceappschallenge.org/2026/challenges/interplanetary-survival-guide-martian-map/).
 
-> **Disclaimer.** MARSWALK is a research and planning prototype. Results are
+> **Disclaimer.** AresNav is a research and planning prototype. Results are
 > computational assessments under stated assumptions and are not a certified
 > astronaut safety analysis.
 

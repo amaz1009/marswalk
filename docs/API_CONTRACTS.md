@@ -1,4 +1,4 @@
-# MARSWALK — API Contracts, Shared Models and Data Dictionary
+# AresNav — API Contracts, Shared Models and Data Dictionary
 
 | Field          | Value                                                                        |
 |----------------|------------------------------------------------------------------------------|
@@ -8,7 +8,7 @@
 | Last updated   | 2026-11-11                                                                   |
 | Change control | Contract changes require Orchestrator approval, a version bump of this file, and a log entry in DEVELOPMENT_STATUS.md |
 
-This document is the single source of truth for every interface in MARSWALK. The
+This document is the single source of truth for every interface in AresNav. The
 Pydantic models in `backend/app/models/` implement it exactly. The frontend uses
 TypeScript types generated from the backend OpenAPI schema
 (`frontend/src/types/api.gen.ts`, produced by `npm run gen:api`). Nobody writes API
@@ -699,8 +699,8 @@ All non-2xx responses use this envelope:
 | `LAYER_UNAVAILABLE` | 409 | Layer exists but its data is unavailable |
 | `POINT_OUTSIDE_REGION` | 422 | A point lies outside the region bounds |
 | `INVALID_MISSION_STATE` | 422 | `MissionState` is internally inconsistent |
-| `GRID_TOO_LARGE` | 422 | Requested route area exceeds `MARSWALK_MAX_GRID_CELLS` |
-| `ROUTE_TIMEOUT` | 504 | Routing exceeded `MARSWALK_ROUTE_TIMEOUT_S` |
+| `GRID_TOO_LARGE` | 422 | Requested route area exceeds `ARESNAV_MAX_GRID_CELLS` |
+| `ROUTE_TIMEOUT` | 504 | Routing exceeded `ARESNAV_ROUTE_TIMEOUT_S` |
 | `NOT_IMPLEMENTED` | 501 | Endpoint belongs to an unmerged work package |
 | `INTERNAL_ERROR` | 500 | Unexpected failure. Details are logged, not returned. |
 
@@ -716,20 +716,20 @@ variable.
 
 | Variable | Default | Purpose |
 |----------|---------|---------|
-| `MARSWALK_ENV` | `development` | `development` or `test` |
-| `MARSWALK_LOG_LEVEL` | `INFO` | Python log level |
-| `MARSWALK_API_HOST` | `127.0.0.1` | Uvicorn bind host |
-| `MARSWALK_API_PORT` | `8000` | Uvicorn port |
-| `MARSWALK_CORS_ORIGINS` | `http://localhost:5173` | Comma-separated allowed origins |
-| `MARSWALK_DATA_DIR` | `backend/data` | Data directory, relative to the repository root |
-| `MARSWALK_DEFAULT_REGION` | `gale_mount_sharp` | Region shown at start-up |
-| `MARSWALK_MAX_GRID_CELLS` | `4000000` | Analysis grid cap per route request |
-| `MARSWALK_ROUTE_TIMEOUT_S` | `20` | Hard timeout for one route plan |
-| `MARSWALK_LLM_PROVIDER` | `none` | `none`, `anthropic` or `openai` |
-| `MARSWALK_LLM_MODEL` | empty | Required when the provider is not `none` |
+| `ARESNAV_ENV` | `development` | `development` or `test` |
+| `ARESNAV_LOG_LEVEL` | `INFO` | Python log level |
+| `ARESNAV_API_HOST` | `127.0.0.1` | Uvicorn bind host |
+| `ARESNAV_API_PORT` | `8000` | Uvicorn port |
+| `ARESNAV_CORS_ORIGINS` | `http://localhost:5173` | Comma-separated allowed origins |
+| `ARESNAV_DATA_DIR` | `backend/data` | Data directory, relative to the repository root |
+| `ARESNAV_DEFAULT_REGION` | `gale_mount_sharp` | Region shown at start-up |
+| `ARESNAV_MAX_GRID_CELLS` | `4000000` | Analysis grid cap per route request |
+| `ARESNAV_ROUTE_TIMEOUT_S` | `20` | Hard timeout for one route plan |
+| `ARESNAV_LLM_PROVIDER` | `none` | `none`, `anthropic` or `openai` |
+| `ARESNAV_LLM_MODEL` | empty | Required when the provider is not `none` |
 | `ANTHROPIC_API_KEY` | empty | Used only when the provider is `anthropic` |
 | `OPENAI_API_KEY` | empty | Used only when the provider is `openai` |
-| `MARSWALK_AGENT_NODE_TIMEOUT_S` | `30` | Per-agent-node timeout |
+| `ARESNAV_AGENT_NODE_TIMEOUT_S` | `30` | Per-agent-node timeout |
 | `LANGFUSE_PUBLIC_KEY` | empty | Optional tracing |
 | `LANGFUSE_SECRET_KEY` | empty | Optional tracing |
 | `LANGFUSE_HOST` | empty | Optional tracing |

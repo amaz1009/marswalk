@@ -21,7 +21,7 @@ $frontendTypecheckSuccess = $true
 $frontendTestSuccess = $true
 
 Write-Host "========================================" -ForegroundColor Cyan
-Write-Host " Running MARSWALK Test Suite" -ForegroundColor Cyan
+Write-Host " Running AresNav Test Suite" -ForegroundColor Cyan
 Write-Host "========================================" -ForegroundColor Cyan
 
 # 1. Backend tests

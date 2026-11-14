@@ -1,4 +1,4 @@
-# MARSWALK — Development Status
+# AresNav — Development Status
 
 This is the single live record of progress. Every agent session reads it first and
 updates it after every completed step. If this file and memory disagree, this file wins.
@@ -23,14 +23,14 @@ DOWNLOAD_APPROVED: YES            # YES once the owner approves the data downloa
 Update this block after every step. It is what an interrupted session resumes from.
 
 ```text
-ACTIVE_WP: none
-BRANCH: develop
-STEP: complete
-LAST_COMPLETED: Merged wp/WP-10-routing-engine and wp/WP-08b-layer-perf into develop (status MERGED)
-NEXT_ACTION: awaiting owner direction
+ACTIVE_WP: WP-RENAME
+BRANCH: wp/rename-aresnav
+STEP: 1 of 1
+LAST_COMPLETED: Product renamed to AresNav across tracked files
+NEXT_ACTION: owner review and commit
 BLOCKERS: none
-WAITING_FOR_OWNER: no
-UPDATED: 2026-11-14T15:48+05:30
+WAITING_FOR_OWNER: yes
+UPDATED: 2026-11-14T17:00+05:30
 ```
 
 ---
@@ -181,4 +181,5 @@ Format: `timestamp | WP | step | action | tests (command → passed/failed/skipp
 2026-11-14T15:20+05:30 | WP-10 | 5 of 5 | WP-10 Fix Round 3: removed silent fallback MarsCoordinateTransformer(center_lat=0.0, center_lon=0.0) from planner.py; transform and crs_transformer must be provided together or both None (raises ValueError on mismatch or if GeoPoint inputs given without spatial ref); grid-only mode documented in docstring and marked by geo_referenced=False on PlanOutcome (path_points, full_path_points, elevation_profile empty; max_distance_from_base_m computed via Euclidean grid spacing); added unit tests for spatial ref mismatch, geopoint without spatial ref, and grid-only vs georeferenced modes; documented true ground spacing in plan_routes docstring; 100% pure ASCII; ruff check clean; ruff format clean | cd backend; pytest tests/unit/engines/test_routing.py -> 21 passed, 0 failed; ruff check clean; ruff format clean | [WP-10]
 2026-11-14T15:46+05:30 | WP-10 | 5 of 5 | Merged wp/WP-10-routing-engine into develop (status MERGED); terrain-aware A* routing engine and human walking-speed model complete; full backend suite 102 passed, 0 failed; ruff clean; frozen contract diff empty | merge --no-ff verified; full backend suite: 102 passed, 0 failed | 72fa583
 2026-11-14T15:47+05:30 | WP-08b | 1 of 1 | Merged wp/WP-08b-layer-perf into develop; cached raster footprints per file version (mtime/size check) in layer_service.py; added regression test test_synthetic_raster_bounds_are_cached; full backend suite 103 passed, 0 failed; ruff clean; frozen contract diff empty | merge --no-ff verified; full backend suite: 103 passed, 0 failed | ec0e287
+2026-11-14T17:00+05:30 | WP-RENAME | 1 of 1 | product renamed from MARSWALK to AresNav | checks clean | [WP-RENAME]
 ```

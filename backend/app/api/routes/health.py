@@ -20,13 +20,13 @@ async def get_health() -> HealthResponse:
     """Return service health status and configuration."""
     settings = get_settings()
 
-    provider = settings.MARSWALK_LLM_PROVIDER.strip().lower()
+    provider = settings.ARESNAV_LLM_PROVIDER.strip().lower()
     if provider == "anthropic" and settings.ANTHROPIC_API_KEY.strip():
         llm_mode = LlmMode.ENABLED
-        llm_provider = settings.MARSWALK_LLM_PROVIDER
+        llm_provider = settings.ARESNAV_LLM_PROVIDER
     elif provider == "openai" and settings.OPENAI_API_KEY.strip():
         llm_mode = LlmMode.ENABLED
-        llm_provider = settings.MARSWALK_LLM_PROVIDER
+        llm_provider = settings.ARESNAV_LLM_PROVIDER
     else:
         llm_mode = LlmMode.DISABLED
         llm_provider = None

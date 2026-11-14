@@ -267,7 +267,7 @@ def test_t_data_05_source_ledger_sha256(tmp_path: Path) -> None:
     Expected SHA-256 is derived dynamically in the test via hashlib.sha256
     from the synthetic payload bytes, not hardcoded as a magic literal.
     """
-    synthetic_payload = b"MARSWALK_SYNTHETIC_DATA_PAYLOAD_TEST_T_DATA_05"
+    synthetic_payload = b"ARESNAV_SYNTHETIC_DATA_PAYLOAD_TEST_T_DATA_05"
     expected_sha256 = hashlib.sha256(synthetic_payload).hexdigest()
 
     test_file = tmp_path / "synthetic_raw.bin"

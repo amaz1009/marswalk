@@ -1,5 +1,5 @@
 [project]
-name = "marswalk-backend"
+name = "aresnav-backend"
 version = "0.1.0"
 description = "NASA Space Apps 2026 - Human-scale Mars EVA route planning backend"
 requires-python = ">=3.12"

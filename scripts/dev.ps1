@@ -12,7 +12,7 @@ if (-not (Test-Path $venvPython)) {
     exit 1
 }
 
-Write-Host "=== Starting MARSWALK Development Environment ===" -ForegroundColor Cyan
+Write-Host "=== Starting AresNav Development Environment ===" -ForegroundColor Cyan
 
 # Ensure PATH includes Node.js
 $machinePath = [System.Environment]::GetEnvironmentVariable("Path", "Machine")

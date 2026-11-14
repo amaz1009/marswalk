@@ -1,4 +1,4 @@
-# MARSWALK — Risk Register
+# AresNav — Risk Register
 
 | Field          | Value                                                     |
 |----------------|-----------------------------------------------------------|
@@ -8,7 +8,7 @@
 | Last Updated   | 2026-11-13                                                |
 | Scope          | Hackathon execution, pipeline, tooling, and delivery risks |
 
-This register tracks operational, technical, and process risks for the MARSWALK project during the condensed ~39-hour hackathon execution window (09:00 IST Sat 14 Nov to 23:59 IST Sun 15 Nov 2026).
+This register tracks operational, technical, and process risks for the AresNav project during the condensed ~39-hour hackathon execution window (09:00 IST Sat 14 Nov to 23:59 IST Sun 15 Nov 2026).
 
 ---
 

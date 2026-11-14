@@ -47,7 +47,7 @@ export const App: React.FC = () => {
         <div className="flex items-center space-x-3">
           <div className="flex items-center space-x-2">
             <span className="h-3 w-3 rounded-full bg-[#d9532f] inline-block animate-pulse" />
-            <h1 className="text-lg font-bold tracking-wider text-white">MARSWALK</h1>
+            <h1 className="text-lg font-bold tracking-wider text-white">AresNav</h1>
           </div>
           <span className="text-xs px-2 py-0.5 rounded bg-[#1e222d] text-gray-400 border border-[#2e3444]">
             Human-EVA Mission Control

@@ -1,4 +1,4 @@
-# MARSWALK — Data Source Selection (Provisional Shortlist)
+# AresNav — Data Source Selection (Provisional Shortlist)
 
 | Field | Value |
 |:---|:---|
@@ -12,7 +12,7 @@
 
 ## 1. Executive Summary & Operational Context
 
-This document records the provisional data source selections, product identifiers, access URLs, and spatial bounds for the MARSWALK human-EVA planning prototype.
+This document records the provisional data source selections, product identifiers, access URLs, and spatial bounds for the AresNav human-EVA planning prototype.
 
 > [!IMPORTANT]
 > **Provisional Status:** The NASA Space Apps 2026 Resources tab opens on **November 13, 2026**. Official recommended sources and regions will be announced at that time. Per owner constraints, all selections in this document constitute a **provisional shortlist** with verified access evidence and open questions, rather than an unalterable final baseline.
@@ -71,7 +71,7 @@ In addition, 3 conceptual candidate data types evaluated during source selection
    - **Role & Priority:** Promoted to **Required third data kind (P1, must-have)** in response to Space Apps guidance recommending at least three data types (optical, elevation, radiation).
    - **Nature of Data:** Measured point/time-series layer at Curiosity's in-situ traverse location in Gale Crater. It is **never a surface-wide radiation raster**; radiation data is presented strictly as localized, historical environmental context.
    - **Verification Status:** The PDS PPI collection bundle URL resolves, but specific sol product IDs and tables remain **`UNVERIFIED` until WP-06**.
-   - **Cut-Line & Fallback Policy:** MSL RAD is cut-line-exempt (the time-based hour-28 cut line skips WP-17, WP-19, and the CRISM part of WP-18, but does not skip RAD). If RAD proves infeasible (data unobtainable or not joinable to the map), not because of the clock, the fallback is to use a cropped THEMIS thermal layer or CRISM mineralogy if either is verified. If no verified third data kind exists, MARSWALK will explicitly record the shortfall in reports and the UI rather than claiming three data kinds.
+   - **Cut-Line & Fallback Policy:** MSL RAD is cut-line-exempt (the time-based hour-28 cut line skips WP-17, WP-19, and the CRISM part of WP-18, but does not skip RAD). If RAD proves infeasible (data unobtainable or not joinable to the map), not because of the clock, the fallback is to use a cropped THEMIS thermal layer or CRISM mineralogy if either is verified. If no verified third data kind exists, AresNav will explicitly record the shortfall in reports and the UI rather than claiming three data kinds.
 2. **Mars Trek Web Portal (`MARS_TREK_PORTAL`):**
    - **Role:** Reference and manual validation portal for cross-checking Gale Crater surface morphology, landmark names, and orbital basemaps.
    - **Verification Status:** Web portal identified in challenge resources; specific layers, endpoints, and terms of service not reviewed. No download URL.
@@ -118,7 +118,7 @@ The following candidate layers were evaluated but are **not** in `data_sources.j
 - **Review Date:** 2026-11-13
 - **Challenge Page & Resources URL:** [NASA Space Apps Challenge Resources](https://www.spaceappschallenge.org/2026/challenges/interplanetary-survival-guide-martian-map/?tab=resources)
 
-On November 13, 2026, the five NASA-listed resources for the human-EVA planning challenge were reviewed against MARSWALK's system design and data architecture.
+On November 13, 2026, the five NASA-listed resources for the human-EVA planning challenge were reviewed against AresNav's system design and data architecture.
 
 ### Resource Evaluation & Verdicts
 
@@ -126,7 +126,7 @@ On November 13, 2026, the five NASA-listed resources for the human-EVA planning 
 |:---|:---|:---|:---|:---|
 | 1 | **USGS Planetary Mapping** | [USGS Astrogeology Planetary Mapping](https://astrogeology.usgs.gov/)<br>Planetary GIS datasets, controlled mosaics, and global geologic maps | Authoritative cartographic products for planetary surfaces. Directly provides the foundational regional layers needed for terrain, hazard classification, and geologic unit delineation. | **Confirmed, already shortlisted** (`USGS_GEOLOGY_SIM3292`, `USGS_GALE_MERGED_DEM`) |
 | 2 | **Mars Trek (Solar System Treks)** | [NASA Solar System Treks — Mars](https://trek.nasa.gov/mars/)<br>Web-based interactive planetary GIS portal | Useful interactive visual portal for cross-referencing surface landmarks and global orbital basemaps. However, specific WMS/WMTS layer endpoints, projection conventions, caching limits, and API terms of service have not been reviewed. Retained for operator visual reference and manual validation only. | **New, optional, `UNVERIFIED — candidate only`** (Added to manifest for reference/validation; no bulk download) |
-| 3 | **Curiosity Mount Sharp Route** | [Curiosity: Where is the Rover?](https://mars.nasa.gov/msl/mission/where-is-the-rover/)<br>Historical waypoint map of MSL traverse up lower Mount Sharp | Validates the choice of Gale Crater / Mount Sharp as a prime science exploration corridor. Serves as regional context and ground-truth location data. However, per MARSWALK Principle P5 and Operating Rule §6, rover routes and mechanical capabilities cannot be used as human-suited traverse evidence. | **Region context only; rover route, not human-traverse evidence** |
+| 3 | **Curiosity Mount Sharp Route** | [Curiosity: Where is the Rover?](https://mars.nasa.gov/msl/mission/where-is-the-rover/)<br>Historical waypoint map of MSL traverse up lower Mount Sharp | Validates the choice of Gale Crater / Mount Sharp as a prime science exploration corridor. Serves as regional context and ground-truth location data. However, per AresNav Principle P5 and Operating Rule §6, rover routes and mechanical capabilities cannot be used as human-suited traverse evidence. | **Region context only; rover route, not human-traverse evidence** |
 | 4 | **Perseverance Raw Images** | [Mars 2020 Perseverance Raw Images](https://mars.nasa.gov/mars2020/multimedia/raw-images/)<br>Surface camera observations from the Mars 2020 rover | High-resolution rover surface imagery from Jezero Crater (~18.4°N, 77.5°E), which is over 3,000 km away from Gale Crater (~4.6°S, 137.4°E). Irrelevant to Gale Crater traverse planning. | **Excluded, rover imagery, outside Gale** |
 | 5 | **NASA Worldview** | [NASA EOSDIS Worldview](https://worldview.earthdata.nasa.gov/)<br>Global full-resolution satellite imagery browser for Earth | Interactive visualization of Earth observing satellites (MODIS, VIIRS, Landsat). Contains Earth observation data only; no Mars planetary coverage. | **Excluded, Earth data** |
 
@@ -149,7 +149,7 @@ Key takeaways and architectural impacts from the official challenge details:
 3. **Surface Point-of-View Imagery:** The challenge explicitly suggests ground-level point-of-view perspective.
    - *Impact:* Mastcam surface imagery stays a **P2 candidate for the demo** (WP-15 / WP-16).
 4. **Target Region Validation:** The challenge details explicitly cite the Mount Sharp boxwork structures investigated by Curiosity in 2025 as the canonical example.
-   - *Impact:* Fully confirms the MARSWALK primary demonstration focus on lower Mount Sharp / boxwork terrain.
+   - *Impact:* Fully confirms the AresNav primary demonstration focus on lower Mount Sharp / boxwork terrain.
 5. **Dynamic Challenge Resources:** NASA notes that additional resources may be added before the hackathon begins.
    - *Impact:* The Resources tab must be re-checked when the event officially begins.
 

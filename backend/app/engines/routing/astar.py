@@ -2,7 +2,7 @@
 
 Implements the deterministic A* pathfinding algorithm with 8-connectivity,
 strict corner-cutting prohibition, admissible octile heuristic, and
-deterministic tie-breaking per MARSWALK SCIENCE_AND_SAFETY_SPEC.md
+deterministic tie-breaking per AresNav SCIENCE_AND_SAFETY_SPEC.md
 sections 7.1, 7.4, and 7.5.
 """
 

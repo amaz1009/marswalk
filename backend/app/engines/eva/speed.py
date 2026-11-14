@@ -1,7 +1,7 @@
 """Human walking-speed model for planetary EVA planning.
 
 Implements the walking speed model on slopes following Tobler's hiking function shape
-[TOBLER1993], scaled so that flat-ground speed equals base_speed_kmh per MARSWALK
+[TOBLER1993], scaled so that flat-ground speed equals base_speed_kmh per AresNav
 SCIENCE_AND_SAFETY_SPEC.md sections 6.2, 6.3, and 6.4.
 """
 

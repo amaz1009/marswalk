@@ -1,4 +1,4 @@
-# MARSWALK — Testing Strategy
+# AresNav — Testing Strategy
 
 | Field          | Value                                                                   |
 |----------------|-------------------------------------------------------------------------|
@@ -12,7 +12,7 @@
 
 ## 1. Purpose
 
-Tests prove that MARSWALK's numbers are correct, its safety rules cannot be bypassed,
+Tests prove that AresNav's numbers are correct, its safety rules cannot be bypassed,
 and its interfaces match `API_CONTRACTS.md`. A test that was not run is never
 reported as passed.
 

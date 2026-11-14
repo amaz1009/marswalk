@@ -1,4 +1,4 @@
-"""Coordinate and geodesy utilities for MARSWALK.
+"""Coordinate and geodesy utilities for AresNav.
 
 Implements docs/SCIENCE_AND_SAFETY_SPEC.md §2.
 """

@@ -320,7 +320,7 @@ def test_t_model_01_mission_state_and_report_prefixes() -> None:
 
 def test_stubs_return_not_implemented_envelope(client: TestClient) -> None:
     """Verify stub endpoints return 501 NOT_IMPLEMENTED with standard error envelope."""
-    # Remaining stub endpoints (regions/layers in WP-08; eva defaults, routes plan in WP-11)
+    # Remaining stub endpoints (envelope in WP-14; agent analyze in WP-17)
     stub_calls = [
         (
             "POST",
@@ -328,21 +328,6 @@ def test_stubs_return_not_implemented_envelope(client: TestClient) -> None:
             {
                 "region_id": "gale",
                 "base": {"lat": 0, "lon": 0},
-            },
-        ),
-        (
-            "POST",
-            "/api/v1/mission/report",
-            {
-                "mission_state": {
-                    "mission_id": "msn_1",
-                    "created_at": "2026-11-14T00:00:00Z",
-                    "name": "n",
-                    "region_id": "gale",
-                    "objective_text": "obj",
-                    "stops": [],
-                    "eva_config": VALID_EVA_CONFIG,
-                }
             },
         ),
         (

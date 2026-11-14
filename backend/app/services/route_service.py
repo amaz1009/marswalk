@@ -58,6 +58,7 @@ from app.utils.coordinates import normalize_longitude
 from app.utils.geodesy import haversine_distance
 
 ENGINE_VERSION: str = "0.2.0"
+ROUTING_DATASET_IDS: tuple[str, ...] = ("HIRISE_DTM_GALE_MOUND",)
 OBJECTIVE_PRIORITY_ORDER: list[RouteObjective] = [
     RouteObjective.LOWEST_RISK,
     RouteObjective.BALANCED,

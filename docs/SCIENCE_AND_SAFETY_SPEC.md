@@ -163,6 +163,11 @@ slope_deg = degrees( atan( sqrt( (dz/dx)² + (dz/dy)² ) ) )
 - Edge cells of the raster have `NaN` slope.
 - Slope is computed at the native resolution of the DTM in its projected CRS.
 
+**Amendment A-2 (East-West Metre Scale, owner-approved D-013):**
+Slope and roughness use ground metres: `dx_ground = dx_projected * cos(latitude of the row)`
+for equirectangular sources with standard parallel 0; `dy` unchanged; the analysis-CRS
+aggregation (section 4.4) then operates on these slopes.
+
 ### 4.3 Roughness (residual RMS) [GROHMANN2011]
 
 Roughness separates small-scale relief from overall slope:

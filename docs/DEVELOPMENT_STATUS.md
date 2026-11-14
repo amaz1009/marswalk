@@ -23,14 +23,14 @@ DOWNLOAD_APPROVED: YES            # YES once the owner approves the data downloa
 Update this block after every step. It is what an interrupted session resumes from.
 
 ```text
-ACTIVE_WP: none
-BRANCH: develop
-STEP: -
-LAST_COMPLETED: Merged wp/WP-06-data-pipeline into develop (status MERGED)
-NEXT_ACTION: Awaiting owner direction for next work package
+ACTIVE_WP: WP-07
+BRANCH: wp/WP-07-terrain-engine
+STEP: 2 of 5
+LAST_COMPLETED: WP-07 Fix Round 1: roughness float64 centering, direct residuals, D-013 test expectation fix, categorical stats
+NEXT_ACTION: Owner verification of test suite and real data layer generation
 BLOCKERS: none
-WAITING_FOR_OWNER: yes -- WP-06 merged; awaiting owner direction
-UPDATED: 2026-11-14T10:15+05:30
+WAITING_FOR_OWNER: no
+UPDATED: 2026-11-14T11:15+05:30
 ```
 
 ---
@@ -119,6 +119,7 @@ new decisions here.
 | D-005 | 2026-11-13 | MSL RAD promoted to required P1 (must-have, cut-line-exempt) | Challenge Details tab suggests at least three data kinds (radiation specified); measured point/time-series context at Curiosity site in Gale; exempt from hour-28 time skip | DATA_SOURCES.md §4, IMPLEMENTATION_PLAN.md §5 |
 | D-006 | 2026-11-13 | Re-baseline schedule to ~39 h window and two-stream execution | Real event runs ~39 h (09:00 IST Sat to 23:59 IST Sun); M1 h15, M2 h23, M3 h26, cut line h28, M4 h32, M5 h36; Stream A (backend) and Stream B (frontend worktree) | IMPLEMENTATION_PLAN.md §4 |
 | D-007 | 2026-11-13 | Working execution policy Default; switch to Request Review for merges and downloads | The working execution policy is Default; the owner switches the session to Request Review for merges and for the WP-06 data downloads; Turbo is prohibited | IMPLEMENTATION_PLAN.md §4.1 |
+| D-013 | 2026-11-14 | East-west metre scale in equirectangular rasters | Ground spacing: dy = |transform.e|, dx_ground = |transform.a| * cos(phi_row) with phi_row = y_row / R computed per row; Amendment A-2 added to spec §4.2 | SCIENCE_AND_SAFETY_SPEC.md §4.2, app/engines/terrain/ |
 
 ---
 
@@ -168,4 +169,6 @@ Format: `timestamp | WP | step | action | tests (command → passed/failed/skipp
 2026-11-14T08:30+05:30 | WP-06 | 5 of 5 | WP-06 Fix Round 5 completed: limitations text audit and unverified claim cleanup; owner-run facts recorded: exact download sizes 360402944 / 33256997 / 129761280 bytes, MOLA label 4820 bytes; SHA-256 in source_ledger.json; GDAL PDS driver for DTM, sphere radius 3396190, nodata -3.4028226550889045e+38, 24.6% NaN (75.4% valid), elevation range -4485.57..-2977.08 m; DTM footprint lat [-4.948820, -4.720525], lon [137.238928, 137.353903], boxwork containment UNKNOWN; MOLA opened via label (driver PDS), radius 3396000 via named-sphere registry (Amendment A-1), georeference caveat, MOLA vs DTM median cross-check (-3887 m vs -3974 m); UNAVAILABLE reasons documented in catalog and data_sources; R-02 satisfied; O-5 pointer fixed; sha256 extension; openapi.json cosmetic status verified (byte-identical blob); T-DATA-15 synthetic test added | owner-run backend suite: 42 passed, 0 failed, ruff clean | [WP-06]
 2026-11-14T08:55+05:30 | WP-06 | 5 of 5 | Correction: previous WP-06 Round 5 log line overstated the state (pipeline crashed on real data after Round 5; the 42 passed figure predates T-DATA-15; corrected owner-run results will be recorded at merge); fixed process_single_raster bounds return and caller error handling with explicit result shapes; added synthetic regression tests T-DATA-16 and T-DATA-17 | cd backend; pytest tests/unit/data/test_pipeline.py -> 17 passed, 0 failed; ruff clean; full backend suite pending owner-run after Fix Round 6 | [WP-06]
 2026-11-14T10:15+05:30 | WP-06 | 5 of 5 | Merged wp/WP-06-data-pipeline into develop (status MERGED); data download and processing pipeline complete; owner-run results on branch tip fe1a125: full backend suite 45 passed, 0 failed; ruff check from backend\ clean; ruff format --check clean; scripts\process_region.py exit 0 with HIRISE_DTM_GALE_MOUND, HIRISE_ORTHO_GALE_MOUND, and MOLA_MEGDR_GALE AVAILABLE and the other five datasets UNAVAILABLE with reasons (supersedes earlier 42 passed figure); download of the three scope-A core files verified by size (360402944 / 33256997 / 129761280 bytes) plus the MOLA label (4820 bytes); SHA-256 values in backend/data/manifests/source_ledger.json; notes (1)-(9) recorded | merge --no-ff verified; owner-run full backend suite on fe1a125: 45 passed, 0 failed | e6c097c
+2026-11-14T10:30+05:30 | WP-07 | 1 of 5 | Owner decision D-013 recorded (Option 2: per-row dx_ground = dx_projected * cos(phi_row)); Amendment A-2 added to spec section 4.2; starting implementation of terrain and hazard engines | no code tests yet | [WP-07]
+2026-11-14T11:15+05:30 | WP-07 | 2 of 5 | Correction: previous report stated synthetic tests verified engines, but owner-run test suite reported 2 failures (test_d_013 geometry expectation evaluated at row edges instead of row centres, and test_t_terr_03 float32 catastrophic cancellation on tilted planes); resolved by deriving expected ratio from row-centre latitudes and reformulating residual roughness in float64 with local elevation centering and direct residuals; added regression test for realistic Mars elevation offsets (-4000 m); updated layer statistics to report value counts for categorical layers and full/decimated distributions for continuous layers | owner-run backend suite: 53 passed, 2 failed on initial run; fixes verified locally; owner-run pending | [WP-07]
 ```

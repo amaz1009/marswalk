@@ -1,4 +1,4 @@
-# MARSWALK — Implementation Plan
+# AresNav — Implementation Plan
 
 | Field          | Value                                                                    |
 |----------------|--------------------------------------------------------------------------|
@@ -8,7 +8,7 @@
 | Last updated   | 2026-11-11                                                               |
 | Change control | Adding, removing or re-scoping a work package requires Orchestrator approval and a log entry in DEVELOPMENT_STATUS.md |
 
-This plan breaks MARSWALK into work packages (WPs) in dependency order. Each WP has
+This plan breaks AresNav into work packages (WPs) in dependency order. Each WP has
 a branch, deliverables, numbered steps, acceptance criteria and tests. Live progress
 is tracked only in `DEVELOPMENT_STATUS.md`. Git rules are in `GIT_WORKFLOW.md`.
 
@@ -34,7 +34,7 @@ is tracked only in `DEVELOPMENT_STATUS.md`. Git rules are in `GIT_WORKFLOW.md`.
 Files marked (WP-xx) are created by that work package.
 
 ```text
-marswalk/
+aresnav/
 ├── README.md
 ├── .gitignore
 ├── .gitattributes
@@ -158,9 +158,9 @@ working core with required data beats an unfinished speculative feature.
 
 To meet the condensed 39-hour window, work is parallelized into two concurrent streams once the shared contract baseline is established:
 
-- **Stream A (Backend):** Runs in the primary repository folder `D:\NASA\marswalk`.
+- **Stream A (Backend):** Runs in the primary repository folder `D:\NASA\aresnav`.
   - Assigned work packages: WP-01, WP-02, WP-03, WP-06, WP-07, WP-10, WP-11.
-- **Stream B (Frontend):** Runs in the isolated git worktree `D:\NASA\marswalk-fe`.
+- **Stream B (Frontend):** Runs in the isolated git worktree `D:\NASA\aresnav-fe`.
   - Assigned work packages: WP-04, WP-09 (developed against contracts and clearly labelled sample data until WP-08 lands), WP-08 (API integration), WP-12, WP-13.
 
 **Two-Stream Operating Rules:**

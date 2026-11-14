@@ -1,4 +1,4 @@
-"""FastAPI application entry point for MARSWALK."""
+"""FastAPI application entry point for AresNav."""
 
 import uuid
 
@@ -29,7 +29,7 @@ setup_logging()
 settings = get_settings()
 
 app = FastAPI(
-    title="MARSWALK API",
+    title="AresNav API",
     description="Human-scale Mars EVA route planning backend",
     version=__version__,
     docs_url="/docs",
@@ -107,7 +107,7 @@ if __name__ == "__main__":
 
     uvicorn.run(
         "app.main:app",
-        host=settings.MARSWALK_API_HOST,
-        port=settings.MARSWALK_API_PORT,
-        reload=(settings.MARSWALK_ENV == "development"),
+        host=settings.ARESNAV_API_HOST,
+        port=settings.ARESNAV_API_PORT,
+        reload=(settings.ARESNAV_ENV == "development"),
     )

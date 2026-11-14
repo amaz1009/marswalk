@@ -1,11 +1,11 @@
-# scripts/setup.ps1 - Environment setup for MARSWALK (Backend venv + Frontend dependencies)
+# scripts/setup.ps1 - Environment setup for AresNav (Backend venv + Frontend dependencies)
 [CmdletBinding()]
 param()
 
 $ErrorActionPreference = "Stop"
 $repoRoot = (Split-Path -Parent $PSScriptRoot)
 
-Write-Host "=== MARSWALK Setup ===" -ForegroundColor Cyan
+Write-Host "=== AresNav Setup ===" -ForegroundColor Cyan
 Write-Host "Repository root: $repoRoot"
 
 # 1. Ensure PATH has Node.js and Python if present in machine/user environment

@@ -1,4 +1,4 @@
-# MARSWALK — Demo Scenario and Video Script
+# AresNav — Demo Scenario and Video Script
 
 | Field          | Value                                                         |
 |----------------|---------------------------------------------------------------|
@@ -23,9 +23,9 @@ This exact disclosure statement must be included in the submission documentation
 > **Scientific Integrity Rule:** All numbers, coordinates, measurements, and timestamps below are placeholders (`[...]`). Real values come strictly from deterministic pipeline outputs generated during the hackathon. Never invent measured values.
 
 ### Scene 1: Introduction & Map Initialization in Gale Crater (0:00 – 0:30)
-- **Visual:** Browser opens to MARSWALK Mission Control view. The viewport centers on Mount Sharp within Gale Crater (`[CENTER_LAT]°, [CENTER_LON]°`).
+- **Visual:** Browser opens to AresNav Mission Control view. The viewport centers on Mount Sharp within Gale Crater (`[CENTER_LAT]°, [CENTER_LON]°`).
 - **Narrator Audio:**
-  *"Welcome to MARSWALK, an EVA traverse planning prototype developed for the NASA Space Apps Challenge. MARSWALK helps mission operators and astronauts design safe, science-optimized surface traverses on Mars using authentic NASA planetary datasets. Here in Gale Crater, we focus on the Mount Sharp boxwork structures investigated by the Curiosity rover."*
+  *"Welcome to AresNav, an EVA traverse planning prototype developed for the NASA Space Apps Challenge. AresNav helps mission operators and astronauts design safe, science-optimized surface traverses on Mars using authentic NASA planetary datasets. Here in Gale Crater, we focus on the Mount Sharp boxwork structures investigated by the Curiosity rover."*
 - **Action:** Pan across the high-resolution HiRISE optical basemap (`[HIRISE_PRODUCT_ID]`).
 
 ### Scene 2: Layer Exploration & Environmental Context (0:30 – 1:00)
@@ -36,7 +36,7 @@ This exact disclosure statement must be included in the submission documentation
   4. **USGS Regional DEM (`USGS_GALE_MERGED_DEM`):** Broader regional context across the Gale Crater corridor (`[PRODUCT_ID]`).
   5. **MSL RAD Surface Radiation (`MSL_RAD_SURFACE_RDR`):** Point and time-series context indicator at Curiosity's traverse location (`[RAD_MEASUREMENT]` or `[STATUS: UNAVAILABLE]`; specific product IDs and measurement units remain UNVERIFIED until WP-06).
 - **Narrator Audio:**
-  *"MARSWALK integrates multiple independent data kinds: 1-meter topography and roughness derived from MRO HiRISE stereo pairs, regional context from USGS elevation models, and environmental radiation measurements from Curiosity's MSL RAD instrument. Notice that radiation is reported strictly as localized measured history—we never fabricate an artificial surface-wide raster."*
+  *"AresNav integrates multiple independent data kinds: 1-meter topography and roughness derived from MRO HiRISE stereo pairs, regional context from USGS elevation models, and environmental radiation measurements from Curiosity's MSL RAD instrument. Notice that radiation is reported strictly as localized measured history—we never fabricate an artificial surface-wide raster."*
 
 ### Scene 3: Terrain Point Inspector (1:00 – 1:25)
 - **Visual:** Operator clicks on a potential traverse waypoint on the map. The Inspector panel pops out.
@@ -65,7 +65,7 @@ This exact disclosure statement must be included in the submission documentation
   2. **Safe EVA Route (Primary):** Terrain-following least-cost path contouring around steep slopes (`[DIST_SAFE] km`, elevation gain `[ELEV_GAIN] m`, estimated time `[EST_TIME] h:mm`).
 - **Visual:** Elevation profile graph below map updates, showing grade profiles and warning zones.
 - **Narrator Audio:**
-  *"MARSWALK calculates routes using deterministic cost functions that penalize steep terrain. Here, the direct path violates our 15-degree hard slope limit across ridge faces. The planned EVA route negotiates the topography, keeping all segments below the hard constraint."*
+  *"AresNav calculates routes using deterministic cost functions that penalize steep terrain. Here, the direct path violates our 15-degree hard slope limit across ridge faces. The planned EVA route negotiates the topography, keeping all segments below the hard constraint."*
 
 ### Scene 6: Safety Panel & Constraint Verification (2:30 – 3:00)
 - **Visual:** Safety Panel displays the constraint checklist:
@@ -91,7 +91,7 @@ This exact disclosure statement must be included in the submission documentation
   - **Rover Imagery (WP-15):** Preview nearest Curiosity ground-level Mastcam frames at waypoint `[WP_INDEX]` (Mastcam frames remain `UNVERIFIED — candidate only` in `DATA_SOURCES.md` §4.2).
   - **Automated Briefing (WP-17):** Deterministic natural language crew briefing summary.
 - **Narrator Audio:**
-  *"MARSWALK demonstrates how planetary data pipelines, deterministic routing, and human EVA physiology models come together to safeguard future Martian explorers. Thank you."*
+  *"AresNav demonstrates how planetary data pipelines, deterministic routing, and human EVA physiology models come together to safeguard future Martian explorers. Thank you."*
 
 ---
 

@@ -1,4 +1,4 @@
-# MARSWALK — System Architecture
+# AresNav — System Architecture
 
 | Field          | Value                                                                       |
 |----------------|-----------------------------------------------------------------------------|
@@ -8,7 +8,7 @@
 | Last updated   | 2026-11-11                                                                  |
 | Change control | Changes require Orchestrator approval and an entry in DEVELOPMENT_STATUS.md |
 
-> **Scope disclaimer.** MARSWALK is a research and planning prototype built for the
+> **Scope disclaimer.** AresNav is a research and planning prototype built for the
 > NASA Space Apps Challenge 2026. It is not a certified astronaut safety system.
 > No output, screen, or report may describe a site or route as "astronaut-safe".
 > All outputs are computational assessments under stated assumptions.
@@ -31,7 +31,7 @@ USGS geologic maps) do not target this scale. Astronaut safety is the first
 priority, and the route should account for spacesuit mobility and avoid significant
 obstacles.
 
-### 1.2 What MARSWALK Is
+### 1.2 What AresNav Is
 
 A human-EVA planning system for one Martian region at a time. It answers three
 questions separately and never merges them into one opaque score:
@@ -42,7 +42,7 @@ questions separately and never merges them into one opaque score:
 3. **Mission feasibility**: does the full EVA (out, work, back, reserve) fit the
    time budget (and, in a later version, the consumables budget)?
 
-### 1.3 What MARSWALK Is Not
+### 1.3 What AresNav Is Not
 
 - Not a rover path planner. Rover data is scientific evidence only.
 - Not a live-conditions feed. Historical observations are labelled as historical.
@@ -265,7 +265,7 @@ Each step is recorded in `processing_manifest.json`. A failed step marks the dat
 
 - Routing and hazard analysis run on a projected grid derived from the primary DTM.
 - The cell size is configured per region. The grid size is capped (default 4 million
-  cells, `MARSWALK_MAX_GRID_CELLS`). Resampling is recorded as a processing step.
+  cells, `ARESNAV_MAX_GRID_CELLS`). Resampling is recorded as a processing step.
 - When the analysis cell is larger than the native DTM post spacing, slope is
   aggregated conservatively (maximum native slope in the cell). See
   `SCIENCE_AND_SAFETY_SPEC.md` §4.4.
@@ -391,9 +391,9 @@ else                                        → PASS     (prototype criteria onl
 | Orchestration | LangGraph `StateGraph` over a typed agent state derived from `MissionState` |
 | Tools | Registry of service functions with Pydantic input and output schemas. Agents can call only these. |
 | Default mode | Deterministic. Each agent has a template implementation built from engine outputs. |
-| LLM mode | Enabled when `MARSWALK_LLM_PROVIDER` is `anthropic` or `openai` and the matching key is set |
+| LLM mode | Enabled when `ARESNAV_LLM_PROVIDER` is `anthropic` or `openai` and the matching key is set |
 | Output validation | Every agent output is parsed into its Pydantic model. Invalid output → one retry → deterministic fallback. |
-| Timeouts | Per-node timeout (`MARSWALK_AGENT_NODE_TIMEOUT_S`). On timeout: deterministic fallback plus an `unresolved_issues` entry. |
+| Timeouts | Per-node timeout (`ARESNAV_AGENT_NODE_TIMEOUT_S`). On timeout: deterministic fallback plus an `unresolved_issues` entry. |
 | Guardrails | Agents receive engine results as read-only evidence. Synthesis may explain but not change values or statuses. Every finding references a dataset or engine output. |
 | Contradictions | If agents disagree, the safety-engine status stands and the disagreement is reported. |
 | Observability | Structured logs per node. Langfuse tracing optional via environment variables. |
@@ -467,7 +467,7 @@ files. Cross-area changes go through the Orchestrator role and are logged.
 | Area | Target (prototype engineering targets, not guarantees) |
 |------|---------------------------------------------------------|
 | Point inspection | < 300 ms on cached processed data |
-| Route planning | < 5 s per request on the configured analysis grid (hard timeout `MARSWALK_ROUTE_TIMEOUT_S`) |
+| Route planning | < 5 s per request on the configured analysis grid (hard timeout `ARESNAV_ROUTE_TIMEOUT_S`) |
 | Layer overlay | < 1 s when cached |
 | Reproducibility | Identical inputs give identical routes, metrics and statuses |
 | Reliability | Core features run with no LLM and no network access to NASA servers |

@@ -1,1 +1,1 @@
-"""Unit tests for MARSWALK backend."""
+"""Unit tests for AresNav backend."""

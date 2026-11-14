@@ -1,4 +1,4 @@
-"""Data pipeline package for MARSWALK.
+"""Data pipeline package for AresNav.
 
 Provides loaders, CRS verification, raster processing stages, and footprint calculations.
 """

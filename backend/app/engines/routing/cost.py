@@ -1,7 +1,7 @@
 """Step cost formulation and profile weighting for EVA route optimization.
 
 Implements the multi-criteria traversal cost function defined in
-MARSWALK SCIENCE_AND_SAFETY_SPEC.md sections 7.2 and 7.3.
+AresNav SCIENCE_AND_SAFETY_SPEC.md sections 7.2 and 7.3.
 """
 
 from dataclasses import dataclass

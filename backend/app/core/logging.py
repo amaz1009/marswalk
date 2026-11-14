@@ -1,4 +1,4 @@
-"""Logging setup for MARSWALK backend."""
+"""Logging setup for AresNav backend."""
 
 import logging
 import sys
@@ -9,7 +9,7 @@ from app.config import get_settings
 def setup_logging() -> None:
     """Configure root logger with log level from settings."""
     settings = get_settings()
-    log_level = getattr(logging, settings.MARSWALK_LOG_LEVEL.upper(), logging.INFO)
+    log_level = getattr(logging, settings.ARESNAV_LOG_LEVEL.upper(), logging.INFO)
 
     logging.basicConfig(
         level=log_level,
@@ -20,4 +20,4 @@ def setup_logging() -> None:
     )
 
 
-logger = logging.getLogger("marswalk")
+logger = logging.getLogger("aresnav")

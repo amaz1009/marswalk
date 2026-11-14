@@ -1,1 +1,1 @@
-"""Unit tests for MARSWALK computation engines."""
+"""Unit tests for AresNav computation engines."""

@@ -1,10 +1,10 @@
 """EVA route planning engine across multi-objective profiles.
 
 Implements the complete traverse optimization workflow defined in
-MARSWALK SCIENCE_AND_SAFETY_SPEC.md section 7:
+AresNav SCIENCE_AND_SAFETY_SPEC.md section 7:
 - Route point placement without snapping or moving (section 7.1)
 - Search window bounding box derivation with 25% padding (at least 500 m) (section 7.1)
-- Fallback to full grid if within MARSWALK_MAX_GRID_CELLS, else GRID_TOO_LARGE (section 7.1)
+- Fallback to full grid if within ARESNAV_MAX_GRID_CELLS, else GRID_TOO_LARGE (section 7.1)
 - Multi-objective profiles: LOWEST_RISK, BALANCED, MAX_SCIENCE (section 7.3)
 - Omission of MAX_SCIENCE when science-interest layer is absent (section 7.3)
 - Multi-leg sequential routing with optional return-to-base leg (section 7.6)
@@ -337,7 +337,7 @@ def plan_routes(
     Performance Limitation:
         On a 1 m resolution analysis grid, traverses >= 2 km with 25% padding
         (at least 500 m) will derive search bounding boxes exceeding 4,000,000
-        cells (MARSWALK_MAX_GRID_CELLS) and return status=NO_FEASIBLE_ROUTE with
+        cells (ARESNAV_MAX_GRID_CELLS) and return status=NO_FEASIBLE_ROUTE with
         is_grid_too_large=True (GRID_TOO_LARGE). To plan traverses at regional or
         multi-kilometre scale, the analysis grid must be aggregated to a coarser
         resolution (e.g. 5 m or 10 m, as specified in SCIENCE_AND_SAFETY_SPEC.md

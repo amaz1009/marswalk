@@ -1,4 +1,4 @@
-# MARSWALK — Science and Safety Specification
+# AresNav — Science and Safety Specification
 
 | Field          | Value                                                                        |
 |----------------|------------------------------------------------------------------------------|
@@ -9,7 +9,7 @@
 | Change control | Changes to formulas, defaults or safety rules require Orchestrator approval and a log entry in DEVELOPMENT_STATUS.md |
 
 This document defines every scientific computation, model parameter and safety rule
-in MARSWALK. Engine code implements it exactly. Where a value is not supported by a
+in AresNav. Engine code implements it exactly. Where a value is not supported by a
 source, it is labelled `ASSUMPTION` and exposed to the operator. References are
 listed in §15 and cited by key, for example [HORN1981].
 
@@ -205,7 +205,7 @@ visual aid with data class `DERIVED` and is never used in calculations.
 
 ### 4.7 Resolution Limits
 
-| Product | Typical resolution (use the product's own metadata) | Use in MARSWALK |
+| Product | Typical resolution (use the product's own metadata) | Use in AresNav |
 |---------|------------------------------------------------------|-----------------|
 | MOLA MEGDR, 128 pixels per degree | about 463 m | Regional context only |
 | CTX DTM | about 18–24 m post spacing | Fallback terrain, regional slope |
@@ -335,7 +335,7 @@ on every route.
   (no corner cutting).
 - Search window: the bounding box of all route points plus padding of 25 % of the box
   size (at least 500 m), clipped to the region. If no path is found, the search is
-  repeated once on the full region grid if it is within `MARSWALK_MAX_GRID_CELLS`.
+  repeated once on the full region grid if it is within `ARESNAV_MAX_GRID_CELLS`.
   Otherwise the response is `GRID_TOO_LARGE`.
 - Route points (base, stops, destination) are placed in the cell that contains them.
   They are not moved. If that cell is `IMPASSABLE_NODATA`, the plan returns
@@ -550,7 +550,7 @@ Before implementation, the work package must:
 ## 13. Radiation, Thermal and Space Weather
 
 - MSL RAD measured the radiation environment at the Curiosity site in Gale Crater.
-  MARSWALK presents it as historical, site-level context (§9.3).
+  AresNav presents it as historical, site-level context (§9.3).
 - THEMIS brightness temperature is an orbital measurement of the surface at the time
   of observation. It is not air temperature and not current.
 - Heliospheric space-weather records (for example NASA DONKI) describe solar events,
@@ -572,7 +572,7 @@ Before implementation, the work package must:
 
 Fixed disclaimer text (used verbatim in `SafetyAssessment.disclaimer` and reports):
 
-> MARSWALK is a research and planning prototype. Results are computational
+> AresNav is a research and planning prototype. Results are computational
 > assessments under stated assumptions and are not a certified astronaut safety
 > analysis.
 

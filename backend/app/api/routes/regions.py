@@ -1,9 +1,9 @@
-"""Region endpoints stub implementing docs/API_CONTRACTS.md §4.2-§4.3 (P0, WP-08)."""
+"""Region endpoints implementing docs/API_CONTRACTS.md section 4.2-4.3 (P0, WP-08)."""
 
 from fastapi import APIRouter
 
-from app.core.errors import AppException
 from app.models import RegionDetail, RegionSummary
+from app.services import region_service
 
 router = APIRouter(prefix="/regions", tags=["Regions"])
 
@@ -15,11 +15,7 @@ router = APIRouter(prefix="/regions", tags=["Regions"])
     description="Returns high-level summaries of all supported Mars exploration regions.",
 )
 async def list_regions() -> list[RegionSummary]:
-    raise AppException(
-        error_code="NOT_IMPLEMENTED",
-        message="Endpoint belongs to an unmerged work package",
-        status_code=501,
-    )
+    return region_service.list_regions()
 
 
 @router.get(
@@ -29,8 +25,4 @@ async def list_regions() -> list[RegionSummary]:
     description="Returns CRS, analysis configuration, layers, and science targets for a region.",
 )
 async def get_region(region_id: str) -> RegionDetail:
-    raise AppException(
-        error_code="NOT_IMPLEMENTED",
-        message="Endpoint belongs to an unmerged work package",
-        status_code=501,
-    )
+    return region_service.get_region_detail(region_id)

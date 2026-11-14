@@ -1,5 +1,8 @@
 """Tests for health endpoint and error envelope (T-API-01, T-API-02)."""
 
+import json
+from pathlib import Path
+
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
@@ -37,9 +40,19 @@ def test_health_returns_schema_and_disabled_mode(client: TestClient) -> None:
     assert data["version"] == "0.1.0"
     assert data["llm_mode"] == "DISABLED"
     assert data["llm_provider"] is None
-    assert data["regions_loaded"] == 0
-    assert data["datasets_available"] == 0
-    assert data["datasets_unavailable"] == 0
+    catalog_path = (
+        Path(__file__).resolve().parents[2] / "data" / "manifests" / "dataset_catalog.json"
+    )
+    with open(catalog_path, "r", encoding="utf-8") as f:
+        catalog = json.load(f)
+    expected_available = sum(1 for d in catalog["datasets"] if d["status"] == "AVAILABLE")
+    expected_unavailable = sum(1 for d in catalog["datasets"] if d["status"] != "AVAILABLE")
+
+    # Region count assertion
+    assert data["regions_loaded"] == 1
+    # Catalog-derived availability counts
+    assert data["datasets_available"] == expected_available
+    assert data["datasets_unavailable"] == expected_unavailable
 
     # Ensure X-Request-ID header is present and formatted
     assert "x-request-id" in response.headers

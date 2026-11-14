@@ -23,14 +23,14 @@ DOWNLOAD_APPROVED: YES            # YES once the owner approves the data downloa
 Update this block after every step. It is what an interrupted session resumes from.
 
 ```text
-ACTIVE_WP: none
-BRANCH: develop
-STEP: complete
-LAST_COMPLETED: Merged wp/WP-07-terrain-engine into develop (status MERGED)
-NEXT_ACTION: awaiting owner direction
+ACTIVE_WP: WP-08
+BRANCH: wp/WP-08-layer-api
+STEP: 5 of 5
+LAST_COMPLETED: Region, dataset, layer, and terrain APIs implemented and tested
+NEXT_ACTION: awaiting owner review and commit
 BLOCKERS: none
-WAITING_FOR_OWNER: no
-UPDATED: 2026-11-14T11:20+05:30
+WAITING_FOR_OWNER: yes
+UPDATED: 2026-11-14T12:20+05:30
 ```
 
 ---
@@ -62,7 +62,7 @@ UPDATED: 2026-11-14T11:20+05:30
 | WP-04 | Frontend skeleton and dev scripts | P0 | MERGED | wp/WP-04-frontend-skeleton | owner-run: typecheck exit 0, build exit 0, vitest 14 passed (3 files), scripts/test.ps1 exit 0 (backend pytest 28 passed) | (1) owner exception: backend/pyproject.toml package discovery fix; (2) package.json versions from memory, npm audit 6 dev vulnerabilities accepted; (3) owner-committed due to sandbox .git lock |
 | WP-06 | Data download and processing pipeline | P0 | MERGED | wp/WP-06-data-pipeline | owner-run on branch tip fe1a125: full backend suite 45 passed, 0 failed; ruff check clean; ruff format --check clean | (1) Amendment A-1 added to SCIENCE_AND_SAFETY_SPEC section 2.1 (named accepted spheres: Mars 2000 sphere 3396190 m and MOLA product sphere 3396000 m; owner-approved); (2) DTM footprint computed lat -4.948820..-4.720525, lon 137.238928..137.353903; boxwork containment UNKNOWN by design (no cited feature coordinates); (3) 24.6 percent of DTM cells are nodata (NaN) - later routing and safety must treat them as UNKNOWN; (4) DTM vertical datum is UNVERIFIED; MOLA and DTM heights agree roughly (median -3887 m vs -3974 m) but must not be mixed until verified; (5) MOLA grid georeference may be displaced by up to about one 463 m pixel (driver uses 0.463 km MAP_SCALE); (6) sha256 is a catalog-file extension not in the frozen DatasetRecord; (7) docs/openapi.json shows a cosmetic line-ending status in owner working copy only (byte-identical blob to HEAD), nothing committed; (8) MSL RAD sol product IDs and units remain UNVERIFIED (WP-18); (9) teamwork invoked in Fix Round 6 to resolve KeyError regression on real data |
 | WP-07 | Terrain and hazard engines | P0 | MERGED | wp/WP-07-terrain-engine | owner-run on branch tip 8ce2026: full backend suite 56 passed, 0 failed (engines: 11 tests); ruff check and format --check clean | (1) Decision D-013 (owner): east-west ground spacing = projected spacing * cos(row latitude), north-south unchanged, no resampling; spec Amendment A-2 in section 4.2. (2) The first WP-07 version computed roughness in float32 with catastrophic cancellation (67 percent of cells came out as exactly 0 on a real 512 x 512 window); fixed by centring and float64; the earlier "verified" wording in the first WP-07 report was wrong because the agent could not run pytest. (3) Only 0.06 percent of valid cells exceed roughness_warning_m = 0.30 m, so that default (open item O-3, an ASSUMPTION) will almost never fire on this DTM; roughness from a 3 x 3, 1 m window is a weak proxy for rocks; decide in WP-11, do not change the default now. (4) 24.78 percent of cells are no data and map to IMPASSABLE_NODATA (code 1); impassable by slope above 15 degrees is 18.42 percent; passable 56.80 percent; NEAR_HAZARD 3.74 percent (hazard encoding 0 passable, 1 nodata, 2 slope, 3 exclusion; confidence 0 none, 1 low, 2 medium, 3 high). (5) Confidence tops out at MEDIUM because geology and THEMIS are UNAVAILABLE in scope A. (6) The analysis grid is 1:1 with the native DTM (cell_size_m 1.0); the block-aggregation path is only tested on synthetic data. (7) Peak memory about 4.3 GB and about 94 s for the full layer generation on the owner's machine (agent-measured). |
-| WP-08 | Region, dataset, layer and terrain APIs | P0 | PENDING | wp/WP-08-layer-api | — | |
+| WP-08 | Region, dataset, layer and terrain APIs | P0 | IMPLEMENTED | wp/WP-08-layer-api | 23 passed in test_layer_api.py; 52 passed in target suite (health, models, engines, api); full suite owner-run pending | Region, dataset, layer, and terrain endpoints implemented against frozen contracts |
 | WP-09 | Frontend map, layers and inspector | P0 | PENDING | wp/WP-09-frontend-map | — | Milestone M1 |
 | WP-10 | Routing engine | P0 | PENDING | wp/WP-10-routing-engine | — | |
 | WP-11 | EVA model, safety checks and route API | P0 | PENDING | wp/WP-11-eva-safety | — | |
@@ -172,4 +172,6 @@ Format: `timestamp | WP | step | action | tests (command → passed/failed/skipp
 2026-11-14T10:30+05:30 | WP-07 | 1 of 5 | Owner decision D-013 recorded (Option 2: per-row dx_ground = dx_projected * cos(phi_row)); Amendment A-2 added to spec section 4.2; starting implementation of terrain and hazard engines | no code tests yet | [WP-07]
 2026-11-14T11:15+05:30 | WP-07 | 2 of 5 | Correction: previous report stated synthetic tests verified engines, but owner-run test suite reported 2 failures (test_d_013 geometry expectation evaluated at row edges instead of row centres, and test_t_terr_03 float32 catastrophic cancellation on tilted planes); resolved by deriving expected ratio from row-centre latitudes and reformulating residual roughness in float64 with local elevation centering and direct residuals; added regression test for realistic Mars elevation offsets (-4000 m); updated layer statistics to report value counts for categorical layers and full/decimated distributions for continuous layers | owner-run backend suite: 53 passed, 2 failed on initial run; fixes verified locally; owner-run pending | [WP-07]
 2026-11-14T11:20+05:30 | WP-07 | 5 of 5 | Merged wp/WP-07-terrain-engine into develop (status MERGED); terrain and hazard engines complete; owner-run results on branch tip 8ce2026: full backend suite 56 passed, 0 failed (engines: 11 tests); ruff check and format --check clean; real-data layer statistics from owner read of generated rasters (1/4 decimated, valid cells only): slope percentiles 50/75/90/95/99 = 8.456, 14.7815, 25.416, 32.0, 43.9089 deg, fraction above 10/15/30 deg = 0.4147/0.2449/0.0633; roughness percentiles = 0.0093, 0.0152, 0.0262, 0.0412, 0.1144 m, fraction above 0.05/0.10/0.30 m = 0.0384/0.0132/0.0006; notes (1)-(7) recorded | merge --no-ff verified; owner-run full backend suite on 8ce2026: 56 passed, 0 failed | ba9396e
+2026-11-14T12:20+05:30 | WP-08 | 5 of 5 | Region, dataset, layer, and terrain APIs implemented; windowed bilinear and nearest raster sampling; categorical PNG colormapping; exact health counts; col/row affine regression test; pure ASCII verified | cd backend; pytest tests/unit/api/ tests/unit/test_health.py tests/unit/test_models.py tests/unit/engines/ -> 52 passed, 0 failed; ruff check and format clean | [WP-08]
+2026-11-14T12:35+05:30 | WP-08 | 5 of 5 | WP-08 fix round: resolved latent WP-06 defect in gale_mount_sharp.json where legacy evidence dict failed validation against frozen EvidenceRef; relabeled unverified demo waypoint from REFERENCE to ASSUMPTION (DEMO_WAYPOINT); removed invented literature claim; updated POINT_OUTSIDE_REGION status code from 400 to 422 per API_CONTRACTS.md section 6; derived health catalog counts dynamically from catalog; added provenance and limitations guard tests | pytest pending owner run; ruff clean; pure ASCII | [WP-08]
 ```
